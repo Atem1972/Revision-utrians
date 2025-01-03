@@ -1,0 +1,30 @@
+vpc is what protect our infrastructure in the cloud
+every vpc has a name
+all vpc has a ciDRS ie 192.168.0.0/16 this will give 65k ip address
+meaning of cidrs = classless inter domain routing
+for trafic from the internet to get to my vpc we need to creat internet gate way. with it my vpc is in the private mode
+when will have internet gate way created trafic from internet can flow to only infrastructed that are on public network it can not get to 
+    any infrastructure under private network. this means we only put infrastructure on ppublic subnet if they need to access the internet
+We need a rout table to help us rout the internet on our infrastructure ie how trafic will route to both infrastructure on public and private
+VPC ARE PER REGION  (region is the geographical location) north virginal us-east-1
+AND SUBNET ARE PER AVALIABILITY ZONE (AZ)  here is the physical data center .we have 6 azOR building in north virginal ie
+   BUILDIND1 US-EAST-1A   BUILDING2 US-EAST-1B BUILDING3 US-EAST-1C  BUILDING4 US-EAST-1D ......
+
+
+WE CAN use nat gateway on the publice subnet which can use download from the internet
+
+
+
+###### how to take an Ami of an instance (backup) snapshot
+go to the instance in aws 
+clck on it
+go to action
+select image and template
+select create image
+file the file, the name, 
+then click on create ami
+
+to see the backup u created goto
+instance , scrow down to Amis  , and u will see ur backup name there
+
+after run terraform plan , if u want somebody to look at it before u run apply , u can run terraform plan -out and the name of the file u want to doom it
