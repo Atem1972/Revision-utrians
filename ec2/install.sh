@@ -1,9 +1,9 @@
 #!/bin/bash
 sudo yum update -y
-sudo groupadd docker
-sudo useradd jonh -aG docker
-sudo yum install git unzip wget httpd -y
-sudo systemctl start httpd
+#sudo groupadd docker
+#sudo useradd jonh -aG docker
+#sudo yum install git unzip wget httpd -y
+#sudo systemctl start httpd
 sudo systemctl enable httpd
 sudo mkdir opt
     cd /opt

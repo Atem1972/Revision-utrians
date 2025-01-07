@@ -5,7 +5,7 @@ rsa_bits = 2048
 }
 #this key will be attach to our instance in aws
 resource "aws_key_pair" "aws_key" {
-  key_name = "terraform-key"
+  key_name = "pen"
   public_key = tls_private_key.ec2_key.public_key_openssh
 }
 

@@ -1,0 +1,43 @@
+## HOW to give permission to docker?
+sudo usermod -aG docker $USER
+newgrp docker
+docker run hello-world
+
+docker -v   = to check version
+docker images = to see all images
+docker ps  = to see all your containers
+docker ps -a -q = to see container id
+docker rm -f $(docker ps -a -q)  = to delete all container runing
+docker pull httpd  = to pull and image from docker registory
+docker -d httpd  = to run container from the image httpd
+docker ps -a  = to list all all containers plus exited once
+docker --name =  to give a name to container  ie(docker run -d --name web httpd)
+docker rename = to rename a container ie docker rename web  fun
+docker  run -d --name gam  redis = this will go out there and download redis
+docker stop web
+docker start web
+docker rm -f  web = to delete container
+docker exec -it web bash = to login to a container
+docker exec web cat /etc/os-release  = to see this output without login inside the container
+docker inspect web = this will show u every u need to know about that container
+ 
+
+ curl 127.36.748.244  = just to see if the end point of a server is workng
+ ifconfig  = to see ur network
+
+ webserver application means we can view it through the internet like nginx, httpd etc
+
+HOW CAN U MAP WEBSERVER APPLICATION THAT HAS SAME LISTENING PORT EG 80 OR 8080
+-docker -d --name web1 -p 8080:80 nginx == first is the runtime, detach mode, naming the container, mapping a port to the container, the name of the image we want to run our container from
+
+
+HOW TO ADD WEB CODE IN TO A CONTAINER (foldER var/www/html= file index.html)
+- fisrtly u need to ADD the part of e image u want to use bc we need to send our code on that folder path so we can see it on the browser eg httpd on linux is var/www/html , cd to it and look for (index.html) bc that is the file to put our code
+- or we can login to the container ie( docker exec -it web bash)
+-cd to the path 
+-ls 
+-htdocs
+- in httpd IN LINUX we need to put our code inside (index.html)
+on docker container we can install commands bc most container do not have them install bc of it light weigt nature
+
+vi index.html  (file for httpd)

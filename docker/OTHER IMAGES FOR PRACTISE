@@ -1,0 +1,8 @@
+to RUN html image install apache
+to run python code install python or pull a python image
+to run java code install java or pull a java image
+to run nodejs code install nodejs or pull nodejs image   ,sudo apt install nodejs npm -y
+
+
+git clone https://github.com/utrains/nodejs-test-app.git
+git clone https://github.com/utrains/bookshopflaskapp.git

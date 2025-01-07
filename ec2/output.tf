@@ -14,3 +14,7 @@ output "pu-id" {
     value = aws_instance.dnk.availability_zone
    
  }
+
+ output "ssh-command" {
+  value = "ssh -i ${aws_key_pair.aws_key.key_name}.pem ec2-user@${aws_instance.dnk.public_dns}"
+}

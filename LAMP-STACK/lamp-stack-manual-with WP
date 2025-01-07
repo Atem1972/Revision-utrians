@@ -1,0 +1,111 @@
+
+## first stage
+here we are going to use lightsail instance
+- bring up a lightsail server
+-  run ssh to it, login using ssh -i valery.pem centos@3.3.3.3
+-   run  sudo -i
+-  run yum update -y
+
+## second stage
+-  run yum install httpd -y
+-  run systemctl start httpd
+-  run systemctl enable httpd
+- run systemctl status
+
+
+## third stage
+## installing mysql (database)
+- run yum install mariadb-server -y
+- run systemctl start mariadb
+- run systemctl enable mariadb
+ ## set passwd for mariadb
+- run mysql_secure_installation  # a drop down will pop up
+  Enter the current password for root: Press Enter (since we don’t have one)
+  Switch to unix_socket authentication: y
+  Set root password? : y
+   New password: school1
+  Re-enter new password: school1
+  Remove anonymous users?: y
+  Disallow root login remotely? : y
+  Remove test database and access to it?: y
+  Reload privilege tables now?: y
+  Now, log in to MySQL to create a database to store information for our website
+  ## now lets loging to our database and create a table
+- run mysql -u root -p  
+   Enter the root password: school1
+   You must have the MySQL prompt ie mysql>
+   Let’s display all the databases in there using the command:
+- run show database;
+     In the MySQL prompt, let’s create our database (webserver):
+- run create database valery;
+- run show database;    #  u will see the databse valery we created   
+## let create a user that can login to our database and give him a passwd (school)
+- run create user baye@localhost identified by 'school';
+## let give our user access to the database valery we created above
+- run grand all privileges on valery .* to baye@localhost identified by 'school';
+## load the privilege and exit the database(mysql) prompt
+- run flush privileges;
+- run exit
+
+## furth stage
+##  install php 
+- run yum install php php-mysqlnd -y
+# let test the php to see if it has been install and runing
+cd /var/www/html
+- run touch info.php
+- run vi info.php
+   write this in it, <?php
+                      phpinfo();
+                      ?>
+                      :wq
+- run systemctl restart httpd   
+ let test it on the browser copy the ip address of that server and port 80
+ 4.4.4.4:80
+- run install php-gd -y
+
+
+## fith stage installing word press
+    WordPress is a CMS (Content Management System). It’s just a tool that helps to host websites easily with clicks, drag and drop etc.
+- run cd /tmp
+- run yum install wget -y
+- run sudo wget https://wordpress.org/latest.tar.gz
+   lets untar  tar.gz and copy the files to /var/www/html
+- run sudo tar -xzvf latest.tar.gz  -c /var/www/html
+- run cd  /var/www/html
+- rm -rf /tmp/latest.tar.gz
+   Now, copy the content of wp-config-sample.php to the file wp-config.php
+- run sudo cp /var/www/html/wordpress/wp-config-sample.php  /var/www/html/wordpress/wp-config.php   
+     For ls to display the last item created at the end of the list, you can use
+- run ls  -ltr /var/www/html/wordpress/
+     Let’s modify that file to set up the MySQL connection with the webserver database and the user oracle
+- run vi /var/www/html/wordpress/wp-config.php
+             modify it with the information we u on our database
+             DB_NAME      =  VALERY
+             DB_USER      =  baye
+             DB_PASSWORD  = SCHOOL
+             :wq
+- run chown -R apache:apache /var/www/html/* 
+
+## Configure Apache for WordPress
+- run sudo vi /etc/httpd/config.d/wordpress.conf
+      Add the bellow content, and save the file
+      <VirtualHost *:80>
+       ServerAdmin baye@localhost
+       DocumentRoot /var/www/html/wordpress
+       ServerName localhost
+       ServerAlias www.localhost.com
+       ErrorLog /var/log/httpd/wordpress_error.log
+       CustomLog /var/log/httpd/wordpress_access.log combined
+       </VirtualHost>
+   :wq
+- run systemctl restart httpd   
+   ## NOW lets finally install wordpress 
+   copy the ip address of ur server to the broser
+    4.4.4.4:80
+    select language
+    fill the form and click install
+    user the user name and pass word u just created to login
+
+                  
+
+
