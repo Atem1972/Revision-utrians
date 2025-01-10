@@ -16,7 +16,7 @@ resource "aws_instance" "dnk" {
     instance_type = "t2.micro"
     subnet_id = aws_subnet.public1.id  
    # security_groups = ["revision"] #existing security group in aws (ooR)
-    security_groups = [aws_security_group.lamp.id]
+    security_groups = [aws_security_group.lamp.id] # remember to arrang the argument for security
     depends_on = [aws_security_group.lamp]
     #key_name = "valery" #copy from available key in aws OR
     key_name = aws_key_pair.aws_key.key_name

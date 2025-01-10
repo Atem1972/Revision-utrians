@@ -30,7 +30,10 @@ here we are going to use lightsail instance
   Remove test database and access to it?: y
   Reload privilege tables now?: y
   Now, log in to MySQL to create a database to store information for our website
-  ## now lets loging to our database and create a table
+ 
+ 
+ ## now lets loging to our database and create a table, do admin work
+ ## type of database=, relational db, sql db, structure db  / no sql db here data are collected in un structure manner
 - run mysql -u root -p  
    Enter the root password: school1
    You must have the MySQL prompt ie mysql>
@@ -38,8 +41,27 @@ here we are going to use lightsail instance
 - run show database;
      In the MySQL prompt, let’s create our database (webserver):
 - run create database valery;
-- run show database;    #  u will see the databse valery we created   
-## let create a user that can login to our database and give him a passwd (school)
+- run show databases;    #  u will see the databse valery we created
+-  run drop database valery; to delete a database 
+- run use valery; = to use a particular database
+  script to creat table
+       CREATE TABLE students (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    grade CHAR(2),
+    enrollment_date DATE
+);
+
+- shows tables;
+- run select * from student; to see all the information on a particular table call student
+- or run select names, age from student;
+
+
+
+
+
+an login to our database and give him a passwd (school)
 - run create user baye@localhost identified by 'school';
 ## let give our user access to the database valery we created above
 - run grand all privileges on valery .* to baye@localhost identified by 'school';

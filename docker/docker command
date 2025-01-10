@@ -2,14 +2,19 @@
 sudo usermod -aG docker $USER
 newgrp docker
 docker run hello-world
-
+docker -d = to run the container on the background (detach mode)
+docker --rm =  this is when u want after stoping a container it shld be remove automatically
 docker -v   = to check version
+docker exec <put container name or id> env = this will show u the environment variable of that container
 docker images = to see all images
+run docker network create net  = to create a network 
+run docker network ls  = to least all the network
 docker ps  = to see all your containers
 docker ps -a -q = to see container id
 docker rm -f $(docker ps -a -q)  = to delete all container runing
+docker rm -f web1 web2 = this will delete only this two containers
 docker pull httpd  = to pull and image from docker registory
-docker -d httpd  = to run container from the image httpd
+docker -d httpd  = to run container from the image httpd on background (detach mode)
 docker ps -a  = to list all all containers plus exited once
 docker --name =  to give a name to container  ie(docker run -d --name web httpd)
 docker rename = to rename a container ie docker rename web  fun
@@ -41,3 +46,29 @@ HOW TO ADD WEB CODE IN TO A CONTAINER (foldER var/www/html= file index.html)
 on docker container we can install commands bc most container do not have them install bc of it light weigt nature
 
 vi index.html  (file for httpd)
+
+
+
+
+
+
+-we use the name or id number ti identify containers
+- why does container dies so quickly? bc containers are  ephemeral in nature
+
+
+Yes, containers are often referred to as ephemeral, meaning their lifecycle is temporary and designed to be short-lived. This is an essential characteristic of containerized environments like Docker or Kubernetes. Here's an explanation of what "ephemeral" means in the context of containers:
+
+What Does "Ephemeral" Mean for Containers?
+Short-lived by Nature:
+
+Containers are designed to start up quickly, perform their designated tasks, and then terminate. This is especially true in microservices architectures, where containers handle specific tasks or services and are replaced as needed.
+Stateless:
+
+Containers typically do not retain data after they are stopped or restarted unless explicitly configured with persistent storage. This makes them stateless by default.
+Easily Replaceable:
+
+Instead of modifying an existing container, the typical approach is to stop it and replace it with a new instance. This aligns with immutable infrastructure principles.
+Dynamic Scaling:
+
+In orchestrated environments like Kubernetes, containers can be scaled up or down dynamically to handle varying workloads. These containers can be destroyed as soon as they're no longer needed.
+

@@ -1,0 +1,41 @@
+We are having issues with one of our EC2 instances. The IP changes every time we start and stop this instance called Public Instance. This causes everything to break since it needs a static IP address. We are not sure why the IP changes on this instance to a random IP every time. Can you please investigate? Attached is our architecture. Please let me know if you have any questions.
+ChatGPT said:
+It seems like you're encountering an issue with your EC2 instance, where the public IP changes every time you start and stop the instance. This is a common scenario with EC2 instances using dynamic public IPs.
+
+Why does the public IP change when the EC2 instance is stopped and started?
+In AWS EC2, when you launch an instance, it is automatically assigned a public IP address that is dynamic (not static). This public IP address is tied to the instance's lifecycle:
+
+When you stop an instance, the public IP address is released back to AWS.
+When you start the instance again, it gets a new public IP address.
+This is the behavior for instances without a Elastic IP assigned to them.
+
+Solution: Assigning an Elastic IP (EIP)
+To ensure that your EC2 instance retains the same public IP address even after starting and stopping the instance, you should use an Elastic IP (EIP). An Elastic IP is a static IP address provided by AWS that you can associate with your EC2 instance. It will remain the same even if you stop and start the instance.
+
+Steps to fix the issue:
+Allocate an Elastic IP:
+
+Go to the EC2 Dashboard in the AWS Management Console.
+In the left navigation pane, under Network & Security, click Elastic IPs.
+Click Allocate Elastic IP address.
+Select Amazon pool and then click Allocate.
+Associate the Elastic IP with your EC2 instance:
+
+In the Elastic IPs page, select the newly allocated EIP.
+Click on the Actions button and select Associate Elastic IP address.
+Select your Public Instance under the Instance dropdown list.
+Click Associate.
+Verify the association:
+
+Once the Elastic IP is associated with your EC2 instance, the instance will use this static IP.
+Check that the Public IP of the instance has changed to the newly associated Elastic IP in the Instance Details section of the EC2 dashboard.
+Test the Static IP:
+
+Now, when you stop and start the EC2 instance, the Elastic IP will remain the same, and your application will continue functioning as expected.
+Additional Notes:
+Elastic IP is free as long as it is associated with a running instance. However, if it is not associated with any instance (i.e., you have allocated it but not assigned it to an EC2 instance), AWS charges for unused Elastic IPs.
+You can associate one Elastic IP per instance, and if you want to move the Elastic IP to a different instance, you can disassociate it and associate it with the new instance.
+Summary:
+EC2 instances are assigned dynamic public IPs by default, which changes when the instance is stopped and started.
+To resolve this, you should use an Elastic IP (EIP), which is a static public IP that remains the same even after the instance is stopped and started.
+Let me know if you need further clarification or help with any part of this process!

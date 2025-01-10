@@ -1,4 +1,4 @@
-creat a volum
+creat a volume # this will persist the data and save
 run docker volume  create dev1  = to creat volume
 run docker volume ls = to see all ur volume
 run docker inspect volume dev1 = this will show u all the information in the volume , 

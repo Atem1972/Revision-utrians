@@ -1,0 +1,49 @@
+2xx - Success
+200 (OK): The request was successful.website working
+201 (Created): A resource was created successfully.
+204 (No Content): The request was successful, but there is no content to return.
+
+4xx - Client Errors
+These indicate issues with the client request:
+
+400 (Bad Request): The request was invalid or cannot be served. using the wrong url
+Example: Missing required parameters or invalid values.
+401 (Unauthorized): Authentication failed or was not provided.
+Example: Invalid or missing AWS credentials.
+403 (Forbidden): The client does not have permission to perform the action.
+Example: IAM policies or permissions deny the request.
+404 (Not Found): The resource does not exist.
+Example: Specifying a non-existent S3 bucket.
+429 (Too Many Requests): You've exceeded API request limits.
+Example: Rate-limiting from the AWS service.
+
+
+5xx - Server Errors
+These indicate issues on AWS's side:
+
+500 (Internal Server Error): A generic error occurred on the server. = when our servsers has a problem and can not produce any trafic
+502 (Bad Gateway): AWS received an invalid response from an upstream server.
+503 (Service Unavailable): The service is temporarily unavailable.
+Example: AWS is throttling your requests.
+504 (Gateway Timeout): AWS timed out while waiting for an upstream server.
+
+
+
+
+AWS-Specific Error Codes
+Some AWS services return unique error codes. Below are a few examples:
+
+S3 (Simple Storage Service)
+NoSuchBucket: The specified bucket does not exist.
+AccessDenied: You do not have permission to access the resource.
+BucketAlreadyExists: The bucket name is already taken globally.
+EC2 (Elastic Compute Cloud)
+InstanceLimitExceeded: You've reached the maximum number of instances.
+InvalidAMIId: The specified AMI ID is invalid.
+UnauthorizedOperation: You don't have permission to perform the requested action.
+DynamoDB
+ProvisionedThroughputExceededException: The request rate is too high for the table's provisioned throughput.
+ResourceNotFoundException: The specified table does not exist.
+Lambda
+InvalidRequestContentException: The request JSON is malformed or invalid.
+ServiceException: AWS Lambda encountered an internal service error.
