@@ -12,3 +12,5 @@ what are some diffn types of software we can use to build LB in prem? HA-PROXY,N
 WE HAVE TWO TYPE OF HA-PROXY loadbalancer ? revers-proxy and forward-proxy
 1) forward-proxy: this is mostly install on company laptop to block website ie u can not be able to open facebook on the laptop. all ur trafic will hit the forward proxy before going to the internet with this u are block from viewing or downloding some specific website. this can be set at home to limit children so they will not be able to watch setting movies.
 2) REVERS-PROXY: this is what we need in website
+WHAT DO WE USE TO ISOLATE OUR INSTANCE?  we use subnet ie we can put one in diffn subnet ie 10.0.1.0/24 AZ 1A   AND the other in another subnet 10.0.2.0/24 AZ1b
+what is a subnet? it is just a way to divide our resource to small portion of network

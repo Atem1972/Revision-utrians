@@ -18,8 +18,8 @@
    8 select nat gateway if u will want ur instance in the private to go to the internet
    9 click on creat vpc
 
-   # stage2
-   # create security group
+   # stage2A
+   # create security group for the loadbalancer
       1 Open the AWS console, go to the VPC service
       2 In the navigation pane, choose Security groups.
       3 Click on Create security group.
@@ -33,6 +33,28 @@
            c) Port range: 80
            d) Source: Anywhere-IPv4
      13 Click on Create security group.
+
+
+  # STAGE 2B
+  # create security group for the EC2
+      1 Open the AWS console, go to the ec2 service
+      2 In the navigation pane, choose Security groups.
+      3 Click on Create security group.
+      4 put security group name , alb-security-group
+      5 for description put  security group for the application load balancer 
+      6 choose the vpc u created
+      7 click on add inbound rule
+      8 click on add rule
+           a) Type: HTTP
+           b) Protocol: TCP
+           c) Port range: 80
+           d) Source: choose the the lb-sg we created above in stage 2a
+     13 Click on Create security group.
+
+
+
+
+
      
 
      # Step 3: Create 2 EC2 instances in the loadbalancer-vpc
@@ -45,16 +67,13 @@
                 6 Create the Key pair (if it does not exist yet): ec2-keypair
                 7 In the network settings, Click on Edit
                 8 Choose loadbalancer-vpc
+                auto asign public ip = disable
                 9  for subnet choose private subnet of first availability zone as subnet
                 10  for fire wall ie security group click create security group
                 11 security group name: webserver-sg
                 12 for description put security for webservers
-                13 click on edit inbound rule and click on add security group rule
-                        a) type= http
-                        b) protocol= tcp
-                        c) port range=  80
-                        d) source type= custom
-                        e) source=    enter the name of the alb security group created previously at stage 2 (alb-security-group) to allow only the load balancer to have access to the web server on port 80.
+                13 click on edit inbound rule and click on select security group 
+                14 choose the ec2 security we created in stage 2b      
 
                14 Scroll down and click on Advanced Details
                15 Scroll down to the User data textfield. Enter the following commands in the text field provided:
