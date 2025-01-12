@@ -8,14 +8,14 @@ vpv
 public subnet 2
 private subnet 2
 
-create ec2 and link to public subnet we created above
-create RDS (database) and link to private we created above 
+
 
 # step 1a creating ec2, i believe u can creat that 
+- creat ec2 security group
   - pleease creat key
   - SUBNET SHOULD BE PUBLIC
   - please create sg open shh and http from anywhere  
-  - USEE THE EC2 SECURITY GROUP   
+    
 
 
   - on the user data put this
