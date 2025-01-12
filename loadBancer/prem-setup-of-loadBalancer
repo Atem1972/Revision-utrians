@@ -50,7 +50,7 @@ Use Case: Tailored to unique scenarios, like prioritizing certain instances or b
 - run systemctl start haproxy
 - run systemctl enable haproxy  
 
-      ##  Step2: Create two web servers on containers using docker
+      ##  Step2: Create two web servers  containers using docker
 In this step, we are going to run two containers from a build image. We will build the image from a docker file. The traffic will be shared on those two containers.
 Follow the steps below to create the web servers in the lightsail instance:
 Connect to the lightsail server via SSH and gain root access

@@ -1,0 +1,133 @@
+# Deploy a WordPress application using Amazon RDS as database
+
+
+There is a WordPress app being actively developed and we need an environment in aws where to test the app before its deployment in production. For this we need a Linux  environment where to run the WordPress files, a database where to keep the data, and a sub domain with dev. keyword.  You are tasked to create this environment in aws.
+# Requirement
+creat route 53
+vpv
+public subnet 1
+private subnet 1
+create ec2 and link to public subnet we created above
+create RDS (database) and link to private we created above 
+
+
+# step1 create database with RDS 
+   1 go to aws console
+   2 search RDS
+   3 click great database
+   4 choose standard  create
+   5 choose mysql
+   6  Scroll down to the Templates section: and select Free tier
+   ON THE drop down fill the following:
+       a) DB instance identifier ie db name: wordpress
+       b) credential seting, master username:  admin
+       c) master password: hdrjrggj
+       d) confirm master passwd: hdrjrggj
+   leave the settings as default and scroll down to the Addition configuration bloc.
+   
+   7 Click on Addition configuration.
+             a) database option  initial database name: wordpress
+             b) DB parameter group: default.mysql8.0
+             c) option group: default:mysql-8-0
+             d) on backup click on the box enable autmated backup
+             f) click on create database
+
+
+ # step 2 creating ec2, i believe u can creat that 
+  - pleease creat key
+  - please create sg open shh and http from anywhere    
+
+
+  - on the user data put this
+        #!/bin/bash
+sudo yum install wget httpd mysql php php-mysql -y
+sudo wget https://wordpress.org/latest.tar.gz
+sudo tar -xzf latest.tar.gz
+sudo cp -r wordpress/* /var/www/html
+sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+sudo cd /var/www/html
+sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+sudo chown -R apache:apache /var/www/html
+sudo systemctl start httpd 
+sudo systemctl enable httpd  
+
+the above user date will install mysql, php, wget and apache it will also download and copy the wordpress application to www directory
+
+- click on create instance
+
+
+# step 3 Configure RDS Database to work with EC2
+   1 go to the RDS databases in the AWS console.
+   2  Click on the MySQL database you created  earlier in steep 1 
+   3 Scroll to the Connectivity & security tab
+   4 click on vpc security group id and it will take u to ur security
+   5 select  inbonce rule
+   6 click on edit inbound rule
+   7 look for that your security change the type to : MYSQL/AURORA     AND ON THE SOURCE SEARCH FOR THE SECURITY GROUP U USE TO CREATE UR INSTANCE . SAVE
+   # This rule will allow MySQL access to any EC2 instance with that security group configured.
+
+
+   #STEP4
+   - ssh into the EC2
+   - RUN Cd ~/Downloads
+   - Next, find the hostname for your RDS database in the AWS console. In the details of your RDS database, the hostname will be shown as the Endpoint in the Connectivity &  security section
+       a) go to ur aws consol
+       b) open rds 
+       c) click on ur database name
+       f) click on connectivity 
+       g) copy the endpoint id and past to 8
+    
+  8   run sudo <past the endpoint u copy from g here> mysql -h <endpoint> -P 3306 -u <mymasteruser> -p  # this will login u to ur database
+             - enter ur database passwd
+  
+  9 run  CREATE USER 'wordpress' IDENTIFIED BY 'wordpress';
+  10 run GRANT ALL PRIVILEGES ON wordpress.* TO wordpress;
+   11 run FLUSH PRIVILEGES;
+    12 run  Exit   
+    n/b make sure to remember the username and passwd  
+
+
+# step 5
+# Configure WordPress on EC2
+In this section, we will:
+- configure WordPress
+- deploy WordPress
+
+1a) Configure WordPress
+   - run cd  /var/www/html/
+   - sudo vi wp-config.php
+             First, edit the database configuration by changing the following lines:
+              
+              a) ('DB_NAME' , <'put the database name u created in asw here'> );
+              b) ( 'DB_user' , <'put the name of the user will just created after login in to our database'>);
+              c) ( 'DB_PASSWORD' , '<put the password FOR THE USER WE CREATED'>);
+              f) ('DB_HOST' , <' put hostname of the database endpoint that we copy in connectivity and security endpoint in aws .> )
+
+   after the above,   scroll down to the second configuration section you need to configure is the Authentication Unique Keys and Salts. 
+   replace everything there with this below;
+
+
+                   define('AUTH_KEY',         '_bpXI|.w>|KoVe++R{81*l?t<Cu~YWBk?]YZmf;+X^C^YnK`z%!!z<V/dA8QESV1');
+define('SECURE_AUTH_KEY',  'YqH$ w0pH=VObC&3QZnVt*I,{CxvGN?/^8|AH>2< T/0JA(N71X&+K*c_j-y.@ZG');
+define('LOGGED_IN_KEY',    'FyK%?Vhr}|-6@=6$~+Z|z?G5YDQ=&XfG^)=?Ym;QQe8o+^}C#sb_LY#S([/jo<zd');
+define('NONCE_KEY',        ']!P_N:#a]+zL@gNdTayT@M3@Z&0P,d:SN3gf1cLhY;np|oc|}a8-g~-%(Z;KfCr.');
+define('AUTH_SALT',        'zf,`$*2T-o^O_L~mra(]g=iL{z02MapPi5VxO}|dZ<;8XL<Hp}Xv.n9$go9~ #xd');
+define('SECURE_AUTH_SALT', 'E,V&S}Y|oi`XB.{1K|+Ztz6@WIRJLXV6x)qP/)sH/5& +Cf|b`([@+y4d!7,G S<');
+define('LOGGED_IN_SALT',   'sl:I1<N44f`|nek^k!tk/c%v,k$AD]nPx&>ONey[BlH6UT+wI/{_/>TJ^r-.4c%g');
+define('NONCE_SALT',       '>8{y|QJ|-|L<|P%=Ha?[Zbsi|W7y32ss j%pvl6HV#-pIcM^3Fl1e{59z_Qs?R?}');
+
+save and quite :wq
+
+# n/b open this link to get the above again;  https://api.wordpress.org/secret-key/1.1/salt/
+
+
+
+# step6 Deploy WordPress
+- run sudo service httpd restart
+- copy the ip of ur instance to the browser
+
+
+
+That’s it. You have a live, publicly accessible WordPress installation using a fully managed MySQL database on Amazon RDS.
+
+               

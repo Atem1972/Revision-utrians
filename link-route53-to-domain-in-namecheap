@@ -5,7 +5,7 @@ make sure u have a domina name either in third party like name cheap or aws
 press the drop down and choose custom dns
 - go to ur aws look for route53
 - go to hostedzone create hostedzone
-- file the space
+- feel the space
     name of ur domain from namecheap
     description optional
     click public
@@ -15,5 +15,5 @@ press the drop down and choose custom dns
 - on route53 click on create record
 - fill the space
       fashion  #(sub domain)
-      ip address of ur instance
+      ip address of ur instance or DNS OF UR LOADBALANCER
  - go to the browser and type ur sub domain name we created in record ie fashion.dev-guro.org     
