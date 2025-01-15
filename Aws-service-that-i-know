@@ -6,3 +6,4 @@ s3 = to create storage
 dynamodb = to lock our file
 cloudwatch = for monitoring
 cloudfront =
+IAM 
