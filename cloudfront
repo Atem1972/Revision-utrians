@@ -1,0 +1,5 @@
+what is cloudfront? it is a content delivery NETWORK services in aws.
+Content delivery network can be explain like this , the is a new movie on netflix and this movie is host in a server in usa , someone from germany goes online to get the movie. the are company that have decide to make it easy ie that for someone to download from us it will be slow. why dont we create a catch at edge location so that if some download from usa for the first time we can just catch in in our location and keep it in our servers there for others not to go as far as usa but to just download from our edge location. reason for this is faster delivery
+
+Get started with CloudFront
+Enable accelerated, reliable and secure content delivery for Amazon S3 buckets, Application Load Balancers, Amazon API Gateway APIs, and more in 5 minutes or less.
