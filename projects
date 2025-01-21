@@ -30,3 +30,13 @@ sudo yum install jenkins -y
 sudo systemctl enable jenkins ## Start Jenkins as a service:
 sudo systemctl start jenkins
 
+
+
+
+#0001
+question what have u work with terraform
+i remember we work on a project that we where migrating thousand of application in aws.
+diffn stages through out the project
+ie inventary the application ie which kind of the application do we want to migrate , does it have database, is it a web appli, does it have dependences, does it have monitoring
+Afte all said and done the cloud atchitect start designing how the application will be hosted in aws and the was an approval in terms of cost in the application
+i was put on the team that will be writing terraform code, modules for dffn services. that is what i have done with terraform
