@@ -1,0 +1,9 @@
+WHAT DO U UNDERSTAND BY SPRING? a company may have many ideals on how to build or modify and application, all this ideals are store on a baglogs(baglog tool =JIRA). the company will go to that baglog remove the most pressing ideals to start working on , the duration they will take to work on it befor it get to the production is what is call SPRING. IT CAN BE TWO WEEKS, ONE MONTH ETC. AND THE CHANGES THEY MAKE ON THE WEBSITE TO MAKE THE CUSTOMER HAPPY IS REFER TO AS ADDING VALUE TO CUSTOMER.
+
+
+CI, FROM WHEN THE CODE LIVE  the devloper laptop to version control system and all the testing carry out on the code by diffn department to test if the code has no problem till we submit request to production is known as CI PIPLINE
+-THE APPROVER PROFESS IS WHAT IS KNOWN AS CD PIPLINE, IE it can either be manual approver or robot approver
+- manual approver is known as continus delivery while robot is known as continus deployment
+
+
+### turning ideals to value
