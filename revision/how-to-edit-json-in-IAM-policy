@@ -1,0 +1,20 @@
+{
+    "version": "2012-10-17",
+    "statement": [
+        {
+            "sid": "visualEditor0",
+            "eff": "ALLOW"
+            "Action": "ec2:DescribInstances",  # this permision will allow the user to only describe instance
+            "resource": "*" # here we can limite the user to only a particular instance  # "*" the star means the user can describe all the instance
+        }
+    ]
+}
+
+# to get more of this policy search for aws policy generator on google
+# meaning of ARN = AMAZON RESOURCE NAME
+
+  - Select type of police = iam police # the are others like sns vpc, s3 bucket
+  add statement 
+   - effect allow or effect
+   aws service: amazon ec2 # this permision will allow the user to only describe instance
+   Action: 

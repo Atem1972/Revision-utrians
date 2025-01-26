@@ -1,0 +1,108 @@
+
+- go to your github and create a new repository
+- on your laptop clone this code link
+- git clone https://github.com/utrains/static-app.git
+-cd static-app
+- rm -rf .git
+- git init
+- git add .
+- git commit -m "ggg"
+- git branch main
+git remote add origin < ur repo link>
+- git push -u origin main
+
+# make sure u have created a repo in ecr
+#  build an image from the Dockerfile ie docker build -t webapp .
+
+
+
+## 2- Create a code pipeline
+- go to aws search codepipline
+- click on create pipline
+- name = anything
+- service role = select new service role
+- role name = default
+- click on the box
+- next
+- source = github (via github app)
+- connect = sellect connect to github
+- Connection name = anything
+- click on install new app
+ - click on Continue
+ - click on all repository
+ - click save
+ - click connect
+ # choose source
+ - repository name = select the repo from ur github
+ - default branch = main
+ - output artifact format = select codepipline default
+ - next
+ #
+ #### add build stage
+ - build provider = select other build providers  1
+ - drop down choose asw codebuild  2
+ - build type = select single build
+ -  project name = click creat project  3
+ # On the page that shows up, enter the project name I used WebApplication. You can leave the description since it's optional.
+ # create build project
+ - project name = anything
+ - image = allow default
+ - image version =  allow default
+ - service role = select new service role
+ - role name = allow it default
+ - click on additional configuration
+ -certificate = donot install any certificate
+ - compute = 7 gb
+ - AWS_DEFAULT_REGION : us-east-1
+ - AWS_ACCOUNT_ID :  Copy your account (see how in the following pictures)
+ - IMAGE_REPO_NAME : dev # this can be change
+ - IMAGE_TAG : dev # this can be change
+ - CONTAINER_NAME : put the name of container u user when creating service in ecs
+ ## buildspec
+- build specification = select use a buildspec file
+- buildspec name- optional = buildspec.yml
+# log
+- click cloudwatch box
+- click continus to codepipline
+- build type = single build
+- region = us east(N. VIR)
+- NEXT
+- NEXT
+
+####DEPLOYMEN STAGE
+- DEPLOY PROVIDER = AMAZON ECS
+-NEXT
+-dploy provider = select amazon ec2
+- region = us east
+-cluster name = put the name of the cluster u created in ecs
+- service name = put the name of the service u created in ecs
+- image definitions file = imagedefinitions.json
+- next
+- befoer clicking on create pipline, 
+- create permition
+- go to iam service
+- click on role 
+- look for the role with ur project name
+- double click on it 
+-click on add permision
+- select amazonec2containerREGISTARYfullaccess
+- click on add permision
+
+
+
+
+
+# to test if the cicd codebuild pipline is working
+- clone the code 
+- vi to index.html
+- change the message on line <h2 data-aos="fade-up"> change here </h2>
+- save and push the changes to github
+- wait and see it the message will change
+- to get the LB DNS, 
+- GO TO UR CLUSTER CLICK ON IT
+- CROW DOWN TO SERVICE
+- CLICK ON VIEW LOADBALANCER
+- COPY AND PUT ON THE BROWSER
+
+ 
+

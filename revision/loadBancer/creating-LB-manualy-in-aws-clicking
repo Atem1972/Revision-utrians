@@ -1,0 +1,159 @@
+## Create an Application load balancer using AWS Console
+# Requirements
+  vpc
+  internet gatway
+  two availability zone
+  A loadBalancer
+  Three instance
+
+# login to ur aws account, on ur consor,
+- serach vpc and create
+    1 select create vpc
+   2  choose vpc and more
+   3  enter vpc name
+   4 enter cidr block 10.20.20.0/16
+   5 select 2  availability zone
+   6 select 2 public subnet
+   7 select 2 private subnet
+   8 select nat gateway if u will want ur instance in the private to go to the internet
+   9 click on creat vpc
+
+   # stage2A
+   # create security group for the loadbalancer
+      1 Open the AWS console, go to the VPC service
+      2 In the navigation pane, choose Security groups.
+      3 Click on Create security group.
+      4 put security group name , alb-security-group
+      5 for description put  security group for the application load balancer 
+      6 choose the vpc u created
+      7 click on add inbound rule
+      8 click on add rule
+           a) Type: HTTP
+           b) Protocol: TCP
+           c) Port range: 80
+           d) Source: Anywhere-IPv4
+     13 Click on Create security group.
+
+
+  # STAGE 2B
+  # create security group for the EC2
+      1 Open the AWS console, go to the ec2 service
+      2 In the navigation pane, choose Security groups.
+      3 Click on Create security group.
+      4 put security group name , alb-security-group
+      5 for description put  security group for the application load balancer 
+      6 choose the vpc u created
+      7 click on add inbound rule
+      8 click on add rule
+           a) Type: HTTP
+           b) Protocol: TCP
+           c) Port range: 80
+           d) Source: choose the the lb-sg we created above in stage 2a
+     13 Click on Create security group.
+
+
+
+
+
+     
+
+     # Step 3: Create 2 EC2 instances in the loadbalancer-vpc
+     # Let’s create 2 EC2 instances that will be used as target servers with the following instructions:
+                1 Open the EC2 service
+                2 In the EC2 Dashboard, click on Launch instances
+                3 Instance name: webserver1
+                4 Instance AMI: Amazon Linux 2 AMI (HVM), SDD volume type (64-bit x86) or any other AMI
+                5 Instance type: t2.micro
+                6 Create the Key pair (if it does not exist yet): ec2-keypair
+                7 In the network settings, Click on Edit
+                8 Choose loadbalancer-vpc
+                auto asign public ip = disable
+                9  for subnet choose private subnet of first availability zone as subnet
+                10  for fire wall ie security group click create security group
+                11 security group name: webserver-sg
+                12 for description put security for webservers
+                13 click on edit inbound rule and click on select security group 
+                14 choose the ec2 security we created in stage 2b      
+
+               14 Scroll down and click on Advanced Details
+               15 Scroll down to the User data textfield. Enter the following commands in the text field provided:
+                         #!/bin/bash
+                         sudo su
+                         yum update -y
+                         yum install httpd -y
+                         systemctl start httpd
+                         systemctl enable httpd
+                         echo "<html><h1><p> Welcome to Utrains.<br> You are redirected to 
+                         ${HOSTNAME} to see how the load balancer is sharing the
+                         traffic.</p></h1></html>" > /var/www/html/index.html
+                16  Then click on Launch instance     
+
+# Stage 4  create the second instance   
+#   follow the same instruction to create webserver2 with the private subnet of the second availability zone and select the webserver-sg created for the first instance
+
+
+
+# stage 5 Configure a target group and register targets
+# We can configure a target group in AWS as follows:
+      1 Open the AWS console, go to the EC2 service
+      2 In the navigation pane, choose Target Groups under Load Balancing section
+      3 Click on Create target group. fille the following:
+         a) choose a target type :  select INSTANCE
+         b) target group name: write APPLICATION-lb-tg
+         C) protocol: HTTP AND SET 80
+         D) vpc : select LOADBALANCER-VPC
+         E) protocol version: choose HTTP1
+4 In the Health checks section, let’s modify the default settings as follows:
+              a) health check protocol: HTTP
+              b) health check: /
+5 For Advanced health check settings, set the following parameters:
+              a) health check port: TRAFFIC PORT
+              b) healthy threshold: 3
+              c) unhealthy threshold: 3
+              d) Timeout: 6
+              f) interval: 100
+              g) success codes: 200
+              h) click on next    
+
+You will be redirected to the page where you can register EC2 instances created in the target group. Follow the instructions below to register webserver1 and webserver2:         
+    
+           -   Once on the Register targets page, select the two EC2 instances we created   
+                (webserver1 and webserver2)
+            -     Click on Include as pending below
+            -   Click on Create target group
+
+
+
+# Step 6: create a load balancer and a listener
+# A listener is a process configured with a protocol and a port to check for connections from clients to the load balancer.
+#Follow the instructions below to create a load balancer and a listener:
+              1  Open the AWS console, go to the EC2 service
+              2  In the navigation pane, choose Load Balancers.
+              3  Click on Create Load Balancer.
+              4  select Application Load Balancer, Click on Create.
+              5  In the Basic configuration section, set the following parameters:
+                     a) loadbalancer name: write my-application-lb
+                     b) scheme: choose internet-facing
+                     c) ip address type: choose IPv4
+              6   In the Network mapping section, set the following parameters:
+                        a) vpc : choose loadbalancer-vpc
+                        b) mapping: select all the availability zone and choose public subnet in each availability zone
+              7 security groups: choose only alb-security-group
+              8  For Listeners and routing, leave the default listener that accepts HTTP traffic on port
+                 80 and in the Default action, choose Forward to the target group application-lb-tg.
+              9  Review your configuration in the summary section, and choose Create load balancer.
+
+
+# Step 7: Test the load balancer    
+#    After the load balancer is created, we can test it using the following instructions:   
+           1  In the navigation pane, choose Target Groups.
+           2  Select the target group we created application-lb-tg
+           3  Choose Targets and verify that your instances are ready
+               a) If the status of instances is initial, it means that the instances are still in the process of being registered
+               b) If the status of instances is healthy, it means your instances are ready
+           4    In the navigation pane, choose Load Balancers.
+           5  Click on the load balancer’s name (my-application-lb)
+           6  in the Details section, copy the DNS name of my-application-lb
+           7  Open the browser and paste it, you will see the traffic redirected to one server
+
+     

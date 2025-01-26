@@ -1,0 +1,64 @@
+# what is docker compose?  it is a tool that will can use to run many contoners in a singer file  
+# requirments
+- install docker compose # in my case it has already been install on my install.sh
+- run docker compose -v  = to no the version
+- touch docker-compose.yaml = to create the docker-compose file to write the script
+- run ls = to see the file created
+- run vi docker-compose.yaml
+       
+    version: '3'      #docker-compose version
+   services:               # here we declear container as service ie each container is a service in docker-compose
+  wordpress:             # here is simply the contain we want to run FIRST SERVICE
+    depends_on:
+        -  mariadb
+    image: wordpress:4.9.4-php7.2-apache
+    #container_name: wordpress
+    restart: always
+    environment:
+        - WORDPRESS_DB_USER=root
+        - WORDPRESS_DB_PASSWORD=db_password
+        - WORDPRESS_DB_HOST= mariadb
+        - WORDPRESS_DB_NAME=webserver
+                       
+    ports:
+        - 80:80
+    
+    networks:
+        - web
+    volumes:
+        - wordpressdata:/var/www/html
+                                       
+  
+  
+  
+  mysql:
+    image: mariadb:10.4.12
+    #container_name: mariadb
+    environment:     #VARIABLE
+        - MYSQL_ROOT_PASSWORD=db_password
+        - MYSQL_USER=wp_user
+        - MYSQL_PASSWORD=wp_password
+        - MYSQL_DATABASE= webserver
+                                          #END OF MARIADB SEVICE
+    
+    
+    networks:
+        - web
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:     # to mount the container to a volume
+        - database:/var/lib/mysql
+   networks:
+    web:
+      driver: bridge
+    volumes:  # creating the volume
+    wordpressdata:
+    database:
+
+    SAVE and quite :wq
+- run docker-compose up -d  = it will bring up the two containers
+- run docker-compose ps   = to least all
+
+ = note it is easy to modify in docker compose if u want to modify only a particular container it will do that without touch the other
+  =any changes made on the file  save and run docker compose up -d
+  =docker compose can do a defualt network for u but u can create yours as seen above
+  always use chtgpt  if u can not generate it

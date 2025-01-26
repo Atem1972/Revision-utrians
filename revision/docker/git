@@ -1,0 +1,16 @@
+how to clone another person git repo and make it us
+git clone https//github.com/anishutrains/portfolio1.git
+cd portfo...
+remove git 
+rm -rf .git
+
+HOW TO PUT THE ABOVE CODE IN A RUNING HTTPD CONTAINER OR    HOW TO PUT A CODE INSIDE A CONTAINNER
+firstly we need to run an httpd container since the code is in html or css
+docker -d --name web1 -p 8080:80 httpd
+docker ps
+   login to the container ,
+ docker exec -it web bash
+ git clone git clone https//github.com/anishutrains/portfolio1.git
+ ls
+ cp -rf portfolio1/* htdoce or index.html
+ take the ip of host to th broser

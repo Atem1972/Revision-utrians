@@ -1,0 +1,19 @@
+make sure u have a domina name either in third party like name cheap or aws
+- on the name cheap website we need to setup a dns 
+- go to manage
+- scrow down and look for nameserver
+press the drop down and choose custom dns
+- go to ur aws look for route53
+- go to hostedzone create hostedzone
+- feel the space
+    name of ur domain from namecheap
+    description optional
+    click public
+- copy the name server and go to name cheap in the nameserver past all the 4 one after the other as directed above
+
+## how to point it to our seerver
+- on route53 click on create record
+- fill the space
+      fashion  #(sub domain)
+      ip address of ur instance or DNS OF UR LOADBALANCER
+ - go to the browser and type ur sub domain name we created in record ie fashion.dev-guro.org     

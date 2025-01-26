@@ -1,0 +1,72 @@
+WK13
+INSTALL and configure terraform on ur laptop
+INSTALLand configureaws cli on ur laptop
+
+ 
+lauching a DOCKER LAB
+
+## 1- Clone Terraform code
+# Create a new directory, DevOpsLab. Our projects and labs will be created in this directory from here on.
+mkdir DevOpsLab
+
+# Navigate to the directory
+cd DevOpsLab
+
+
+# Now create a directory Docker which we will use to create all the Docker labs and projects.
+mkdir Docker
+
+
+# Now move into the directory
+cd Docker
+
+
+# clone the code from GitHub
+git clone https://github.com/utrains/docker-Lab.git
+
+
+# Once the cloning is completed, move into the docker-Lab directory
+cd docker-Lab
+
+
+# At this level, we will explain the code before creating our lab
+
+# 3- Launch Lab
+# To launch the lab, run the commands below on your terminal
+terraform init
+terraform plan
+terraform apply --auto-approve
+
+- ssh to the server
+
+Then copy the SSH command underlined above and paste it to access the server using an SSH connection.
+Once in your server, run the command below to verify if your lab is working
+- run docker ps
+## FINISH LAUNCHING DOCKER LAB
+
+STEP 2
+## GO TO AWS AND CREATE ECR REPOSITORY
+## PUSH IMAGE YOUR BUILD IMAGE FROM YOUR LAPTOP TO ECR REPOSITORY U CREATED
+
+
+## DEPLOY THE IMAGE U PUSH TO ECR USING AWS ECS
+To deploy to ECS, we need to create a cluster, a task definition, and services.
+1- Create a cluster.
+Login to your AWS account and on the search bar tap ECS then click on Elastic Container Service 
+ 
+ - HERE CREAT ECS CLUSTER
+
+ - CREAT NEW TASK DEFINATION , U WILL SEE A SPACE TO PUT THE URL OF UR IMAGE IN ECR
+   a) task definition = any name
+   b) click on aws fargat , serverless
+   c) container detail, name = google
+   d) url = copy from ecr and past here
+   f) essential container = yes
+- create service, on service create LB   
+   - SElect capacity provider
+   -capacity provider = fargate
+   - select service
+   - family = select the name u gave to the container in cluster
+   - service name = any name
+   - click on LB
+ - COPY THE LAODBALANCER DNS TO THE BROSWER

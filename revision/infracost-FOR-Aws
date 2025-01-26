@@ -1,0 +1,10 @@
+how to know  the total cost for ur infrastructure u are about to create in aws using terraform 
+- we need to install infracost on our windows laptop
+- open powershell, run as administration
+- run choco install infracost
+- on ur vitual stadio run infracost --version
+- run infracost aoth login
+- it will open a website
+- use ur github credential to login on the open website ie barronvalery@gmail.com  passwd= At72038313@
+- after the authentification is succefull,
+- any time u have infrastructure to create in aws befor u do apply run= infracost breakdown --path .  OR infracost breakdown --path </path/to/the/project>

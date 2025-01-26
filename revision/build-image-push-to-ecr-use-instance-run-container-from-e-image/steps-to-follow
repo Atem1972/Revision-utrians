@@ -1,0 +1,63 @@
+
+
+-  Create an ECR repository IN AWS
+- lounch an instance install docker it
+- make sure the docker is up and runinig
+- ssh to th instance 
+- run docker ps or images
+-  clone this git clone https://github.com/utrains/static-app.git
+- ### we need to give permision between ec2 and ecr
+
+
+## how to give access for ur ec2 to aws , example u want to push an image from ur instance to ECR?
+ we should create a role and attach to our instance to give access
+ - go to iam
+ - click on role
+ -  click on creat role
+ - Trusted entity type = click on aws service
+ - Use case = select ec2
+ - click on next
+ - click on administration accesss
+ -next
+ - click creat role
+ - role name = any name
+ - click creat
+ ## go to ur ec2 and attach the role
+ - click on ec2
+ - click on the instance box u want to attach th role to
+ - go to action
+ - click on security
+ - select modify ima role
+ - on the iam role click on the drop down and select the role name u want to attach
+ - click on update iam role
+
+      ## run ecr get-login-password --region us-east-1 # to verify if ur server has access now to aws after finishing creating
+
+- cd static-app
+- go to the repo u created in aws lock for push view copy the commands the bring to ur terminal and run
+- this will build and push the image to aws ecr
+
+
+## how to test the image on ur instance
+
+- run docker build -d --name web1 -p 8080:80 <past the ecr image url here>
+- take the ip of the instance with the port to the browser ip:8080
+
+
+
+## what if we realise the application has a problem , how to fixe it
+-cd to the directory that has all the code for the application
+- make sure it has a dockerfile
+-ls and look for index.html
+-vi index.html
+- fixed the problem and qite :wq
+-test befor pushing the image to ecr
+- <go to ecr click on the repo , go to view push command go to 4line copy from push past in the bracket below , u can chang e tag>  ie
+- docker build -t 455452245698.dkr.ecr.us-east-1.amazonaws.com/static:v2.0
+- lets push the image to our ecr
+- run docker push 455452245698.dkr.ecr.us-east-1.amazonaws.com/static:v2.0
+- go to ecr in aws and check for new image
+- to run new container
+- go to ecr open this new image copy the url of the image 
+- run docker build -d --name web1 -p 8085:80 <past the ecr image url here>
+- take the ip of the instance with the port to the browser ip:8080

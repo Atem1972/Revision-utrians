@@ -1,0 +1,6 @@
+## WHAT IS THE DIFFN BETWEEN INTERNET-FACING AND INTERNAL IN LOADBALANCER
+A) internet-facing means when we type our lb DNS on the browser we can access our web stance while
+B) internal means instances that we do want it to go to the internet ie it should be local in this case we need to put our lb in internal and in private subnet
+
+
+exampe, client--hit--lb--hit--webpage instance == this call internet-facing.  But IN THE CASE WHERE OUR INSTANCESS HAS VITAL INFORMATION THAT CAN NOT GO PUBLIC THEN WILL NEED TO PUT IT OWN LOADBALANCER IN INTERNAL
