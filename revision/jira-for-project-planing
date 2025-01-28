@@ -1,0 +1,26 @@
+jira software is the tool we use for project planing, ie what project are binging with , spring to finish it
+we break down migration project in to? user stories or ticket
+and this ticket are store in the kanban board
+# how do u get work  assign to u ? we have barg log the jira software and we have the kanban board on the jira where we have projectand we assign project to ourself and we start working on it.
+we take what ever that has to go to production from the barg log , we work on it after we are done with that we go pull some more and the cycle keep going round and round.
+barg log is is a place where i deals are kept and we start moving it one after another in order or important, urgency, current
+
+# dataservicegroup.atlassian.net/jira/software/c/project/RE/boards/2
+- backlog has all the project we need to do , even if is something we shall do in two years time , it will still be kept in backlog
+- when will pull the project from backlog we put it to the column to do ie this are things we are going to do on the cureent spring
+- when u go to work in the mornx u open this jira board take a ticket assign it to urself, you should move the ticket u assign to urself to dev progress column
+- every morning we have scrum meeting and during the meeting we open the jiraboard and start discussing what is going on
+- how do we manage project? we use the jira software
+- jira also have conference which is use at work for documentation
+- on the jira we also have kanban board to manage project or to do planning 
+- devops is planing, coding testing deploy or release to production
+
+# agil is divided in to 3 categories 
+ a ) agil kanban # here if we have 10 project for the next spring we stick just with that and we use this board to manage the project
+ b) agil scrum  # with this if u have 10 project u people are working on during that spring if the project finish on time u can go to the backlog and pull other project and start working on it
+ c) scrum band  # here is mixing of both the 2 above
+
+ - what is test in progres in kanband,? let say a friend want u to create a security group for him ,after u finish u will carry the ticket to test in progress meaning u can test it now and if it respond is working well u then carry the ticket to done column
+
+ - impendiment culumn means the ticket u assign has a problem
+

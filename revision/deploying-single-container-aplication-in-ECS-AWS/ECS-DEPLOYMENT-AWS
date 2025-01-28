@@ -54,7 +54,12 @@ To deploy to ECS, we need to create a cluster, a task definition, and services.
 1- Create a cluster.
 Login to your AWS account and on the search bar tap ECS then click on Elastic Container Service 
  
- - HERE CREAT ECS CLUSTER
+ # HERE CREAT ECS CLUSTER
+ - click on create cluster
+ - cluster name = any name
+ - infrastructure = select fargate
+ - click create
+
 
  - CREAT NEW TASK DEFINATION , U WILL SEE A SPACE TO PUT THE URL OF UR IMAGE IN ECR
    a) task definition = any name
@@ -62,11 +67,67 @@ Login to your AWS account and on the search bar tap ECS then click on Elastic Co
    c) container detail, name = google
    d) url = copy from ecr and past here
    f) essential container = yes
-- create service, on service create LB   
+   g) port mapping ,port name = any name
+   e) click create task definition
+
+# create service, and service create LB 
+ click on cluster
+  - click on the name of the cluster u created
+  - scrow down and click on service  
    - SElect capacity provider
    -capacity provider = fargate
    - select service
-   - family = select the name u gave to the container in cluster
+   - family = select the name u gave to ur task
    - service name = any name
+   - select replica
+   - desire task = 2 
    - click on LB
+   - file some space 
+   - click on creat service
+   - check that ur default lb security-group has port 80 open
+
+
  - COPY THE LAODBALANCER DNS TO THE BROSWER
+
+
+ # lets create cicd codepipline
+ - go to aws search codepipline
+ - click on create codepipline
+ - click on Build custom pipeline
+ - next
+ - Pipeline name = any name
+ - next
+ - Source provider = click on the drop down and sellect   Github(via Github App)
+ - click on connect to github
+ - connection name = any name
+ - click connect to github
+ - click on install new app
+ - select and click on ur github name
+ - when u are in scrow down and click on all repository
+ - click save
+ - click on connect
+ -  Repository name = select the repo name with ur code 
+ - Default branch = main
+ - click on codepipline default
+  - next
+
+  # codebuild stage
+  - click on other build provider
+  - click on create project
+  - Project name = any name
+  - role name = put a role 
+  - AWS_DEFAULT_REGION = us-east-1
+  - AWS_ACCOUNT_ID = PAST UR AWS ACCOUNT ID NUMBER
+  - IMAGE_REPO_NAME = the name of the repo in ecr
+  - IMAGE_TAG = the tag of ur image in ecr
+  - CONTAIANER-NAME = the name of ur container in ecs
+  - click on Buildspec
+  - select Use a buildspec file
+  - Buildspec name = buildspec.yml
+  - next 
+  - Deploy provider = amazon ecs
+  - Cluster name = put the name of ur cluster in ecs
+  - Service name = the name of the service u created in ecs
+  - Image definitions file = imagedefinitions.json
+  - go to iam and creat ur role, look for the role name u created
+  - if deployment faild go to buildspec file in github and edit the container name with the container name in ecs
