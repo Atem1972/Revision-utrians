@@ -1,0 +1,4 @@
+# any experience with bash shell script? yes
+ i wrote a script to delete logs, basicaly an application was generating so much logs and each time the logs will full the hard drive and this will generate 
+ alert and some body will need to ssh to the server and do away with the logs . we had a meeting and i ask the team involve a long is the logs soppose to be 
+ there before they do away with it , they said 10 days at most so i wrote a bash shell script that can do a way with the logs scheldule it using cronjob
