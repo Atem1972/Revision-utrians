@@ -1,0 +1,27 @@
+
+## DevOps Software Development Modernisation Project
+c:\Users\49163\AppData\Local\Temp\1737487545358Infrastructure-as-Code-AWS-1-400x225.png
+
+
+# Assignments
+
+ 
+1- You have been asked to implement a fully automated CI-CD pipeline and cloud strategy. The nature of the product is irrelevant and terms are intentionally generic. Please leverage the technologies and tools that are familiar to you for things such as programming languages, version control, build tools, operating systems, configuration management, virtualization, etc. The following deficiencies have been identified and must be addressed
+
+    Source code is scattered across Developer workstations with no version control.
+    Developers are compiling code and packaging build artifacts on their personal workstations. There is no consistent and repeatable method of building the application.
+    Developers and QA Engineers are manually copying build artifacts to test servers. They are also performing manual operations such as restarting services in order to propagate changes.
+    Any testing that is executed is strictly manual.
+    The product consists of a monolithic architecture that is tightly coupled.
+    Configuration files are modified manually on individual workstations and copied to test and production servers. Alternatively, IT Operations modifies individual files directly on test and prod servers. The files are not stored in a repository nor are they under version control.
+    There are inconsistencies with the versions of the operating systems in the test and production environments. No standard OS has been established. Installations and patching are executed manually.
+    As a result, there are a large number of security vulnerabilities. There is no threat detection or automated security scanning.
+    Creating new infrastructure is a predominantly manual task that is cumbersome and not easily reproduceable. Environment drift is rampant across the entire stack. Operating and capital expenses are high in order to maintain the systems in the current data center.
+    System and application monitoring do not exist.
+    Database schema changes are executed manually with no version control.
+    The relationship between Dev and Ops is fractured. Communication is lacking or incomplete. Blame is often deflected. A common response to requests or problems is, “That’s not my job!”
+    Production deployments are executed manually on a quarterly basis. The event may take 10-12 hours and requires 8 people to complete.
+
+You are the lone DevOps Engineer tasked with adopting the CI-CD automation and cloud strategy. We will take on the roles of the Developers, Product Owners, Quality Engineering and IT Operations. You can freely interact with us and ask questions during this exercise.
+
+2- I have a code on a developer’s laptop, walk me through how you will set up the pipeline for it to be deployed to production in your environment.

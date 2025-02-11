@@ -1,0 +1,29 @@
+****** Projects
+
+1- what is DevOps ?
+2- why should we care about DevOps?
+3- who is a good DevOps engineer?
+4- what is CI ( continious integration ) ?
+5- what is shift left concept? <it means test everything before it get  to production> left means lower env
+6- what is the difference between continious delivery and continious deployment
+7- explain the ci/cd pipeline concept 
+8- what are some deployment patterns you are familiar with? blue/green, rolling update, canary
+9- how often do you deploy to production? two weeks spring
+10- How do you get work assign to you? backlog
+11- describe a typical day at work
+12- what is an artifactory ? which one are you familiar with? jfrog
+13- there is new app that is been developped. the app is going to be used by patients and health provider to 
+schedule appointments, track treatements, and locate providers nearby.
+this app is developped in java.
+this is the link to the code base: https://github.com/kserge2001/geo.git
+after a meeting with the dev team, they said after writing or making a change to the code,
+they run series of commands to compile, build, test and package the code for qa ( or more lower env) testing.
+mvn clean
+mvn install
+mvn compile
+mvn test
+mvn package
+Your job is to build the CI/CD pipeline for this project.
+the goal is to set up the CI pipeline as follow:
+  every time the developer make a change and push it , a job will trigger to automate all what the developer was doing manually.
+  the jar file generated should be store in jfrog each time the pipeline runs.
