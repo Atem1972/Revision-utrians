@@ -1,0 +1,145 @@
+# Setup the Haproxy load balancer on a lightsail server using docker
+# What’s a Haproxy?
+HAProxy is free and open-source software. It provides a high-availability load balancer and proxy server for TCP and HTTP-based applications that spread requests among multiple servers in the backend. Written in C, it has the reputation of being fast and efficient.
+
+# diagram: user on his labtop trying to browse amazon.com,   the request trafic will hit a loadbalancer (HA PROXY LB)   THEN THE LB WILL SEND THE REQUEST TO OUR BACKEND SERVERS. THE METHOD HE USES TO SEND TRAFIC DEPEN ON THE BELOW CONFIGURE; and is  called load balancing algorithms.   the last is the many instance/servers in e backend that the lb send the client request to 
+                           
+                        - Round Robin
+                          Description: Requests are distributed sequentially across all available backend instances in a circular manner. use case same size instance
+                        - Least Connections
+                           Description: Requests are sent to the instance with the fewest active connections at the time.
+                        Use Case: Useful when backend instances have varying capacity or when connection duration is uneven (e.g., for databases or real-time communication).
+                        - Weighted Round Robin
+                       Description: Similar to round-robin but assigns weights to instances based on their capacity. Instances with higher weights receive more requests.
+                        Use Case: Suitable when some instances have more resources (CPU, memory) and can handle more traffic.
+                       - Weighted Least Connections
+       Description: Combines weights and least-connections logic. Requests are sent to the instance with the least active connections, considering the instance's weight.
+                Use Case: Works well in dynamic environments where both traffic and backend capacity vary.  
+                - IP Hash
+Description: Uses a hash of the client's IP address to determine which backend instance to send the request to. This ensures that the same client always connects to the same backend instance (if it's available).
+Use Case: Useful for applications requiring session persistence (e.g., shopping carts, user sessions).
+                   - Geolocation
+Description: Routes traffic to the nearest backend instance based on the client's geographical location.
+Use Case: Ideal for global applications to reduce latency and improve user experience.
+                    - Random
+Description: Traffic is distributed randomly across available backend instances.
+Use Case: Simplicity; works in scenarios where all instances are of equal capacity and performance.
+                  - Custom Algorithms
+Description: Some load balancers allow custom algorithms based on specific application needs.
+Use Case: Tailored to unique scenarios, like prioritizing certain instances or balancing traffic based on advanced metrics.
+
+
+
+# our lab to set up the above customer request
+- loaunch a centos lightsail instance ie key, 
+- ssh to that server remotly
+- cd ~/Downlods
+- chmod 400 valery.pem
+- run ssh -i valery.pem ec2-user@3.145.8.150   # valery.pem is the keyname, ec2-user is the username , 3.145.8.150 is the instance public ip address
+- run sudo -i   # to gain root access
+- yum update -y
+- yum install haproxy -y
+- vi /etc/default/haproxy
+        # This is sourced by both, the initscript and the systemd unit file, so do not
+          # treat it as a shell script fragment
+
+        # change the config file location if needed
+        # CONFIG="/etc/haproxy/haproxy.cfg"
+        ENABLED=1
+        exit and save :wq
+- run systemctl start haproxy
+- run systemctl enable haproxy  
+
+      ##  Step2: Create two web servers  containers using docker
+In this step, we are going to run two containers from a build image. We will build the image from a docker file. The traffic will be shared on those two containers.
+Follow the steps below to create the web servers in the lightsail instance:
+Connect to the lightsail server via SSH and gain root access
+Install docker, start and enable it using the following commands:
+- run sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+- run sudo yum install -y yum-utils
+- run sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+- run sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+- run systemctl start docker
+- runsystemctl enable docker
+    # Create a PHP file that will be used to display the page content. Use this command to create the file: vi index.php, then copy and paste the below content:
+- run   vi index.php
+        <!DOCTYPE html>
+           <html>
+            <head>
+           <title>Load balancer lab</title>
+          </head>
+             <body>
+             <h2>Welcome to the Load balancer application.</h2>
+           <?php
+
+             $hostname = $_ENV['HOSTNAME'];
+            echo "<p> You are redirected to <b>$hostname</b> to see how the load balancer is sharing the traffic !!!</p>";
+           ?>
+         </body>
+          </html>
+
+          save and exit :wq
+
+    ## Create a Dockerfile used to build the Docker image. Use the following command to create the file vi Dockerfile, then copy and paste the content below:
+    - run vi Dockerfile
+                    # Use a based image that has webserver and php
+                   FROM php:7.4-apache
+
+                  # copy the index.php to the container 
+                COPY index.php /var/www/html/
+
+                 # Expose the port 80 if needed
+              EXPOSE 80  
+
+     save and quite :wq   
+- run   docker build -t php-apache2 .       # to bulld and image 
+- docker run -d --hostname webserver1 --name web1 -p 8000:80 php-apache2   # runing container from our build image
+- run docker ps -a = to see all container  
+
+## lets loging to each of the container and collect ip addres
+-run docker exec -it web1 bash
+cat /etc/hosts
+exit  # do it to all the container save the ips somewhere
+
+
+
+stag3
+# Step3: Haproxy Configuration
+# We installed Haproxy on the Host, so you can check the haproxy config file using the below command:
+- RUN cat /etc/haproxy/haproxy.cfg
+# Delete everything thing in the file  use this botton on ur key board to delete it ESC THEN %d
+- run vi /etc/haproxy/haproxy.cfg
+                   global
+daemon
+maxconn 256
+
+defaults
+    mode http
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+frontend http-in
+    bind *:80
+    default_backend webservers
+
+backend webservers
+    balance roundrobin
+    # Poor-man's sticky
+    # balance source
+    # JSP SessionID Sticky
+    # appsession JSESSIONID len 52 timeout 3h
+    option httpchk
+    option forwardfor
+    option http-server-close
+    server web1 172.17.0.2:80 maxconn 32 check 
+    server web2 172.17.0.3:80 maxconn 32 check
+
+         listen admin
+       bind *:8080
+      stats enable
+
+      save and quite :wq
+- run   systemctl restart haproxy   
+# since we expose our container to 8000:80 and 8005:80 then will need to open those port on our instance
+ for testing copy the ip address of our host server to the broswer

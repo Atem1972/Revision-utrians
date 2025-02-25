@@ -1,0 +1,32 @@
+# monolithic vs micro service
+
+A) monolithic
+  - with monolithic everything is in one burg ie all the application is writen in same language , u can not use two diffn language here to write a particular website ie either u use java, python but not both
+  - if one of the application is broken the whole application stop functioning ie u can not maintain one of the application without the other
+  - if we want to release to production , all most go at once
+  - here deploymen is taken place on VMS/MAIN FRAM
+
+
+
+
+
+
+
+  B) micro service
+  - here each application isdevelope separate from each other and each application can be writing in diffn language
+  - and the application talk to each other using their url and that is called <API CALL>
+  - HERE deploymen is on container
+  - when frontend application (html) is serving a content to the backend application it is called <REST api>
+  - note that when the talk of api is just application talking to each other using their URL EG TERRAFORM TALK TO AWS USING THE API CALL
+
+
+  # API GATEWAY IN AWS
+  - WITH this we only use url and the links of the application ie
+    urls/<link> application link
+        / <link> application link
+        / <link> application link
+  - when frontend is talking to lambda function in aws it uses the API GATEWAY SERVICE to create the communication   
+  - api gateway help to create the url that are use for two application to talk to each other without the developer developing the communication link
+  ie for frontend to any backend application the api gateway will create the link which we are going to use to make the call   
+
+

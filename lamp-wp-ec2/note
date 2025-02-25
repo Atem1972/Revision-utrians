@@ -1,0 +1,6 @@
+how to take a pip on database
+-login to the database
+- run mzsql -uroot -p;
+- enter passwd= school
+- run use webserver;
+- run show tables;

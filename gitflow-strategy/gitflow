@@ -1,0 +1,174 @@
+
+
+# Gitflow Branching technique
+ 
+ ![gitflow-diagram](unnamed.png)
+Assignment
+
+ 
+
+You’ve been asked to implement a CI-CD pipeline, but in the company the developers aren’t using any version control. So your first task is to research a git branching method, present it to the developers, and then do an implementation demo to the developers. After doing some research, you decided to go for the git-flow technique out of the many out there because :
+
+    It makes parallel development very easy, by isolating new development from finished work.
+    Feature branches also make it easier for two or more developers to collaborate on the same feature.
+
+Read more about this technique here
+
+
+## note
+
+Implementing the 'Git flow'
+
+
+
+# What is the git flow branching strategy?
+Giflow is a  Git branching model that involves the use of feature branches and multiple primary branches.
+In this workflow, instead of a single main branch, this workflow uses two branches to record the history of the project. The main branch stores the official release history, and the develop branch serves as an integration branch for features. It's also convenient to tag all commits in the main branch with a version number.
+# The overall flow of Git flow
+When you create a new repository, it has a default branch, which is the main branch.
+The overall flow of Git flow is:
+1) A <develop>  branch is created from the main branch
+2) A <release> branch is created from the develop
+3) feature branches are created from develop
+4) When a feature is complete, it is merged into the develop branch
+5) When the release branch is done, it is merged into develop and main
+6) If an issue in the main is detected, a hotfix branch is created from the main
+7) Once the hotfix is complete, it is merged into both develop and main
+
+## Implementing the Git flow method.
+We have seen what the git flow method is all about. Now let's implement it.
+First thing, let's create a remote repository and link it to our local repository.
+
+# Creating remote repository
+Log into your GitHub account and on the sidebar, click on new to create a new repository.
+
+Enter the repository name and click on Create Repository.
+
+After creating the repository, let's go ahead and link our remote repository to our local repository. Take note of the repository link. We will use it to link our remote repository to our local repository.
+
+## Linking the remote repository to the local repository.
+Since we do not have a local repository yet, we will create a local repository with just the README file and then link it to our remote repository.
+Open git bash let's create the local repository. On git, bash type the following commands.
+- cd ~
+- mkdir gitflow
+- cd gitflow
+- touch README.md
+
+
+Now let's link our local repository to our remote repository and push the changes to the main branch.
+Note that the “remote GitHub link”  is the link to the remote repository you created earlier.
+- git init
+- git add README.md
+- git commit -m "first commit"
+- git branch -M main
+- git remote add origin "remote github link"
+- git push -u origin main
+
+
+So far we were just setting up our repositories and our project has just a single branch which is the main branch. Now let's go ahead and implement the git flow.
+
+This command may produce an error message similar to the one below:
+error: failed to push some refs to  "github.com:hermann90/gitflowddemo.git"
+
+This error is because, by default, the repository we have initiated locally does not contain the main branch;
+to find out, we analyzed the error message and then ran the git branch command to see if the main branch exists
+
+# Solution: rename the master branch
+this solution consists of changing the name of the master branch
+the new name must be the main
+use the command below to rename this branch:
+
+- git branch
+- git branch -m master main
+- git branch
+
+
+Execute again the git push command which had generated the error
+
+git push -u origin main
+
+
+# The first step is to complement the default main with a develop branch.
+ A simple way to do this is for one developer to create an empty develop branch locally and 
+ push it to the server (here you are acting as the developer) :
+
+- git branch develop
+- git push -u origin develop
+
+
+# We just created a develop branch and pushed our code to it.
+This branch will contain the complete history of the project, whereas main will contain a partial version. Other developers should now clone the repository and create a tracking branch for develop.
+
+# Feature branches
+Each new feature should reside in its branch. The feature branches use develop as their parent branch. When a feature is complete, it gets merged into the develop branch. Features should never interact directly with main.
+
+## Creating a feature branch
+To create a feature branch, change the parent branch to develop.
+Note that userstory/login is the name of a feature the developer is to implement that he is using as the branch name.
+
+git checkout develop
+git checkout -b userstory/login
+
+
+
+Let's make some changes in our README file, then commit and push the changes to our userstory/login branch.
+notepad README.md
+
+modify the README file by adding the text below.
+
+Then commit and push the changes to the remote branch.
+The command for adding commit and pushing the changes :
+
+
+git add .
+git commit -m "login button"
+git push -u origin userstory/login
+
+
+# Finishing a feature branch
+When you’re done with the development work on the feature, the next step is to merge the feature branch into the develop branch.
+- git checkout develop
+- git merge userstory/login
+
+
+# Release branches
+Once develop has acquired enough features for a release (or a predetermined release date is approaching), you fork a release branch off of develop. Creating this branch starts the next release cycle, so no new features can be added after this point. Only bug fixes, documentation generation, and other release-oriented tasks should go into this branch. Once it's ready to ship to production, the release branch gets merged into the main and tagged with a version number. In addition, it should be merged back into develop, which may have progressed since the release was initiated.
+Making release branches is another straightforward branching operation. Like feature branches, release branches are based on the develop branch. A new release branch can be created using the following method. Creating a release branch, make sure that your develop branch is up-to-date since multiple people are working on the project.
+# To create a release branch, do the following:
+
+- git checkout develop
+- git checkout -b release/0.1.0
+
+
+Once the release is ready to ship, it will get merged into the main and develop, then the release branch will be deleted. It’s important to merge back into develop because critical updates may have been added to the release branch, and they need to be accessible to new features.
+When you are done with the release branch, go ahead and merge with the main and develop, then delete it.
+
+- git checkout main
+- git merge release/0.1.0
+
+In production, we can notice some bugs that were not seen during the release face, so to fix this, we need to create a hotfix branch. A hotfix has the main branch as the parent.
+# Hotfix branches
+Maintenance or hotfix branches are used to quickly patch production releases. Hotfix branches are a lot like release branches and feature branches, except they're based on main instead of develop. This is the only branch that should fork directly off of the main. As soon as the fix is complete, it should be merged into both main and develop, and the main should be tagged with an updated version number.
+A hotfix branch can be created using the following method.
+Note that hotfix_branch should be replaced by the name of the bug we are fixing.
+
+- git checkout main
+- git checkout -b hotfix_branch
+
+Similar to finishing a release branch, a hotfix branch gets merged into both main and develop.
+git checkout main
+git merge hotfix_branch
+git checkout develop
+git merge hotfix_branch
+git branch -D hotfix_branch
+
+If you head over to the GitHub repository we created at the beginning, you will see all the branches that we created.
+
+We can see clearly that we have a total of 4 branches. Clicking on the branches, we will see the various commits.
+
+NB: Testing is usually done on the release branch, reason for the bug fixes.
+This is one of many branching strategies you can always implement.
+Read more
+Read more about the git flow on the blog
+How to use git flow
+

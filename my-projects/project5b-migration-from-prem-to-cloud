@@ -1,0 +1,27 @@
+
+
+Migrate On-premise Infrastructure to cloud
+Scope
+ICARE, One of your clients, currently operates a web and mobile application for its customers. This application relies on a REST API, with the web portion being served from dedicated static content servers. Additionally, the application utilizes a central customer database and a corporate mail server for its functionalities. Access logs are sent to a distinct storage system, and employees also rely on a separate application (such as a CRM or ERP system) that shares the same database.
+
+What is expected of you?
+ICARE is considering migrating as much of this infrastructure as possible to the AWS cloud. This decision stems from the need to address challenges related to scaling the web and app tiers as customer demand grows, as well as the desire for increased redundancy, and disaster recovery, given the current reliance on a single datacenter.
+So your task is to propose an architecture design on AWS cloud that will mitigate the on-premise infrastructure’s challenges.
+See the infrastructure diagram below.
+
+
+[migration-project](-image5.png) 
+ ## requirement of the diagram above
+ - web log storage = s3
+ - maill server = SES IE SIMPLE EMAIL SERVICE
+ - inginx web hoster static = s3 to put our web code
+ - we also need cloudfront, ACM,route53
+ - REST API = EW WILL USE API GATEWAY + LAMBDA
+   # OR
+   INSTEAD OF S3 WE CAN USE 
+   -EC2 2
+   - LOADBALANCER
+   - S3 FOR STORAGE
+   - CERTIFICATE
+   - SES
+

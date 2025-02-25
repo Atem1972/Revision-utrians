@@ -1,0 +1,69 @@
+CHECK EXPLANATION OF CICD ON W12D4
+
+## note AMI are region specific, that means each region has diffn ami eg ohio, north virgina,etc
+## note how to limit people from creating many ssh keys just to make changes on our instance in aws,? we use ci tool call JENKINS
+ our statefile is store in s3 AND LOCK WITH DYNAMODB SO THAT ONLY ONE PERSON CAN WORK ON IT AT A TIME , THIS HELP TO PREVENT DAMAGE ON OUR STATEFILE
+
+
+https://github.com/utrains/terraform_job_preparation
+
+# how to edit terraform resource name
+
+terraform state list
+terraform state move aws_iam_user.user1 aws_iam_user.user2
+
+
+# how to destroy only one resource bloock in terraform
+- we can command it out with # and do apply  or 
+- run terraform state list
+- run terraform destroy --target then the resource u want to destroy
+
+
+# how to do terraform graph
+
+
+provider "aws" {
+  region = "us-east-1"
+
+}
+
+resource "aws_vpc" "vpc1" {
+  cidr_block = "10.0.0.0/16"
+  instance_tenancy = "default"
+}
+
+resource "aws_subnet" "sb1" {
+  cidr_block = "10.0.1.0/24"
+  vpc_id = aws_vpc.vpc1.id
+}
+
+run terraform graph >file.dot
+dot -Tpng file.dot -o graph.png
+
+
+A)how to prevent resource from being delete mistakenly? we use life cycle metargument
+b)how to tell terraform to create new resource befor distroying the old one?  we use life cycle metargument
+u can get this on metargument file google more life cycle 
+
+## check for this metargument call provider 
+       provider "aws" {
+  region = "us-east-1"
+  alias = "us1"
+}
+
+provider "aws" {
+  region = "us-east-2"
+  alias = "us1"
+}
+
+provider "aws" {
+  region = "us-west-1"
+  alias = "us3"
+}
+
+resource "aws_instance" "web" {
+  provider = aws.us1
+  instance_type = t2_micro
+  ami = ami-09099
+  
+}

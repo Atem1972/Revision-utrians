@@ -1,0 +1,149 @@
+## Task 2: Monitor Your Instance
+Monitoring is an important part of maintaining the reliability, availability, and performance of your Amazon Elastic Compute Cloud (Amazon EC2) instances and your AWS solutions.
+
+Select the instance by checking the box next to the instance and navigate to the bottom of the screen to the Status checks tab.
+
+ With instance status monitoring, you can quickly determine whether Amazon EC2 has detected any problems that might prevent your instances from running applications. Amazon EC2 performs automated checks on every running EC2 instance to identify hardware and software issues.
+
+Notice that both the System reachability and Instance reachability checks have passed.
+
+Select the Monitoring tab.
+
+This tab displays Amazon CloudWatch metrics for your instance. Currently, there are not many metrics to display because the instance was recently launched.
+
+You can choose a graph to see an expanded view.
+
+ Amazon EC2 sends metrics to Amazon CloudWatch for your EC2 instances. Basic (five-minute) monitoring is enabled by default. You can enable detailed (one-minute) monitoring.
+
+In the Actions  menu, select Monitor and troubleshoot  Get Instance Screenshot.
+
+This shows you what your Amazon EC2 instance console would look like if a screen were attached to it.
+
+Screen-shot
+
+ If you are unable to reach your instance via SSH or RDP, you can capture a screenshot of your instance and view it as an image. This provides visibility as to the status of the instance, and allows for quicker troubleshooting.
+
+Select Cancel located at the bottom of the instance screenshot.
+
+ Congratulations! You have explored several ways to monitor your instance.
+
+ 
+
+## Task 3: Update Your Security Group and Access the Web Server
+When you launched the EC2 instance, you provided a script that installed a web server and created a simple web page. In this task, you will access content from the web server.
+
+Select the instance by checking the box and select the Details tab.
+
+Copy the Public IPv4 address of your instance to your clipboard.
+
+Open a new tab in your web browser, paste the IP address you just copied, then press Enter.
+
+Question: Are you able to access your web server? Why not?
+
+You are not currently able to access your web server because the security group is not permitting inbound traffic on port 80, which is used for HTTP web requests. This is a demonstration of using a security group as a firewall to restrict the network traffic that is allowed in and out of an instance.
+
+To correct this, you will now update the security group to permit web traffic on port 80.
+
+Keep the browser tab open, but return to the EC2 Management Console tab.
+
+In the left navigation pane, select Security Groups located under Network & Security.
+
+Select  Web Server security group.
+
+Select the Inbound rules tab.
+
+The security group currently has no rules.
+
+Select Edit inbound rules then select Add rule and configure the rule with the following settings:
+
+Type: HTTP
+
+Source: Anywhere-IPv4
+
+Select Save rules
+
+Return to the web server tab that you previously opened and refresh  the page.
+
+You should see the message Hello From Your Web Server!
+
+ Congratulations! You have successfully modified your security group to permit HTTP traffic into your Amazon EC2 Instance.
+
+ 
+
+## Task 4: Resize Your Instance: Instance Type and EBS Volume
+As your needs change, you might find that your instance is over-utilized (too small) or under-utilized (too large). If so, you can change the instance type. For example, if a t3.micro instance is too small for its workload, you can change it to an m5.medium instance. Similarly, you can change the size of a disk.
+
+Stop Your Instance
+Before you can resize an instance, you must stop it.
+
+ When you stop an instance, it is shut down. There is no charge for a stopped EC2 instance, but the storage charge for attached Amazon EBS volumes remains.
+
+On the EC2 Management Console, in the left navigation pane, select Instances.
+
+ Web Server should already be selected.
+
+Select Instance state > Stop instance.
+
+Select Stop
+
+Your instance will perform a normal shutdown and then will stop running.
+
+Wait for the Instance State to display: stopped
+
+Change The Instance Type
+In the Actions  menu, select Instance Settings  Change Instance Type, then configure:
+
+Instance Type: t3.small
+
+Select Apply
+
+When the instance is started again it will be a t3.small, which has twice as much memory as a t3.micro instance. NOTE: You may be restricted from using other instance types in this lab.
+
+Resize the EBS Volume
+In the left navigation menu, select Volumes located under Elastic Block Store.
+
+Select the volume by checking the box, and navigate to the Actions  menu, select Modify Volume.
+
+The disk volume currently has a size of 8 GiB. You will now increase the size of this disk.
+
+Change the size to: 10 NOTE: You may be restricted from creating large Amazon EBS volumes in this lab.
+
+Select Modify
+
+Select Modify to confirm and increase the size of the volume.
+
+Start the Resized Instance
+You will now start the instance again, which will now have more memory and more disk space.
+
+In left navigation pane, select Instances.
+
+Select the Web Server instance by checking the box, then navigate to Instance state > Start instance.
+
+Congratulations! You have successfully resized your Amazon EC2 Instance. In this task you changed your instance type from t3.micro to t3.small. You also modified your root disk volume from 8 GiB to 10 GiB.
+
+ 
+
+ 
+
+## Task 5: Test Termination Protection
+You can delete your instance when you no longer need it. This is referred to as terminating your instance. You cannot connect to or restart an instance after it has been terminated.
+
+In this task, you will learn how to use termination protection.
+
+In left navigation pane, select Instances.
+
+Select the Web Server instance by checking the box and navigate to the top and select Instance state  menu, select  Terminate instance.
+
+Note: There is a message that says: On an EBS-backed instance, the default action is for the root EBS volume to be deleted when the instance is terminated. Storage on any local drives will be lost. It will ask if you are sure that you want to terminate the instance. You will be able to select the Terminate button.
+
+Note: You will notice that the instance did not terminate and a red error message pops up at the top that says: Failed to terminate an instance: The instance may not be terminated. This is because it has termination protection enabled.
+
+In the Actions  menu, select Instance settings  Change termination protection.
+
+Uncheck  Enable followed by Save
+
+You can now terminate the instance.
+
+In the Actions  menu, select Instance State  Terminate instance.
+
+Select Terminate

@@ -1,0 +1,13 @@
+what is docker = it is containerisation software that is use to create and manage containerisation
+Advantage of docker
+-it is light weight, bc it does not use kerne but instead use that of the host machine
+-isolation of application
+-open source
+-faster deplyment
+
+what runtime do we need to run container application (docker)
+
+you can have a server runing ubuntu os and if you run docker on it you can run diffn application using diffn os like centos, redhat, httpd,debian
+
+
+clone this repository for ur docker-lab

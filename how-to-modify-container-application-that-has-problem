@@ -1,0 +1,13 @@
+- cd to tht application directory
+- run ls
+- look forindex.html
+- vi index.html
+- after finish updating
+- press esc on keyboard and :wq
+
+## if it was a container application then will need to build a new image and push back to ECR WITH A TAG TO DIFFERENTAITE fro the old image with error  and will nedd to push it to aws ecr for another container to be run
+ - follow the same prosidule to build an image and push to ecr
+ - And still follow the same prosidule to bring the container up and runing 
+ - follow same procedule to test
+
+- To rebuild the image run = docker build -t <past the ecr repo link u want to push the image end with a dot> .

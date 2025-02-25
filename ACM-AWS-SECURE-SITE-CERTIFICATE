@@ -1,0 +1,13 @@
+WHAT IS ACM SERVICE IN AWS? it stand for amazon certificate manager , it is just making ur websit secure for user
+it is just an encripted certificate we can plug on our website 
+- search for acm 
+- click on certificate manager
+- click on request certificate
+- click public then next
+- put ur website domain name
+- select DNS validation - recommended
+- select RSA 2048
+- click on request 
+# how to validate the certificate
+- click on the created certificate
+- click on creat record twice

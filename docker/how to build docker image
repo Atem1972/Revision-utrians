@@ -1,0 +1,34 @@
+firstly we need a docker file
+touch Dockerfile
+vi Dockerfile
+
+
+FROM httpd
+RUN apt update -y
+RUN apt install git -y
+RUN git clone  git clone git clone https//github.com/anishutrains/portfolio1.git  # where our code is located
+EXPOSE 85
+RUN cp -r portfolio1/* htdocs or index.html
+RUN apt remove git vim wget -y && rm -rf portfolio1
+:wq!
+
+###now lets built an image from the above file
+docker build -t atem1972/img  .  = -t  carries the name of my docker repo , and img is the name of the image, and the . mean the file is there  OR
+docker build -t atem1972/img -f /path/to/our/dockerfile
+ run docker images
+ if u see any catch runn  docker build --no-cache -t atem1972/img:v2  # if u alread have exixting image with this name
+  
+  lets run a container from our build image
+  docker run -d  --name web -p 8080/80 atem1972/img
+
+  lets push our buld image to our docker repo
+  docker login
+  atem1972 = my docker repo login information
+  passwd - hdgshhfhjg
+  docker push atem1972/img
+
+
+  where can we push our images 
+  - docker hub private
+  - ecr aws
+  -acr azure

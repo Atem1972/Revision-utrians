@@ -1,0 +1,8 @@
+-  Create an ECR repository IN AWS
+- lounch an instance by cloning this git
+- git clone https://github.com/utrains/static-app.git
+ - cd static-app
+ # 2b- Build a Docker image   docker build -t webapp .
+ - go u ur ecr repo in aws click on view push command
+ 
+ 

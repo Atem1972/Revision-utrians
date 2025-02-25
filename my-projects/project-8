@@ -1,0 +1,252 @@
+AWS PROJECT 8: Test website endpoints using AWS LAMBDA
+AWS PROJECT 8: Test website endpoints using AWS LAMBDA
+ 
+
+![project8-diagram](image-6.png)
+
+ 
+
+ Test website endpoints
+
+## Implementation of the solution
+The solution is implemented in the following steps:
+Create an S3 bucket and upload the Website endpoint file.
+Create Lambda function and upload code.
+Create cloud watch events.
+Create a pipeline with code pipeline to update the s3 bucket.
+The SES service is implemented in the Python Code
+Below is the architecture of the solution.
+
+<Creating an S3 bucket and Uploading the endpoint text file to the S3 bucket
+Before we upload any file or folder, you need to create an S3 bucket and take note of the name.
+
+Open your visual studio and change to git bash terminal.
+Navigate to the documents directory.
+cd ~/Downloads
+
+Run the command below to create an S3 bucket using AWS CLI
+aws s3 mb s3://bucket-name --region us-east-1
+
+You can use any bucket name you want but take note of the name.
+
+Now that we have created the bucket, let's clone and upload the text file folder with the endpoints.
+git clone https://github.com/utrains/website-endpoints.git
+
+to see the content of this file, run the command below
+code website-endpoints/websites.txt
+
+you will see the list of endpoints we will be testing.
+
+Now copy the files to the S3 bucket you created above.
+Replace bucket-name with the name of your bucket in the command below.
+aws s3 cp  website-endpoints s3://bucket-name --recursive
+
+
+We created the s3 bucket and uploaded the endpoint file folder. Now, let's go ahead and create a lambda function that will verify these endpoints and send the reports by email to the monitoring team in case the website is down.
+Create and upload code into the lambda function
+Before we create the lambda function, let's create a role that the lambda function will use.
+Sign in to the AWS Management Console and open the IAM console at https://console.aws.amazon.com/iam/.
+In the navigation pane of the console, choose Roles and then choose Create role.
+
+For Trusted entity type select AWS service and for use case select Lambda
+
+Click on Next
+For policies, select CloudWatchFullAccess, AmazonS3FullAccess and AmazonSESFullAccess click on Next
+Now, enter the name of the role and click on Create role.
+
+Now that we have created the Role, let's go ahead and create a lambda function to use this role.
+Open the Functions page of the Lambda console.
+click on the Orange Create function button
+
+On the page that shows up, under basic information, enter the name of your lambda function and also choose Python 3.9 for the environment.
+
+scroll down and click on change default execution role
+select use existing role  then select the role you creates above
+
+In my case the name of the role is endpoint-role.
+Click on create function to create.
+Once the function is created, scroll down and click on configuration, then click on General configuration
+lastly, click on edit.
+
+Here we will change the time out to 3mins
+
+Then click on save.
+After saving, click on Code.
+clear everything in the code source.
+
+Now go ahead and copy this (here) code and paste.
+Before deploying the code, there are certain basic configurations you need to change.
+ 
+
+For the region, enter your desired region, the sender email, the receiver email and the bucket name of the bucket you created earlier.
+After doing all the above, click on deploy.
+
+Note: Always click on Deploy each time you modify the lambda function.
+We have created and deployed our lambda function. Next, let's create cloud watch events to schedule our function.
+Create Cloudwatch events
+Create a rule to run your Lambda function on a schedule.
+To create a rule using the console
+Open the CloudWatch console at https://console.aws.amazon.com/cloudwatch/.
+In the navigation pane, choose Events, then rules
+
+ Now click on Create rule.
+
+Enter the Name of the rule and description of your choice
+For Rule type, choose Schedule
+Then click on Continue to create rule
+
+For Schedule pattern, do the following:
+Choose A schedule that runs at a regular rate.
+For Rate expression, specify the schedule interval (for example, 5 minutes).
+Then click on Next
+
+Here we are scheduling the lambda function to run every 5 minutes. You can also use cron jobs to schedule the lambda function.
+For Targets, choose AWS Service as the target type
+Then select Lambda function and choose the Lambda function we created earlier
+Click on Skip to review and create
+
+Choose Create rule.
+Once the rule is created, you will see a success message.
+
+Now you will receive emails from Amazon on your sender and receiver emails asking you to verify your emails.
+
+Open the email and click on the URL to verify.
+Please do this on the receiver and sender so that you can start receiving notifications.
+Once it's done, you will receive a notification when a site is down.
+
+Now that we have done all the configurations, in the next section we will create a pipeline so that we can update our website list.
+Creating a pipeline with code pipeline and GitHub to update the website list
+Before setting up the Code pipeline, you will have to fork the repository containing the website endpoints to your private GitHub so that you can be able to link it to your pipeline.
+To fork the repository, go to this link GitHub - utrains/website-endpoints
+At the top right of the page, click on fork.
+
+Scroll down and click on Create Fork.
+
+Now that you have fork the repository, let now go ahead and create a pipeline to update the website endpoints that we will be testing.
+Creating the Pipeline
+Sign in to the AWS Management Console and open the AWS CodePipeline console. Choose Create pipeline.
+
+Enter the name of your pipeline. In my case, I used test-endpoint-pipeline.
+Allow the rest as Default and click on Next
+ 
+
+ In the next step, we will add the source of our folder which in our case is GitHub.
+Adding the Source Stage
+Select Github Version 2 from the source provider.
+
+ 
+Write the name of the connection and click on Connect to Github to proceed Next.
+Then, click on Connect.
+
+Now click on Authorize AWS connector for Github.
+
+On the screen that shows up, click on Install a new app.
+
+On the page that shows up select the GitHub you will want to connect to.
+
+You can choose to link all your repositories or just certain repositories. Here, I choose to link all my repositories and then click on install.
+
+After installation, on the next page click on Connect.
+
+Once the connection is completed, you will get a connection successful on your pipeline widget.
+
+Now select the GitHub repository containing the website endpoints and the branch.
+ 
+In our case, the repository name is website-endpoints and the branch name is main.
+Scroll down in the Trigger bloc, choose Specify filter as trigger type
+Choose Push for Event type and Branch for Filter type
+Then for Branches, type main in the text field for Include and leave the rest as default.
+
+Now scroll down and click on next.
+Skip the Build phase. You can use AWS Codebuild to compile typescript or any project that needs to be built before deploying. We skip this because the repo contains static website content.
+
+Select Amazon S3 for Deploy provider.
+For the region, since we did not specify the region when creating our S3, the bucket was created in the default region which is us-east-1
+So, select us-east-1 as the region,
+For the bucket, Select the bucket we created earlier.
+Check Extract file before deploying box
+No additional configurations are needed. Hit the Next button.
+
+On the next page, you will need to review your configurations. You can go back and change the configuration if you made any mistake at the Review step. Hit the Create Pipeline button.
+
+If your pipeline was created successfully, you will receive two green ticks on both Source and Deploy.
+Now that our pipeline has been created successfully, let's test our pipeline by adding more website endpoints that are not working.
+Testing the pipelines
+To test the pipeline, go to your GitHub account, click on your profile then select repositories.
+
+On your repositories, select the repository that you forked earlier.
+
+Now, click on the code and copy the GitHub link so that we can clone the repository to our local computer and modify it.
+
+Now go to Visual Studio code gitbash terminal, move to the Home directory and create a directory website.
+
+
+cd ~
+mkdir websites
+cd websites
+git clone paste-the-link-you-copied
+
+
+Now that you have cloned the repository, let's add some website endpoints that are down and push to GitHub.
+
+
+cd website-endpoints
+code websites.txt
+
+now scroll down to the bottom and add the sites below
+
+
+testter.gk
+myhomee.tk
+
+
+Now let's save and push to Github.
+on the terminal type the code below
+
+
+git add .
+
+
+git commit -m "added new website endpoints"
+
+
+git push
+
+
+Now go to AWS and open the pipeline we created earlier, you should see the activity of your pipeline.
+
+Now let's verify our emails to see if we have any notifications concerning the websites we added earlier.
+
+you will see notifications asking you to verify if the website endpoint is fine.
+
+
+
+
+Now that we are done let's clean up our account to avoid aws charges.
+Deleting AWS Resources
+Just to recall,  we will delete the s3 bucket, lambda function and finally the Codepipeline.
+we will delete all of these resources using awscli.
+Deleting S3 Bucket
+To delete the s3 bucket, enter the code below on your terminal remember to replace buck-name with your bucket name.
+
+
+aws s3 rb s3://bucket-name --force
+
+
+Deleting Lambda function
+To delete the lambda function, enter the code below on your Terminal. Replace my-function with the name of your lambda function and region-name with the region where you created your lambda function.
+
+
+aws lambda delete-function --function-name my-function --region region-name
+
+
+Deleting CodePipeline
+Enter the command below on your terminal to delete the codepipeline. Replace name-of-pipeline with your codepipeline name and pipeline-region with the region in which your pipeline is located.
+
+
+aws codepipeline delete-pipeline --name name-of-pipeline --region pipeline-region
+
+
+
+CONCLUSION
+In this project we were able to build a monitoring and alerting solution to be used by the  team in monitoring supported apps. Also we added a CI/CD pipeline so that we can be able to update the app’s endpoints we want to monitor.  If you went through the project successfully, congratulations on another miles

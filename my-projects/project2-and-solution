@@ -1,0 +1,149 @@
+
+## AWS PROJECT 2: Hosting a Secure Static Website On AWS
+
+      ![image1.txt](image-2.png)
+      https://utrains.org/wp-content/uploads/2022/04/site.jpg
+
+## below has all the road map to click in aws
+## Hosting a static website with S3, CloudFront, and Route53
+
+
+Host a secure static school information website
+A client needs you to host his school website (meaning the information is hard-coded).
+These are the requirements:
+– The website must be accessible via a unique domain name.
+– The site should be accessible to users worldwide.
+– The website must load quickly to ensure a smooth user experience.
+– The client requires a hosting solution that is both efficient and cost-effective
+– The website must be secured with HTTPS.
+
+Tips
+The school website is static content which means there is no database. It is just a piece of HTML code that needs to be delivered. So to host this website we have 2 solutions:
+
+Use one single EC2 instance with a load balancer in front of it and send the traffic through HTTPS
+Use an Amazon S3 bucket to hold your static website files and an Amazon CloudFront distribution to serve your website globally. Amazon Route 53 will manage your domain name, and AWS Certificate Manager will provide a valid SSL/TLS certificate.
+We will use the second solution which is the must efficient for this purpose.
+
+Services to be used
+
+Amazon S3
+Amazon CloudFront
+Amazon Route 53
+AWS Certificate Manager
+
+Prerequisites
+
+You will need to create an account on Namecheap to register your domain name if you don’t have one.
+
+
+
+
+
+## hosting a static website with S3 oR ec2, CloudFront, and Route53, ACM/SSL, SNS, CLOUDWATCH
+
+
+
+
+-  Create a S3 bucket in AWS ,
+- click general popos
+- Bucket name = the name most be unique
+- click on create bucket
+- click on the bucket name u created
+- click on upload  # this is to up load ur code
+- u we see a place where u need to go to ur computer drag the folder whhere the files are and drop on the space in s3
+- click on permissions
+- Block public access = click edit
+- undo the box with Block all public access
+- click on save all changes
+- Bucket policy = click edit
+- on the box past the below policy in it save and quite
+    {
+	"Version": "2012-10-17",
+	"Statement": [
+    	{
+        	"Sid": "PublicReadGetObject",
+        	"Effect": "Allow",
+        	"Principal": "*",
+        	"Action": "s3:GetObject",
+        	"Resource": "arn:aws:s3:::bucket-name/*"            ##change this bucket name here with the bucket name u just create
+    	}
+	]
+}
+- on the policy code above  change the bucket name with urs  ie change <bucket-name> and put ur own bucket name
+- look for properties and click
+- scrow down till u see Static website hosting, click edit
+- enable it
+- index document = index.html  # entring point to my application, if it was a python code it shld have diffn entring point name
+- click save it will take u to where u will see the bucket websit endpoint copy and past on the browser
+- scrow down to Bucket website endpoint copy the link to the browser to see if the website will come on
+# lets request for a certificate in aws
+- search ACM
+- FULLY QUALIFY domain name = dev-guro.info
+- click request
+- validation method = choose DNS OR EMAIL BUT I WILL GO WITH DNS
+- Key algorithm = ANY OF THE BELOW BUT I WILL GO WITH THE FIRST
+- U WILL SEE PENDING VALIDATION
+- SCROW down and click on create record in route53 # before u click here make sure u have created a hosting zone in route53
+- click on create record
+# lets create our cloudfront
+# Serve content from the S3 bucket with CloudFront ie if my content is hosted in usa and i have people in europe browsing my website
+# i will attach cloudfront to my website so that the content can be deliver to them through cloudfront edge location ie their trafic
+# will not need to trave to usa but catch in any of the edge location in europe will deliver the content to them
+- on aws search cloudfront
+- click on create cloudfront distribution
+- Under the Origin settings section, click on the Origin Domain Name field and select the S3 bucket you created earlier. Then click on Use website        endpoint button.
+- In the Origin Path field, leave it blank
+- For the field Enable Origin shield, select NO
+- Scroll down to the Default Cache Behavior settings section. For Viewer Protocol Policy, select Redirect HTTP to HTTPS.
+- In the Web Application Firewall section, choose Do not enable security protections just for the demo.
+- Next, scroll down to the Settings. Inside the Default Root Object field, enter the filename at the root level, which should be your landing page. I used index.html as my Default Root Object.  ie default root object =index.html
+- click on Create Distribution.
+
+# lets create hosted zone in route53 
+- we belive u have already create configure ur domain
+# Setting records on route53 to direct traffic to CloudFront
+- click on create record
+- on alias
+- route trafic to = alias to cloudfront distribution
+- An alias to a CloudFront distribution and another record in the same hosted zone are global and available only in US East (N. Virginia).= select the
+cloudfront link u created 
+
+# lets create a ci source pipline and link to our s3 static app
+- go to aws
+- search code pipline
+- click create pipline
+- pipline name = any name 
+-role name = allow empty 
+- next
+- source provider = github via github
+- click on connect to github and do all that require but if u already created a connector befor just look for the name and selct it
+- repository name = select the repository in ur github with ur code
+- default branch = main 
+# branches
+- include = main
+- next
+# no build stage since it is not a container will want to run but if will want a build stage then we need to add a file on our  code source 
+# in github call  buildspec.yml and dockerfile
+-next
+# deploy stage
+- provider = click drop down and select amazon s3
+- bucket = select ur bucket name that has ur code
+- object key = index.html # this can be change
+- next
+- create pipline
+- go to ur index.html and modify it and push to github to test if the pipline is working
+- the changes may not affect the app ie what u updated may not show on the app reason being that?
+- to do it , go to cloudfront search on TTL ie time to leave
+since we are using cloudfront we need to set a specific duration that the catch edge location need to be updated.
+# do research on how to set that , step bellow
+
+# how to up date catch in cloud
+If you update your content and need CloudFront to fetch a new version immediately, you can create an invalidation request.
+
+Steps to Invalidate Cache in CloudFront
+Go to the CloudFront Console.
+Select your distribution.
+Click Invalidations → Create Invalidation.
+Enter the paths of files you want to invalidate (e.g., /index.html).
+Click Invalidate.
+⚠️ Note: Invalidations take time (a few minutes) and may incur additional costs.

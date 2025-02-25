@@ -1,0 +1,3 @@
+WHEN A CLIEN ACCESS OUR WEBSITE ON THE BROWSER THE TRAFIC first hit our loadBalancer , then the LB send the trafic to our web-server( ## what is install here is apache,nginx) and our webserver display our content to client or user and this is http protocol. 
+
+how to make our webs-server http protocol secure? we shoud buy SSL OR TLS CERTIFICATE

@@ -1,0 +1,50 @@
+cloudwatch is a monitor service in aws
+how to monistor ur bills, instance in aws using monitor service called cloudwatch 
+how to create a notification in aws ie when ur bills reach a setting amount u shuld be notify. we use SNS SERVICE.
+- cloudwatch can tell tell u about cpu usage, ram , anything runing in the instance but it can not tell u who login to the instance who delete the instance who create what in aws but cloudtrail can do all of this.
+
+# CREATIN billing alert in aws
+- go to bill
+- scrowl down to billing preferences
+- alert preferences  click on edit
+- put ur emaill there and click on update   dont forget to tick the box
+
+
+# lets creat our SNS
+- CLICK ON THE 3 DASH ON THE LEFT ie hamburger
+- click on topic and create
+- click on standard
+- put name = billing alert
+- click on create
+- click on creat subscription
+- on topic arn choose the name of SNS U CREATED ABOVE
+- Protocol= email  # we can add many emails i one subscribtion
+- endpoint = put the email u put on billing preference
+- click on creat subscribtion
+- to ur gmail and confirm
+
+# creat cloudwatch to monitor our bill alert we created above
+- click on ALARM, select Billing
+- click on create alarm 
+- on merix look currency and put USD OR EURO, LOOK FOR PERIOD SELECT THE HOURS U WANT TO BE NOTIFY
+# CONDITION
+- SELECT  static
+-  select greater than if u want the shld notfy u when ur bill is more than the amt u put bellow
+- on than put the maximum amt u want notification if u bill is higher 5$
+- click next 
+# alarm state triger
+- click in alarm
+-click select an existing SNS TOPIC
+- SELECT THE NAME OF SNS WE CREATED ABOVE 
+- next
+- alerm name = 5 dollar bill
+- next
+- create alarm
+
+
+
+# LAMBDA ACTION 
+ u can just put a script the to delete ur instance anytime ur bill get high than mention
+ # Auto scalling
+ will u want me to reduce some instance if ur bill goes higher
+ # ec2 action 

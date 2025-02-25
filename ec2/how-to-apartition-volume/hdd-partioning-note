@@ -1,0 +1,24 @@
+ssh to the server
+run lsblk to see the volume
+we need to be root run sudo -i
+run fdisk + the name of the volume we created ie /dev/xdsv
+run m to get help ie option
+run n to add partition
+run p for primary partition
+run 1
+enter
+run +10g or +10k or t,p,m
+run p to print the partition
+run w to write it completely
+run lsblk
+run d to delete the above apartition
+
+
+#######how to make make the above apartition usable
+run mkfs.ext4 /dev/xvds1
+
+###we need to mount it
+run mkdir /data
+run mount /dev/xvds1 /data
+run df -h to see the dics
+to add information on that dics cd to it 

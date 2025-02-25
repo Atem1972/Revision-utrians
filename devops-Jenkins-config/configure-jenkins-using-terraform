@@ -1,0 +1,115 @@
+
+
+## Install and configure Jenkins using Terraform on an EC2 instance (Dec 02 /2023)
+
+1- Prerequisites:
+Terraform must be installed on your machine
+You must have an account on AWS
+AWS CLI must be installed and configured.
+The following are the resources that will be created using the Terraform code
+A default VPC if one does not exist.
+A security group for the ec2 instance for access on port 8080 used by the Jenkins server and port 22 for SSH connection.
+A default subnet.
+A key pair.
+An EC2 Instance with Jenkins installed on it
+2- The source code of the infrastructure
+
+mkdir devops-lab
+cd devops-lab
+git clone https://github.com/utrains/DEVOPS-UTRAINS.git
+cd DEVOPS-UTRAINS
+ls
+cd jenkins-setup
+ls
+
+# As you can see, our repository contains the following files :
+var.tf file
+This file contains our variables.
+aws-ec2.tf file
+This file takes care of the creation of resources (ec2, VPC, subnet, ... ) in AWS.
+aws_key_pair_generate.tf file
+This code is used to generate the key pair for the connection to the server
+output.tf file
+This code is used to display various output
+data.tf file
+In this file, we can call an existing resource (aws amazon_linux_2) to start our Ec2 instance
+roles.tf file
+In this file, we are creating the Amazon roles that the Jenkins service needs to access our AWS. 
+installjenkins.sh file
+In this file, we have the bash script that allows the installation of Jenkins when the server is provisioned.
+In this file, we are installing various software
+
+# 3- Creation of resources
+When everything is configured, the following terraform commands are used to create resources in AWS.
+
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+The result that is displayed in the terminal, contains the URL of the Jenkins server.
+We have to open this URL in the browser to finish the configuration of our Jenkins server
+Wait a few minutes, then open Jenkins in the browser to finish the configuration.
+
+# 4- Finish Jenkins configuration
+Open the Jenkins server URL in the browser
+
+Connect via SSH to the Jenkins server using the ssh_connection command displayed in the outputs.
+Use the cat command to display the Jenkins initialization password
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+Copy the password, paste it into our Jenkins user interface then click on the next button.
+ 
+In the window that appears, click on install suggested plugins, after creating the Jenkins server information then complete the configuration
+
+ Once these plugins are installed, you land on the interface to create a user. Fill this window with the following information :
+Username: devops
+Password: devops
+Confirm password: devops
+Full name: Devops admin
+E-mail address: your_email@gmail.com
+Click on Save and Continue button
+ 
+
+ 
+
+
+
+# To finish the configuration, click on Start using Jenkins
+
+ The Jenkins dashboard will be displayed.
+We see that our admin user is logged
+We have the button to create the first job. We will dedicate an entire chapter to the creation of Jenkins jobs
+
+
+Exercise: In your AWS EC2 console, create an AMI with the current state of your Jenkins server
+5- Build your first Job
+In the Jenkins Dashboard
+Click on Create a job
+
+Enter the name first_job then Choose Freestyle project then click on OK
+
+In the General menu, scroll down, go to Build Steps
+
+Click on Add build step drop-down and choose Execute shell
+
+Enter these commands in the windows that displayed
+
+lscpu
+pwd
+ls
+cat /etc/os-release
+
+
+Click on the Save button
+
+In the left panel, you can now click on Build Now to build the job
+
+In the Build History, you can click the button to display the console output.
+
+
+This console is very useful to solve build errors.
+Next Step
+
+You might allow the infrastructure and configure Jenkins in the following tutorial before destroying it. In the next tutorial, we will configure the jenkins server with git and maven and build our first jobs!

@@ -1,0 +1,4 @@
+how we collaburate with statefile oR
+where do your company store their statefile? S3 bucket, azure storagr, google,terraform cloud
+
+in our case we are going to create s3 bucket and sent our statefile their and create a dynamodb table to lock it

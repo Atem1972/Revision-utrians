@@ -1,0 +1,33 @@
+ Create the AMI
+Go back to the EC2 Dashboard.
+Select the instance you just customized.
+Click Actions > Image and templates > Create Image.
+Fill in the details:
+Image Name: A descriptive name for your AMI (e.g., MyCustomUbuntuAMI).
+Description: Optional details about what this AMI includes.
+Choose whether to include all attached volumes:
+Default: All root and additional EBS volumes are included.
+Modify as needed.
+Click Create Image.
+Step 4: Monitor Image Creation
+Navigate to the AMIs section in the EC2 Dashboard.
+Look for your new AMI under the Owned by me tab.
+Wait for the AMI’s status to change to Available.
+Step 5: Use the AMI
+When launching a new instance, choose My AMIs in the AMI selection step.
+Select your custom AMI to launch a new EC2 instance with the custom configuration.
+Step 6: Share or Manage the AMI (Optional)
+Sharing the AMI:
+Select the AMI in the AMIs section.
+Click Actions > Modify Image Permissions.
+Add AWS account IDs to share the AMI.
+Deregister the AMI:
+If the AMI is no longer needed, deregister it to avoid clutter:
+Click Actions > Deregister AMI.
+Notes
+Private vs. Public:
+By default, AMIs are private to your account.
+You can make them public if you want others to use them.
+Snapshot Management:
+When creating an AMI, snapshots of volumes are created.
+Ensure to delete unused snapshots if you no longer need the AMI.

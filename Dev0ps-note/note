@@ -1,0 +1,74 @@
+# what is devops bring on the table from SDLC METHOD? 
+- colaburation b/w developer and operation
+- automation
+-test code
+-use tools
+- iac
+- cicd
+# stages of devops
+- develop
+- tools for callaburation ie VCS
+- set up a branches strategy ie gitflow strategy 
+- build the code container push to artifactory ie maven
+- function test but unit test is use by developer to check their code and while functional test is to test all the applicaion on the app if is working well
+this is carry out by qa team 
+- copilort to generate code in vsc
+-
+
+# what devops need to take note of
+- how the developers will collaburate with thire code
+- build and test ie how does the developer normaly build and test their code , the devops will collect the step and automate it
+ here we are going to use automation tool for this build stage eg jenkins
+- artifactory ie jfrog: after we have finish testing the code ie scaning the code analising the code
+- functional test: here the qa, uat , staging , non prop start doing testing on all the code and image we have push to the artifactor ie ecr, jfrog,s3 
+- all the above are call lower environment or test environmennt
+# change request need to me be submited after the functional testing is over
+- did the script exercute well in lower environment
+- what is the test result
+- did u run container from it
+- when did this happen
+- time
+- risk level
+- row back strategy
+# cd stage ie deployment to production
+- tool to use in prod, if is a bash shell script/ zip file we can use <Ansible> to deploy it to our infrastructure
+- if is and image we can use <HELM>
+- we need to monitor / operate
+- we use ahat ever come from monitoring, review on the street, all this will go back to ideals and which will be kept in the backlog and we start colecting for the next spring
+
+
+# **** DeVOps Concept ****
+
+first what is SDLC ( software developement life cycle)
+requirements==> Design==> Implementation or coding ==> verification/test ==> maintenance
+
+method used:
+  - Waterfall
+  - Agile
+  - Lean
+  - DevOps
+DevOps is a sdlc that emphasize on collaboration between ops and dev
+
+DevOps is a combination of people, processes, and tools aimed at improving and 
+automating the collaboration between development and operations teams. 
+The key components of DevOps can be summarized as follows:
+
+***People: DevOps emphasizes collaboration and communication between developers, operations 
+staff, and other stakeholders. It encourages a culture of shared responsibility and 
+continuous learning.
+
+***Processes: DevOps promotes agile practices, continuous integration, continuous delivery 
+(CI/CD), and other methodologies that enable faster and more reliable software delivery. 
+It focuses on streamlining workflows, reducing bottlenecks, and improving efficiency across 
+the software development lifecycle.
+
+***Tools: Various tools are used in DevOps to automate processes, monitor performance, 
+manage infrastructure, and facilitate collaboration. These tools can include version control 
+systems (e.g., Git), continuous integration servers (e.g., Jenkins, GitLab CI/CD), 
+configuration management tools (e.g., Ansible, Puppet, Chef), containerization and 
+orchestration platforms (e.g., Docker, Kubernetes), and monitoring solutions (e.g., Prometheus, Grafana).
+
+By integrating people, processes, and tools, DevOps aims to create a culture and environment where software development and IT operations teams can work together more effectively, deliver software faster, and maintain high levels of quality and reliability.
+
+**DevOps Flow **
+plan==>code==>build==>test <==> Integration <==>release==> deploy==> operate==> monitor

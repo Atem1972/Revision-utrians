@@ -1,0 +1,64 @@
+
+## python cod
+first create a file  
+- list.py
+   myfruitlist = ["apple", "banana", "cherry]      # this is called list in python, 
+                                                     #we can say list of fruilt
+                                                     # "myfruitlist is a variable
+     print(myfruitlist)       # this will display all the value in the variable called myfruitlist
+     print(type(myfruitlist))  # this will tell which data type is this? list
+     print(myfruitlist[0])    # this will print the first value of the variable myfruitlist
+     print(myfruit[1])    #  # this will print the second value of the variable myfruitlist
+     print(myfruitlist[2])    # this will print the third value of the variable myfruitlist
+
+     run the code = python3 list.py
+
+     ## change value of a list in a variable
+     myfruitlist[2] = "orang"   # this will go to the variable value number them the 
+                                 first value is always zero when it get to the list with value 2 it will replace with our new value
+    print(myfruitlist)   # this is to print again the value in the variable 
+                           myfruitlist and u will see that orrang has replace CHERRY   
+    RUN python3 list.py     
+
+ ## exercise2
+ - create a file call tuple.py
+    # tuple is a function in python just like list just that with list u can make changes on the variable value but with tuple u can not make any changes
+    code 
+         myfinalanswertuple = ("apple" ,"banana", "pinaple")
+         print(myfinalanswertuple)    # this will tell which type of function is this? list
+        print(type(myfinalanswertuple))   # this will tell which type of function is this? list  
+    print(myfinalanswertuple[0])    # this will print the first value of the variable myfruitlist
+     print(myfinalanswertuple[1])    #  # this will print the second value of the variable myfruitlist
+     print(myfinalanswertuple[2])    # this will print the third value of the variable myfruitlist
+                                            
+   run python3 tuple.py
+
+
+
+# exercise3   
+# dictionary start with a carin bracket and end with carin bracket ie {}
+
+  code 
+      myfavoriteDictionary = {
+        "akwa" = "apple"
+        "sonia" = "banana"
+        "paulo" = "pinaple"
+      }
+    print(myfavoriteDictionary)  
+    print(type(myfavoriteDictionary))  
+     print(myfavoriteDictionary["akwa"])  # to print akwa
+      print(myfavoriteDictionary["sonia"]) 
+        print(myfavoriteDictionary["paulo"])  
+
+   run python3 dictionary.py
+
+
+   # exercise 4
+   # creating a mixed type list
+   creat a file call mixedlist.py
+    code
+        mymixedtzpelist = [45, 373567, 1.02, true, "my dog is on the bed.", "45" ]     
+        for items in mymixedtzpelist:
+           print ("{}is of the data type {}".formate(item,type(item)))  # this will print the data type for each item on the above list
+ run   python3 mistlist.py        
+    

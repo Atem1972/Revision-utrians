@@ -1,0 +1,146 @@
+Working with Loops
+Lab overview
+A loop is a segment of code that repeats. You will be introduced to two types of loops: the while loop and the for loop.
+
+In this lab, you will:
+
+Use a while loop
+Use a for loop
+Estimated completion time
+45 minutes
+
+Accessing the AWS Cloud9 IDE
+Start your lab environment by going to the top of these instructions and choosing Start Lab.
+
+A Start Lab panel opens, displaying the lab status.
+
+Wait until you see the message Lab status: ready, and then close the Start Lab panel by choosing the X.
+
+At the top of these instructions, choose AWS.
+
+The AWS Management Console opens in a new browser tab. The system automatically logs you in.
+
+Note: If a new browser tab does not open, a banner or icon at the top of your browser typically indicates that your browser is preventing the site from opening pop-up windows. Choose the banner or icon, and choose Allow pop ups.
+
+In the AWS Management Console, choose Services > Cloud9. In the Your environments panel, locate the reStart-python-cloud9 card, and choose Open IDE.
+
+The AWS Cloud9 environment opens.
+
+Note: If a pop-up window opens with the message .c9/project.settings have been changed on disk, choose Discard to ignore it. Likewise, if a dialog window prompts you to Show third-party content, choose No to decline.
+
+Creating your Python exercise file
+From the menu bar, choose File > New From Template > Python File.
+
+This action creates an untitled file.
+
+Delete the sample code from the template file.
+
+Choose File > Save As..., and provide a suitable name for the exercise file (for example, while-loop.py) and save it under the /home/ec2-user/environment directory.
+
+Accessing the terminal session
+In your AWS Cloud9 IDE, choose the + icon and select New Terminal.
+
+A terminal session opens.
+
+To display the present working directory, enter pwd. This command points to /home/ec2-user/environment.
+
+In this directory, you should also be able to locate the file you created in the previous section.
+
+Exercise 1: Working with a while loop
+A while loop makes a section of code repeat until a certain condition is met. In this exercise, you will create a Python script that asks the user to correctly guess a number.
+
+Printing the game rules
+From the navigation pane of the IDE, choose the .py file that you created in the previous Creating your Python exercise file section.
+
+Use the print() function to inform the user about your game:
+
+print("Welcome to Guess the Number!")
+print("The rules are simple. I will think of a number, and you will try to guess it.")
+Save and run the file.
+
+Confirm that the script runs correctly and that the output displays as you expect it to.
+
+Importing random and writing a while loop
+You will use the import command to include code that someone else wrote. Up to now, you have been using built-in functions. Recall that a function is a piece of reusable code.
+
+At the top of the file, include the Python module (which is a type of library) called random.
+
+Note: By convention, import statements are placed at the top of the script.
+
+import random
+Place the cursor on the next line after the second print() statement. Next, enter a statement that will generate a random number between 1 and 10 by using the randint() function of the random module.
+
+number = random.randint(1,10)
+Track whether the user guessed your number by creating a variable called isGuessRight:
+
+isGuessRight = False
+To handle the game logic, create a while loop:
+
+while isGuessRight != True:
+    guess = input("Guess a number between 1 and 10: ")
+    if int(guess) == number:
+        print("You guessed {}. That is correct! You win!".format(guess))
+        isGuessRight = True
+    else:
+        print("You guessed {}. Sorry, that isn’t it. Try again.".format(guess))
+Note: The while loop will repeat the code inside the loop until the number is guessed correctly, which is represented by the condition isGuessRight != True in the code. Additionally, Python uses indentation to determine logic blocks, or what statements are considered to be part of the while loop. You can indent a line by placing the cursor next to a statement and pressing TAB.
+
+Save the file.
+
+Writing pseudocode
+Before you run the Python script, write out the logic of the while loop in written (non-code) sentences. This technique is called pseudocoding.
+
+For example:
+
+If the user has not guessed the correct answer, enter the loop.
+
+Ask the user for a guess.
+
+Is the guess the correct number?
+
+If the correct guess, tell the user it was the correct guess and exit the loop.
+
+If the wrong guess, tell the user it was the wrong guess and continue the loop.
+
+Running the script
+Now run the Python script and see if it works.
+
+Run the file.
+
+Confirm that the script runs correctly and that the output displays as you expect it to.
+
+Adding comments
+It is helpful to write comments in the code. A comment line is ignored by Python, and it starts with a pound sign (#). On most keyboards, you can create this symbol by pressing SHIFT+3. Add your own comments to the code to help you remember what the code does.
+
+Informing the user about the script
+In this activity, you will start a new Python script by creating the initial output that informs the user about what the script will do.
+
+From the menu bar, choose File > New From Template > Python File.
+
+Delete the provided sample code from the template file.
+
+Choose File > Save As... and save it as for-loop.py.
+
+To inform the user about your script, use the print() function:
+
+print("Count to 10!")
+Save and run the file.
+
+Confirm that the script runs correctly and that the output displays as you expect it to.
+
+Writing the for loop
+In Python, you can include a large amount of functionality in a few words. This feature makes Python relatively easy to write compared to other programming languages, but it can also make Python code more difficult to read. In this activity, you will use the for statement, but you will also spend some time analyzing it after you see it run.
+
+Return to the Python script. To count to 10, enter the following code.
+
+Note: Python uses indentation to determine that the print statement is inside the for loop statement.):
+
+for x in range (0, 11):
+    print(x)
+Save and run the file.
+
+Confirm that the script runs correctly and that the output displays as you expect it to.
+
+Here is an explanation of what happened in those two lines. The for statement uses the for … in keywords to tell the computer to go through the list. A list is generated by the range() function. The range() function takes a starting number and an ending number, but the ending number is not inclusive. Therefore, you pass in 11 to have the function stop counting at 10. The letter x acts as a variable. Each time through the loop, the variable x is assigned to the next variable in the loop and is printed out to the screen.
+
+Congratulations! You have worked with while and for loops in Python.

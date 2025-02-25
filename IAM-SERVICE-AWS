@@ -1,0 +1,50 @@
+# in iam police is just to give permtion to user on the aws account ie either given them access to somes services or removing them access
+# iam role is use to make services to talk to each other eg u want ec2 to talk to s3
+# user are the people that wishes to do something in ur aws acount ie u need to create them iam user account and give them a particular permission using policy to do that
+# group in iam, is use to create groups and asign user to those group and any permision given to that group is what the user in that group will have. and a user can be assign to many groups
+
+
+
+
+GO TO AWS
+- SEARCH IAM
+-HERE WE CAN CREATE USER,GROUP AND ATTACH USER TO THE GROUP
+- ROLE = WHEN EC2 NEED TO ACCESS S3 BUCKET THEN WE NEED TO CREATE A ROLE
+- IN IAM WE CREATE A GROUP AND ATTACH IT TO A POLICY AND WEHEN WE ADD USER TO THAT GROUP IT AUTOMATICALLY GET THAT POLICY. policy are permission.
+
+
+example 
+- go to iam click on create policy then choose the service
+- choose ec2  , this means i want to give access to someone to access only ec2 service
+- we can choose which policy to give list, read write, etc then crown an click on the policy
+- click next
+- give the policy name eg ec2 read
+- click on action to see all the permision u want to creat and if is not correct look on the left conner and click edit
+
+
+
+# IAM Policy to allow DescribeInstances action
+resource "aws_iam_policy" "describe_instances" {
+  name        = "DescribeInstancesPolicy"
+  description = "IAM policy to allow describing EC2 instances only"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = "ec2:DescribeInstances", permission
+        Effect   = "Allow",
+        Resource = "*" # resouce name u are allow some to access 
+      }
+    ]
+  })
+}
+
+# Output the policy ARN
+output "policy_arn" {
+  value = aws_iam_policy.describe_instances.arn
+}
+
+
+
+- 
