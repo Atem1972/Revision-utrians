@@ -1,0 +1,103 @@
+
+
+# DevOps Full Strategy
+DevOps Process :
+A. Developers:
+
+
+Where is the Code stored? (In VCS? In Dev Computer? branching strategy implemented ?)
+Process to build (build tools used locally or remotely ? build steps )
+How is the Test made (test exist or not ? automated tested ? manually tested ? )
+Deployment process (manually ? or automated ? )
+Artifact (generated locally ? Where is this stored ? )
+Project management (JIRA, Kanban Board, scrum, sprint, agile, …)
+Team communication (slack, Microsoft Team, email, …)
+
+B. Build Stage, Integration and code analytics (At this stage developers have a working piece of code, and we need to move to the next step)
+Integration test (JUnit, PyTest, TestNG, PHPUnit, … )
+Code quality (sonarQube, Checkov, trivy, Terrascan and more …)
+Automation for all the manual (Code Build, artifacts, package or image creation) steps (Jenkins, GitHub Action, GitLab Runner, Circle CI, Travis CI, Bamboo, Go Continuous Delivery, Azure DevOps and more … )
+
+
+C. Artifacts
+What is generated from the code (Zip file, Tar file, jar file, war file, docker image, …)
+Where is it stored (Nexus, Jfrog, ECR, GCR, S3 Bucket, …)
+Versioning (Pom file version, customised version, git tag, …)
+
+
+D. Deployment to QA, CAT, UAT, PRE-PROD
+Automation tools (Ansible, Jenkins, Chef, Puppet, code deploy, …)
+Dynamic test (Security testing, functional testing, performance testing, regression testing, acceptance testing, integration testing, Load testing, )
+Tools and technology for testing (Jenkins, JMeter, Selenium, Python, … )
+Vendor tools (…)
+Circle Back to the Developer if any issues
+Project management (JIRA, Kanban Board, scrum, sprint, agile, …)
+Team communication (slack, Microsoft Team, email, …)
+
+
+E. How to take the agreed upon code, artifact, package, or script to PROD
+Can be fully automated: From the developer's laptop to PROD (Continuous Integration/Continuous Deployment)
+Submit a change request (CR) using the ServiceNow tool and deploy to PROD after manual approval by a couple of managers and IT Directors (Continuous Integration/Continuous Delivery)
+Automation tools for deployment (Ansible, Puppet, Chef, Helm, …)
+Patterns or Strategy ( blue/green, canary, rolling update …)
+
+# Blue/Green: ( the one you use) :
+→ A blue/green deployment is a deployment strategy in which you create two separate, but identical environments.
+→ One environment (blue) is running the current application version and
+→ one environment (green) is running the new application version.
+→ Using a blue/green deployment strategy increases application availability and reduces deployment risk by simplifying the rollback process if a deployment fails.
+→ Once testing has been completed on the green environment, live application traffic is directed to the green environment, and the blue environment is deprecated.
+# Benefit :
+Blue/green deployments provide a level of isolation between your blue and green application environments.
+This helps ensure spinning up a parallel green environment does not affect the resources underpinning your blue environment.
+This isolation reduces your deployment risk.
+Example:
+→ Some AWS deployment services support blue/green deployment strategies including Elastic Beanstalk, OpsWorks, CloudFormation, CodeDeploy, and Amazon ECS.
+
+# Canary:
+→ A canary deployment is a progressive rollout of an application that splits traffic between an already-deployed version and a new version, rolling it out to a subset of users before rolling out fully.
+→ A canary deployment gives you a chance to partially release your application.
+→ In this way, you can ensure the new version of your application is reliable before you deliver it to all users.
+Phases of a canary deployment
+When you create a release for a canary deployment, the rollout is created with a phase for each canary increment, plus a final stable phase for 100%.
+For example, if you configure a canary for 25%, 50%, and 75% increments, the rollout will have the following phases:
+→ canary-25
+→ canary-50
+→ canary-75
+→ stable
+
+# Rolling update:
+→ A rolling deployment involves gradually replacing an older version of the application with a new one.
+→ This software deployment strategy helps gradually replace the infrastructure running the application until the rolling deployment becomes the only version.
+→ It is the default deployment strategy in Kubernetes.
+Problem:
+Traditionally, to update the software running on a server, the application server was taken offline, the software was upgraded, tested in a closed environment, and then restored into service.
+This resulted in a significant amount of downtime, which was costly and disruptive for businesses.
+To make things worse, if there was a need to revert the installation to a previous version due to an unexpected bug or issue, the same process was repeated, resulting in more downtime.
+Solution: Rolling update
+In a rolling upgrade, only a portion of the application server’s capacity is taken offline at any given time, meaning the update can be performed with no downtime. 
+Rolling deployments use the concept of a window size:
+this is the number of servers that are updated at any given time.
+For example, if a Kubernetes cluster is running 10 instances of an application (10 pods), and you want to update two of them at a time, you can perform a rolling deployment with a window size of 2.
+For each application instance in the deployment window, it is updated, basic testing is performed, and Kubernetes validates that the application is working properly.
+The instances that were successfully updated resume service, and then other instances are taken offline and updated.
+The process repeats until all relevant pods in the cluster are updated to run the new version of the application. 
+F. Issues in PROD
+During deployment or release :
+NoC call for triage
+Understand the issue, identify and isolate (code issue, database issue, network, load balancer, …)
+If a minor issue, do a hotfix
+Urgency: usually issued in response to urgent issues, such as security vulnerabilities, data corruption, or major bugs, which cannot wait for the next release or sprint.
+Quick Deployment: The goal of a hotfix is to provide a rapid solution to a critical problem.
+If big issue, rollback to the previous version
+Strategy 1: redeploy the previous code (with helm, you can just use helm rollback command)
+Strategy 2: change the version of the artifact in the playbook or script
+Alert from monitoring tools (Splunk, Prometheus, Grafana, datadog, newrelic, …):
+NoC call for triage
+An incident ticket is generated (ServiceNow tool, Jira Service Desk, … )
+Understand the issue, identify and isolate (code issue, database issue, network, load balancer, …)
+Get the corresponding team involved and find a solution
+G. Observability
+Monitoring (Splunk, Prometheus, Grafana, datadog, newrelic, …)
+Improvement
+Look forward to the next sprint and also the deployment of new approved change requests to production

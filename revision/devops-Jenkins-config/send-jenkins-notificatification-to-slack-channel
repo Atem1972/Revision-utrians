@@ -1,0 +1,126 @@
+
+
+# Send Jenkins Notifications to Slack channel
+
+Description: 
+You have received a ticket to add Slack notifications to your Jenkins Pipeline.
+# What needs to be done:
+Create a Slack account
+Install Jenkins App for Slack
+Install Slack notification plugin for Jenkins
+connect Jenkins to Slack
+Create a new Jenkins Job to test the notifications
+# Create a Slack account
+To create an account go to AI Work Management & Productivity Tools 
+click on Create a New workspace
+
+On the next page, Click on Continue with Google
+
+Select your Google account then click on Next.
+You will be taken to the screen below, click on Create a workspace
+
+
+
+Fill in the name of the workspace and click on Next.
+
+Enter your name and click on Next.
+On the Next page which needs you to invite members, click on Skip this step and confirm it by clicking on Skip step in the windows that appear.
+Now enter Slack notification for the project name, then click on Next.
+
+Then click on Start with Free
+
+You have successfully created a Slack account. Now let’s go ahead and install a Jenkins App for Slack.
+Install a Jenkins App for Slack
+To install a Jenkins App for Slack, follow the steps below:
+Open your Slack App.
+On the top left side of the Slack home page, click on the small arrow on your workspace’s name (Utrains-school)
+On Tools & settings, click on Manage Apps
+ 
+On the page that opens, enter Jenkins CI in the search bar and select it.
+You will be sent to the Jenkins app page in your browser, Click on Add to Slack
+
+Select the Slack channel you want to post to and click Add Jenkins CI integration (You can also create a new channel by clicking on the link where it says Create a new channel ).
+
+On the next page, scroll down to Integration Settings to find all the settings and information that you need to customize your Slack notification in Jenkins.
+We will need the auto-generated Token later for configuration in Jenkins, so save it copy and paste it somewhere.
+
+Click on Save Settings
+Install Slack Notifications plugin for Jenkins
+Now, go to your Jenkins admin portal in your local browser.
+On the left menu, click on Manage Jenkins → Plugins
+
+Under the Available Plugins tab, filter and search for “slack notification.”
+Select Slack Notification, then click on Install.
+
+It will take you to the installation page, and it should only take a few seconds to finish installing.
+Once the “Success” message appears, go to back to the main page by clicking Go back to the top page.
+
+Connect Jenkins to your Slack
+Before we set up a new pipeline job, we need to configure Jenkins' settings to connect to your Slack.
+To do that, go to Manage Jenkins → System
+Scroll down on the Configure System page until you see the settings for Slack.
+
+Workspace: To get your Team workspace name, go to Slack and click on the workspace name.
+
+Then you will see the account URL. The workspace name is the account URL without .slack.com as shown below.
+
+So in this case, the workspace name is utrains-school
+Credential:
+Click Add → Jenkins and a pop-up will appear.
+Under the Kind dropdown, select secret text.
+
+Paste the Slack Token that you have copied in the previous step into Secret
+Optional: I added SlackToken for Description to keep track of my credentials/tokens…
+Click on Add.
+
+So that it’s readable in the drop-down after you’ve added it. You can choose any name you want.
+
+
+Default channel/member id: Enter the channel name (i.e. #channel) or user ID (i.e. UUU123UU4) you want the notification to be sent.
+
+Once everything is filled out, Verify the connection by clicking on test connection. If you see a success scroll down and click on Save.
+Create a new job to test the Slack notification.
+In the Jenkins Dashboard, Click on New Item
+Enter slack-test as the name of your job, select Pipeline, then click OK on the bottom left.
+
+Scroll down to Pipeline. We will paste our JenkinsFile script into the Script text box.
+
+Copy and paste the following code into the pipeline script. This is the bare bones you need for sending a Slack message (documentation):
+
+
+pipeline {
+
+   agent any
+
+   stages {
+
+       stage('Slack it'){
+
+           steps {
+
+               slackSend channel: '#slack-notification', 
+
+                         message: 'Hello, world'
+
+           }
+
+       }
+
+   }
+
+}
+
+
+
+Click on Save.
+Click on Build Now. Wait a second…
+Click on your newest build which should appear flashing under Build History.
+
+Click on Console Output to view what happens as it would in your terminal or command prompt.
+
+
+If everything goes well, go to your channel on Slack you will notice that a Slack message has been sent to you.
+
+Conclusion
+This was just a demonstration of how to add Slack notifications to your pipeline. With this, you can configure notifications on all steps of your pipeline, you can even send error messages on Slack etc.
+Go ahead and practice on a real-world pipeline project. Thank you

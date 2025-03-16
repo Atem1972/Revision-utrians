@@ -1,0 +1,291 @@
+
+
+<meaning of build executor status in jenkins?> number of jobs that can build in parralel. 
+what drive the number of executor is  the size of my server
+                                             go manage jenkins
+                                                 click on system
+                                                 look for number of executor
+
+# how to generate sentax in jenkins to use in our stage  
+-look for pipline syntax
+- open it on a new tab 
+- if u want to checkout git search for git
+- past the url of the repo
+- branch name
+- if is a private then put credential
+- click on generate script
+- copy the new generate url and put on the git checkout stage u want to build                                             
+
+open the folder were ur code is 
+- u can creat ur jenkinfile in it then start writing stage or what u want jenkins to do
+- make sure this file is indicate on ur job in jenkins
+
+
+ #    jenkinsfile code
+          pipline{
+            agent any
+            
+            environment{                         # this is a variable
+               BRANCH_name = 'main'
+               GIT_URL =   'https://github.com/atem1972/awscicd.git' 
+               IMAGE_NAME = 'Atem1972/awscicd'
+               IMAGE_VERSION = "${BUILD_NUMBER}"  # THIS WILL BE NUMBERING EACH TIME THE SATGE BUILD/RUN
+            }
+            stages{
+              stage('git checkout'  #here is the name of the stage){
+                steps{
+#                 git branch: 'main', url: 'https://github.com/atem1972/awscicd.git   ## this was generated in pipline syntax in jenkins as seen in     line 9-17 above   < let mk variable out of the git branch >  OR
+                  git branch: "${BRANCH_NAME}", url: "${GIT_URL}  ## THIS IS CALLING VARIABLE IN LINE 27-29
+                }
+              }
+
+              stage ('docker build' #name of stage){  # we want to bulld docker image
+                steps{
+                    sh 'docker build -t "${IMAGE_NAME}:${IMAGE_VERSION}" .'
+                    sh 'docker images'
+                }
+              }
+            }
+          }
+put the code to ur github and u can manually built it or use set up a triger
+
+## project
+- clone this url link https://github.com/utrains/geomvpx0
+- push to ur github account private repo
+- integrate git to jenkins if u have not yet don so
+- go to jenkins create a job, set git credential, set trigger
+- go to ur code in github and creat jenkinsfile and put delarative pipline, and creat stages on what u want jenkins to do  like chechout the code from github, scan the code with sonar tool and this tool most be install and intergrate to jenkins, build image from the code, push the code to artifactory 
+
+## solution
+- go to jenkins creat a job
+- click on new items
+- put ur job namme = geoapp
+- click pipiline then ok 
+- add description
+- add trigger ie click on github hooktriger 
+to your github account and set the trigger
+- on pipline = select pipline script from scm
+ - scm = git
+ - repository = past the url of ur repo from github, if is a private repo u need to put credential down
+ - credentials = select the credential we just created bellow ## n/b u most always create ur credential as seen below before coming here to select          
+              <how to create the credential to use on 70>
+               credentials = 
+               - go to manage jenkins
+               - click on credentials
+               - double click on (global) under domain
+               - click on add credentials
+               - kind = select username and password
+               - username = atem1972
+               - password = since github does not support passwword then we need to go to github and generate token copy and put in this space of passwd
+               - ID = give any name but make sure to remember the name ie githu-credential
+               - Describtion = github-credential
+               - click create 
+                 <how to generate the token to use above>
+                 - go ur github account
+                 - on ur right hand corneer click on the green icon
+                 - click on setting
+                 - click on developer setting
+                 - click on personal access token
+                 - select token classic
+                 - click on generate new token
+                 - note = any name
+                 - check the box repo, admin:org, user, delete_repo,
+                 - click on generate token
+                 - copy the token , donot click on delete , the token looks like this <ghp_RKtabxz8anr..........>
+                 - go to password on line 79 a past the token there
+
+ - branch = main , always check to know the real branch
+ - script path = jenkinsfile # make sure u create a file with this same name on ur code in github
+ - click save
+
+ ## lets build stages on our jenkinsfile in our code
+
+   # jenkinsfile # here is a java code
+    # delarative pipline
+                  
+# start of jenkinsfile
+                   pipline{
+                    agent any
+                  
+                tools{
+                  maven 'M2_HOME       # this name most match that in toos in jenkin 
+                }
+
+                    environment{
+                      BRANCH_NAME = 'main'
+                     GITHUB_CREDENTIALSID = 'github-credentials'
+                      GIT_URL = 'https://github.com/atem1972/geoapp.git'
+                      SONARQUBE_CRED = 'sonarqube-cred'  # this was the name is from jenkins when we were setting up credential , go to jenkins ,click cred
+                      SONAQUBE_INSTALLATION = 'sonar-server'  # this was gotten from sonar in jenkins then go to system
+                      APP_NAME = 'geo-app'
+                      SCANNER_HOME = 'sonar-tool'   ##this is the name we gave when we were setting tool in jenkins, go to jenkins click on tool
+                      JFROG_CRED = 'jfrog-cred  #this is gotten from jfrog setup in jenkins click on credential , ID=jfrog-cred
+                    artifactpath  = 'target/*.jar'
+                    ARTIFACTORY_URL = ' http://localhost:8081/artifactory'  # our jfrog url
+                    REPO    = 'geolocation'  # this is the name of artifact/repo i created in jfrog
+                    artifacttargetpath = ' release_${BUILD_ID}.jar'  # here this is the name we want app to be call in our jfro geolocation repo
+                    docker_REPO  = # go to aws in ecr create a repository copy the URL and past here, END WITH '/OUR REPO NAME'
+                    REPO_URL     = # go to aws in ecr create a repository copy the URL and past here, END WITH 'amazonaws.com'
+                    ecr_passwrd =
+                    AWS_REGION = ' us-east-1'
+                    
+                    
+                    }
+
+                    stages{
+ #                     stage('git checkout  # the name of the stage){  # this is telling jenkins to clone our code from github
+                      steps{                # we need to go to jenkins and generate our gitcheckout url
+                                            - go to jenkins browser click on pipline syntax
+                                            - select git:git
+                                            - repository url = past the repo url
+                                            - branch = main
+                                            - credential= select the credential u created above ie github-credentials
+                                            - click on generate pipeline script
+                                            - copy it and past on git branch below
+                        git branch:'main',credentialsid:'github-credentials',url:'https://github.com/atem1972/geoapp.git   OR  # lets mk variable from this
+                        git branch: "${BRANCH_NAME}",credentialsid:"${GITHUB_CREDENTIALSID}",url:"${GIT_URL}"   # if a line is long use \ and continus 
+                      }
+
+                      }
+#                      stage('unit test'   #check syntax of our code){
+                                          # befor we can do anything here we need to go and configure maven in jenkins since we hv already install it on our jenkins-server
+                                          - go to manage jenkins
+                                          - click on tools 
+                                          - look for maven
+                                          -  click on add maven
+                                          - maven_HOME = /opt/maven
+                                          - click on save 
+                                          -maven Name = M2_home      # this name was taken from the maven configuration in our jenkins-sever
+#                        steps{           # we can run maven here because it has been integrated to jenkins already ,it was don in tools
+                          sh 'mvn clean' # since is a tool then we need to clear it in this file as seen in line 109-111
+                          sh 'mvn test'
+                          sh 'mvn compile'
+                          # note if we have but a script will just put the path here
+                        }
+                      }
+ #                     stage('sonarqube scan'){    ## WE  can generate the below step in jenkins pipeline syntax
+                        steps{
+                          withsonarQubeEnv(credentialsId: "${SONARQUBE_CRED}", installationName: "${SONAQUBE_INSTALLATION}") {
+                            sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=${APP_NAME} -Dsonar.projectkey=${APP_NAME} \
+                            -Dsonar.java.binaries=. '''
+                          }
+                        }
+                      }
+#                      stage(quality gate check){   ## to understand this look at line 184-197 below
+                                                    ## for jenkins to check this in sonarqube we need to setup a webhook in sonarqube as seen below
+                                                    ## on sonarqube click on administration
+                                                    ## click on configuration then select webhooks, click on create
+                                                    ## name = anyname 
+                                                    ## url = put the url of jenkins here end it with /sonarqube-webhook
+                                                    ## click on create
+                        steps{                      
+                          script{
+                            waitForQualityGate abortpipeline: false # this can be change to true, credentialsId: "${SONARQUBE_CRED}"
+                          }
+                        }
+                      }
+#                      stage('trivy scan){     ## we can use it to scan maven dependency and docker image
+                         steps{
+                          sh "trivy fs --format table -o maven_dependency.html ."  ## we can replace the fs to image if is docker image we want to scan
+                         }                                 ## in between format and table we can put --exit 1 meaning fail it with 1 if severity is critica
+                      }                                    ## maven_dependency.html is a file we want jenkins to create for us an put all information
+
+#                      stage('package code/artifact){   # this will package the code in a single executive formate ie jar file,zip,image, etc
+                       steps{                           ## for every maven project or for every java code, the most always be a file in the code called
+                        sh 'mvn package'                ## < pom.xml>  when u open the file u will see the name u will call ur artifact, type of file we   
+                                                          are going to jenerate, version
+                                                          # this stage is creating but a jar file artifact. to that go to pom.xml
+                       }
+                    }
+#                  stage('upload jar to jfrog){  # this is simply push the package app to jfrog, s3. and if is and image we will push to ECR
+                     steps{    # to see the jar file u just push to ur artifact
+                               # go to jfro browser, on ur left coner click on the icon jfrog artifactory, click on the repo name , check the dropdown to #see ur jar filr u send there
+                         withCredentials([usernamePassword(credentialsId: "${JFROG_CRED}", usernameVariable: 'ARTIFACTORY_USER', \
+                          passwordvariable: 'ARTIFACTORY_PASSWORD')]) {
+                            script{
+                              // Define the artifact path and target location
+                              //def artifactpath = "release_${BUILD_ID} . JAR"   # BUILD_ID IS taken from jenkins variable
+                              // upload the artifact using curl
+                              sh """
+                              curl -u ${ARTIFACTORY_USER} : ${ARTIFACTORY_PASSWORD} -T ${artifactpath} \ # this was copy from our artifact we created in
+                              ${ARTIFACTORY_URL}/${REPO}/${artifacttargetpath}  """   # jfrog , this is the upload link , this variables here will take
+                            }                                                         # their value from the jfrog credential we have put in jenkins
+                          }
+                     }
+                    }
+#                    stage(' Docker image build){   # here we are building an image from the jar file
+                                                    # we need to modify our dockerfile
+                                                    - FROM openjdk:8             # this is java software in image form
+                                                    - ADD target/*.jar app.jar   # here we are copying the jar file with our app here
+                                                    - EXPOSE 8082                 # and our application is listening to port 8081
+                                                    - ENTRYPOINT ["java","-jar","app.jar"]      # executing the jar file
+                     steps{                        # if eror ocure read the error , go to ur dockerfile an corect it entrypoint
+                      script{
+                        sh "docker build --no-catche -t ${docker_REPO}: Latest ."
+                        sh "docker build --no-catche -t ${DOCKER_REPO}:${BUILD_ID} ."   # here we are building two images
+                      }
+                     }
+                    }
+#                   stage(' scan Docker image){    #here we are using trivy to scan the image if it has any mistake
+                     steps{
+                      sh """trivy image --format table -o docker_image_report.html ${DOCKER_REPO}:${BUILD_ID} """
+                     }
+                    }
+#                    stage('push image to registory){  # it is going to push the image we build above after scaning it to our registory ie ecr, gold image 
+                      steps{
+                        script{
+                        /*  //def ecr_passwrd=sh(script: "aws ecr-public get-login-password --region 'us-east-1'")  shutdown
+                          //sh "docker login --username AWS --password ${ecr_passwrd} public.ecr.aws/g0j7o9l5"     shutdown
+                            */
+                          sh "aws ecr-public get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${REPO_URL}"
+                          sh "docker push $DOCKER_REPO}:Latest"
+                          sh "docker push ${DOCKER_REPO}:${BUILD_ID}"
+                        }
+                      }
+                    }
+                    }
+                   }
+
+# push the  code above to github
+- go to ur jenkins on the browser and see if the job is building
+- make sure u have setup github trigger
+# - go to sonarqube on the browser to see  the scanning result also
+      - click on project on ur sonarqube browser
+      - u will see the new project i name it on the jenkinfile geo-app
+      - on the geo-app in sonarqube u will see ur total number of BUGS
+      - CLIck on the geo-app to see the statistic of ur code
+      - click on 515 bugs # this will help to get error message on the code which the develop can use to fixed the code
+      - u can click on each line to read the error
+
+#       quality gate check in sonarqube 
+#      # this simply means what we are going to look on before we say a code has passed quality of faile
+#      ## how to setup the quality gate
+        - click on quality gate in sonarqube
+        - click on create
+        - name = anyname geoapp
+        - click on the quality gate we just created
+        - scrowdown and click on unlock editing
+        - click on add condition
+        - click on on overall code
+        - on the drop down sellect bugs
+        - value = put 100 ## this simply means if is greater than 100 fail it
+        - click on add condition
+        - on the quality gateway scrowdown till u see project click on all then select the name of the project u want it to use the condition
+        # lets set this quality gate in our jenkinsfile above
+        
+
+      
+
+
+
+
+
+
+
+
+
+
+
+#                        < how to edit ur job in jenkins>
+                         - click on ur job
+                         - click on configure

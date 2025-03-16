@@ -1,0 +1,11 @@
+## how to git the administrator password
+- the file u see there copy it , login in to ur jenkins serever and cat the file ie
+/var/lib/jenkins/secrets/initialAdminpassword
+- copy the password and bring on the jenkins
+- click on install sujestion plugins
+
+## create first admin user
+- devops or anything
+- devops or anything
+- anything
+-anything

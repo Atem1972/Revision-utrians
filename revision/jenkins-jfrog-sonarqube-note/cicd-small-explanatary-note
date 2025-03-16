@@ -1,0 +1,16 @@
+
+
+# cicd
+
+developer push code to github
+
+ devops engineer will set up a cicd pipeline for the code
+ - they will need to checkout the code from github to jenkins
+ -  carry out a unit test on the code using tools like maven, sonarqube, trivy
+ -  the will need to generate artifact from the code ie jar file, zip, tar, docker image, war
+ - they will still need to scan the artifact like the docker image ie trivy to scan image
+ - we need to store the artifact some ie jfrog ,s3, ecr,
+ - we need to deployed this artifact in the lower environment to test(functional testing) the application if everything is working well ie dev, qa, uat,non prod environment
+ - then production
+
+we need to create a jenkinsfile on the developer code and insert all the above in it as stages ie checkout stage, scanning stage, generating artifact stage,scanning artifact stage, pushing the artifact to artifactary stag, functional test deployment stage
