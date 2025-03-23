@@ -1,4 +1,4 @@
-## how to git the administrator password
+## how to get the administrator password for jenkins
 - the file u see there copy it , login in to ur jenkins serever and cat the file ie
 /var/lib/jenkins/secrets/initialAdminpassword
 - copy the password and bring on the jenkins
@@ -9,3 +9,9 @@
 - devops or anything
 - anything
 -anything
+
+
+## how to backup in jenkins
+- we can take amis backup
+- ssh into ur jenkins server
+- run ls /var/lib/jenkins

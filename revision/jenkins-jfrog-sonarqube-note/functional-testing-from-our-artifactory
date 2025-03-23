@@ -1,0 +1,25 @@
+
+- after we most most have done all the unit test, scaning and build and artifact then push it to our jfrog artifactory,
+next step will be for the lower environment like dev,qa,uat etc to pull the code and do functional testing from it.
+- what is this functional testing all about? they will be testing all the application on the app to be sure it is functioning is it should befor we can use it in 
+
+# this are the steps the lower env will take to test the artifact
+- launch and instance 
+- shh to it
+- now go to ur jfrog browser to downlod the artifact to ur lower env server and test the appliction
+        - seach for artifact repository browser
+        - sellect the artifact u want to download for ur testing  click on the name of ur code and it will carry u to another page
+        -click on the home page
+        - on the center click on the repo name that contain ur file
+        - enter the password of ur jfrog
+        - copy the download link
+        - go to ur lower env server and past it
+        - run <past it here something like this = curl -uadmn\;hdfjgdjhdbd -o "http://4.4.4.0.comput.amazonaws.com:8081/artifact/geoapp/<target_file_path>"
+        lets modify the above download link before we run it = <we need to modify the end of the file with the name of ur file u push to the repo in jfrog>  ie <instead of target_file_path we will put the name of the file something like this = release_17.jar>
+        - u can run the code now
+# how to bring up this jarfile app up
+- most case the developer is in place to tell u what u need to run to bring the app up
+- since is a java code run = java -jar release_18.jar    ## release_18.jar is the name of the artifactfile in jfrog
+- check the log messages to fine the port the app is listening to. this our own is 8082
+- go and copy the ip adress of ur server go to the browser withit and add :8082 ie 2.3.5.3:8082
+        

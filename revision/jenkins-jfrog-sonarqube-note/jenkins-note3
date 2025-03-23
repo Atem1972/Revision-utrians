@@ -105,7 +105,7 @@ to your github account and set the trigger
                   
 # start of jenkinsfile
                    pipline{
-                    agent any
+                    agent any   # it means this job should run anywhere. this means this is run on the main jenkins-server
                   
                 tools{
                   maven 'M2_HOME       # this name most match that in toos in jenkin 
@@ -123,7 +123,7 @@ to your github account and set the trigger
                     artifactpath  = 'target/*.jar'
                     ARTIFACTORY_URL = ' http://localhost:8081/artifactory'  # our jfrog url
                     REPO    = 'geolocation'  # this is the name of artifact/repo i created in jfrog
-                    artifacttargetpath = ' release_${BUILD_ID}.jar'  # here this is the name we want app to be call in our jfro geolocation repo
+                    artifacttargetpath = "release_${BUILD_ID}.jar"  # here this is the name we want app to be call in our jfro geolocation repo
                     docker_REPO  = # go to aws in ecr create a repository copy the URL and past here, END WITH '/OUR REPO NAME'
                     REPO_URL     = # go to aws in ecr create a repository copy the URL and past here, END WITH 'amazonaws.com'
                     ecr_passwrd =
