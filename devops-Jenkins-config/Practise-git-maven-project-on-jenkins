@@ -1,0 +1,148 @@
+
+
+# Practice: Git-Maven project on Jenkins Updated 05/12/23
+At the end of this tutorial, you will be able to build a Jenkins Job using Maven and a code push to GitHub
+# Prerequisites:
+Before starting this tutorial, you must:
+- Have a GitHub account and know how to use basic Git commands
+- Have GitBash on your system
+- Have a Jenkins server up and running with JAVA_HOME configured, Git and Maven installed and configured (click here if that is not yet installed)
+- Open and log in to your Jenkins server in your browser and your terminal
+
+# Create the GitHub Repository for the project
+First log in to your GitHub account at http://github.com
+Click on the + sign to create a new repository then choose New repository
+Give a valid name to the repo: helloworld_march_2023
+
+- Make sure the repository is Public 
+- Check the button to Initialize this repository with a README file 
+- Click on Create repository
+Once the repository is created, we will copy the clone link to create the repo locally in our Git Bash
+- Click on Code the copy the repo link
+
+# Now, open a new Git bash terminal and make sure to switch to the devop-lab folder
+
+run cd devops-lab
+
+Create a folder for our project
+run mkdir git-maven-practice
+run cd git-maven-practice
+
+Clone the repository
+run git clone paste-the-link-here
+run ls
+
+
+
+Now, let’s also clone the Utrains repository that contains the source code of our app:
+git clone https://github.com/utrains/helloworld19.git
+ls
+
+
+
+Copy the content of the helloworld19/ folder in helloworld_march_2023 repository
+cp -r helloworld19/* helloworld_march_2023/
+cd helloworld_march_2023
+ls
+
+
+Now, commit the changes to our online repo
+
+git add --all
+git commit -m "First commit for Jenkins Practice"
+git push origin main
+
+- If you open your repository, you will be able to see all the files and folders that are added to it.
+- Now we have to use this repository in Jenkins to build our Job
+
+# Create a Project in Jenkins
+Before creating the project in Jenkins, we need to copy the link to our repository online:
+
+Now, go to your Jenkins console and click Dashboard then on New Item:
+
+- Name: mavenproject then click on Maven project and click on OK
+
+- In the Dashboard, click on the new project u created
+
+# Click on Configure, to configure the Maven project
+In the Source code management tab, click on the radio button Git
+- Repository URL: Paste the link for clone creation
+- Put the branch specifier on the main branch: */main
+
+# Under the Build section, in Goals and options, enter clean install package. Then click on Apply, then on Save.
+
+Now, click on Apply and on Save
+Build the Job
+Click on Build Now to build the project
+
+ You can check the console output to make sure the project works as expected
+
+Click on the Jenkins logo to display all the jobs running
+
+Click on project name (mavenproject), then open the console in Build History
+You can check the various commands that were run successfully 
+If you go back to the project and click on Workspace you will get the content of helloworld_march_2023 repository
+
+
+
+You can also check that using the terminal of your Jenkins server
+cd /var/lib/jenkins/workspace/
+ls
+cd mavenproject/
+ll
+
+
+(All the files in helloworld_march_2023 are here!)
+
+Clean up:
+
+
+The below code found around line 87 needs to be uncommented so we can create the ami using Terraform.
+From this:
+/*
+module "ami" {
+  source = "../ami-creation"
+  source_id = aws_instance.ec2_instance.id
+  ami_name = "jenkins_ami"
+}
+
+output "jenkins_ami_id" {
+  value = module.ami.ami_id
+}
+*/
+
+To this:
+module "ami" {
+  source = "../ami-creation"
+  source_id = aws_instance.ec2_instance.id
+  ami_name = "jenkins_ami"
+}
+
+output "jenkins_ami_id" {
+  value = module.ami.ami_id
+}
+
+Then run the following commands:
+terraform init
+terraform apply --auto-approve
+
+Once it is done, comment on those lines again as shown below:
+/*
+module "ami" {
+  source = "../ami-creation"
+  source_id = aws_instance.ec2_instance.id
+  ami_name = "jenkins_ami"
+}
+
+output "jenkins_ami_id" {
+  value = module.ami.ami_id
+}
+*/
+
+
+
+terraform state list 
+terraform state rm module.ami.aws_ami_from_instance.ami
+terraform destroy --auto-approve
+
+

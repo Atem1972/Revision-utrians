@@ -1,0 +1,47 @@
+
+- on the VSC search bar , search for Remote ssh and install it
+- copy the ssh output from the master server
+- click on this icon >< THAT SAys open a remote window, below us VSC
+- a remote search bar will open  click on connect to host
+- on that search bar past the ssh link u copy above here
+- click on the sugestion below and it will try to connect
+- if it does not work , go back again click on that same icon 
+- on the search bar that pop up , click on configure ssh hosts
+- click on the first line something like this C:\Users\kserg\.ssh\config
+- A file will open , put this content in it ie
+           - Host <put any name here>
+           - HostName <go to ur master instance, on ur ssh key output copy the exact portion as seen here (ec2-32.32.42.22.compute-1.amazonaws.com)>  
+                                        portion not to copy (ssh -i ansible-ke.pem ec2-user@)
+         - IdentityFile <go to ur terminal run pwd copy the path an past here and end it with ur instance key name like this "\valery-key.pem" 
+                                                                                                                edit it  as seen in line 17 at e end 
+                                         pleas do this without doing ssh to the server> ie C:\users\sfs\fsf\sfs
+                                         please make sure u use but back slash like this \ not this / if not it will not work
+           - User <put the user of the master instance here ie either ec2-user, ubuntu etc >
+
+- go back to this icon >< click on it
+-   clic on connect to hosta
+- click on the first line which is the name of the host u put on line 12    
+- click on linux   
+
+
+
+# N\B WE CAN ALSO USE VI IF WE DONT WANT TO USE VSC
+# LETS us vi to configure Ansible
+ - shh to the Ansible master
+ - vi inventory.yml and put the below code on it
+ # this is the file that contain all our target server config
+       [webservers]
+       3.3.3.3
+       [databaseserver]
+       3.3.34.34
+
+       [webservers:vars]
+       ansible_ssh_private_key_file=~/ansible-key.pem
+       ansible_user= ec2-user
+
+       [databaseservers:vars]
+       ansible_ssh_private_key_file=~/ansible-key.pem
+       ansible_user= ubuntu
+
+
+

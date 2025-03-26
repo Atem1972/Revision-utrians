@@ -1,0 +1,151 @@
+
+# here we are continuing with  our dev forder in 03
+- cd dev
+- create a file called playbk.yml
+
+
+- vi playbk.yml  # write the code below in it
+# please watch out for indentation in yaml
+        
+        
+        
+#  1) first playbook 
+         --- 
+         - hosts = all   ## <this simply means run on all the target server in my inventory.yml file but we can still specify if we want it to run only on
+                         on a specific target server on theinventory.yml file by put the name ie <-host = webserver it will run only on server group
+                         under this target server in the inventory.yml file>
+       become: true/false  oR
+       become_user: root    ## this is give permision as sudo -i ie to become root user, to do some setting thing in a sever u most be root user
+       ignore_errors: yes    ## this simply means with the task if u fine any error ignore that stsge and move to the next stage 
+       gather_facts: yes          ## when ansible run it collect all the information from the target machine , u can either yes collect or no dont
+                                  # see this information gather run ansible ws -m setup
+
+#       tasks:                  # here we put what we want our playbk.yml to go an do on our target node
+#       - name: create a file   ## here is just a message , u can put anything
+       file:
+       path: /tmp/juk.txt      ## this will create wil create the file juk.txt in the target server on the /tmp/ directory
+       mode: '0666'            ## here we are giving permision to the file
+       state: touch           ## what command ansible need to run to create the file
+
+         
+#        - name: creating a directory            ## here is just a message , u can put anything
+           file:                                 # this known as module
+           path: /tmp/ dir
+           mode: '0485'    ##here is permision 
+           state: directory
+
+#       - name:  create user in target server   ###     here is just a message , u can put anything
+          user:                                # this known as module
+          name: valery
+          comment: valery ojong
+          uid: 1032
+          group: adin      
+          shell: /bin/bash
+          when:ansibe_os_family== "Debian" or ansibble_processor_nproc > 2   ## this simply means create this user  on the target server if it has but 
+                                                                              Debian OS IF NOT DONT CREATE
+#       - name: create group      ###     here is just a message , u can put anything
+          group:                   # this known as module
+          name: devops
+          state: present
+
+#       - name: check uptime
+         command: uptime
+#       - name: check the date
+         shell: date 
+#        - name:  
+           shell: cat /etc/passwd | grep valery    
+#        -name: 
+          command: mkdir class 
+
+
+- how to check if our playbook is well written, RUN ansible-playbook playbk.yml --syntax-check   # the --syntax-check is like testing unit test in jenkin 
+- how to execute our playbook, RUN ansible-playbook playbk.yml
+
+### how to limit a playbook inventory.yml to run only on a particular servers and not the entire host
+on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means run this playbook only on the instance with this ip address
+
+
+
+
+
+
+## Second playbook
+ vi play2.yml
+  
+  ---
+   - hosts: webserver
+   become: = true
+   ignore_errors: = yes
+   gather_facts: yes
+   vars:          ## this how to declear a variable in ansible
+    package_name: httpd
+       
+
+#   tasks:
+#        - name:  install package
+        yum:                                    ## module, you can go to chatgpt and ask what module can i use to install packaage and their agument
+        name: "{{package_name}}"           ## calling variable in ansible     
+        state: present
+
+#       - name: create groups              ## this task can be use when u want to create many groups at onces
+          group:
+          state: presnt
+          name: "{{items}}"
+          loop:
+           - cloud
+           - security
+           - devops
+           - linuxad
+              
+
+
+- To check syntax of the playbook Run ansible-playbook play2.yml --syntax-check or just --check  
+- To execute the playbook Run   ansible-playbook play2.yml   
+
+
+
+
+# third playbook
+  vi play3.yml
+   
+
+ ---
+  - host: webserver
+     become: = true
+     ignore_errors: = yes
+     gather_facts: yes
+     vars:                 ## here is a declear variable
+     f_name: hello world
+
+
+#       tasks:
+#        - name: download package online
+          get_url:
+          url: https://github.com/kserge2001/resume/archive/refs/heads/main.zip
+          dest: /tmp/main.zip
+
+#        -name:     delete a file in a target server
+           file:
+            path: /tmp/main.zip
+            state: absent
+
+#          - name: Debug     # this module is use to display something on the screen
+              debug:
+              msg:  "Hello world"     or   below will work
+              var: f_name          ## here we are calling a variabl above
+
+#         - name: check server uptime
+            command: uptime   
+            register: uptime_output    ## this simply means the output from line 138 save it for me, reason beig that u may want to display it an check
+                                        what it actualy run. u can use the below line 141-143 to display it   
+#         - name: display the output variable
+           debug:
+           var: uptime_output.stdout_line       ## this simply mean go to the task in line 137 check the output in <register:>
+                                               and display it here for me . # take note the .stdout_line is and attach way to get just exact something
+
+
+
+
+- To check syntax of the playbook Run ansible-playbook play2.yml --syntax-check or just --check  
+- To execute the playbook Run   ansible-playbook play2.yml 
+                                                                         

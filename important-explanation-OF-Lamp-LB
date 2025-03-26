@@ -1,0 +1,16 @@
+what is a lamp-stack server? is just aserver that has a webserver page that people can access on the browser.
+WHAT IS a lamp-server? it is a server that is build with couple of software to server application or host application. and the are other types apart from lamp and we can also called it WEB TIER AND DATABASE TIER(frontend backend)
+can you build me a 3 tier application, what does this mean? it means u will need to build WEB-PAGE, LOADBALANCER, DATABASE. Here u will need two instance , one for webpage with lamp install softwares install on it and configure and the other instance for database with a database software like HA-PROXY install on it and configure
+when somebody hit the domain dev-guro.info what device on the network does the traffic hit first? loadbalancer
+what is a loadbalancer? it is a device in the network that help us direct the trafic to our backend servers. it is an instance that has lb software install on it and configure (ha-proxy)
+what is the first server the loadbalancer will hit first in the backend? WEBSERVER IE LAMP-STACK
+WHAT is a webserver?  it is just a server build to deliever content  through the http protocol, 
+diffn b/w http and https? https is secure while http is not , for us to make http secure we need to attach an SSL or TLS certificate
+when somebody say splunk server, apache server, python-server , it is just a server that has any of them their software insall in it.
+what is a loadbalancer? it hleps to direct trafic to our target instance in the backend
+what are some diffn types of software we can use to build LB in prem? HA-PROXY,NGINX, TRAFIC, F5,
+WE HAVE TWO TYPE OF HA-PROXY loadbalancer ? revers-proxy and forward-proxy
+1) forward-proxy: this is mostly install on company laptop to block website ie u can not be able to open facebook on the laptop. all ur trafic will hit the forward proxy before going to the internet with this u are block from viewing or downloding some specific website. this can be set at home to limit children so they will not be able to watch setting movies.
+2) REVERS-PROXY: this is what we need in website
+WHAT DO WE USE TO ISOLATE OUR INSTANCE?  we use subnet ie we can put one in diffn subnet ie 10.0.1.0/24 AZ 1A   AND the other in another subnet 10.0.2.0/24 AZ1b
+what is a subnet? it is just a way to divide our resource to small portion of network

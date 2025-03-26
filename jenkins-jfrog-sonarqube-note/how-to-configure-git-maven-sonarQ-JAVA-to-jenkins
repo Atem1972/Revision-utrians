@@ -1,0 +1,83 @@
+
+NB any tools that we need to intergrate it to jenkins , try to do the following
+- install the tool on the same server u are runing jenkins
+- go to jenkins and install the tools by clicking on plugins , available plugins then search the tool and install it
+- configure the tool to jenkins by click on tools, search for the tools and configure it as it shld be configure
+
+
+# firstly install git on the same jenkins server
+# secondly go to ur jenkins browser
+- click on manage jenkins 
+- clickck on available plugins  # here u will get plugins of software u want tointergrate to jenkins
+- search for github and check the box github integration
+- click on install
+
+# lets also install maven plugins in jenkins
+- go to ur jenkins browser
+- click on manage jenkins
+- click on plugins
+- click on availabe plugins
+- search maven integration and maven invoker
+- check the two boxes and install
+
+
+  # let configure java to jenkins
+  - click on manage jenkins
+- click on tools
+- search for maven configure
+- JDK, NAME = JAVA_HOME
+- go to ur jenkins server where u have configure git and maven and get the path of ur maven/java
+- run echo $JAVA_HOME, COPY THE OUTPUT
+- JAVA_HOME = PAST THE PATH U COPY ABOVE HERE 
+## let install java plugins
+- go to plugins 
+-availabl plugin install it
+
+# LET CONFIGURE GIT ALSO
+ git stallation
+ - go to tools
+-git name = github
+- path to git executable = git
+- click on apply then save
+make sure u uncheck automatically
+# let also install git plugins
+-go to plugins
+- look for vailable plugins install t
+
+
+# lets connfigure maven in jenkins
+- go to manage jenkins
+- click on tools
+-search for maven installation
+- click on add maven
+- maven Name = M2_home  # this name was taken from the maven configuration in our jenkins-sever
+- maven_HOME = /opt/maven
+- click on save 
+# go and install maven plugins also
+- go to plugin
+- availabl plugins
+- search for maven and install
+
+## LETS CONFIGURE SONAR-Q TO JENKINS
+- go to jenkins browser
+- click on manage jenkins
+- click on tools
+- look for sonarqube scand
+- name = any name but make sure to rememeber it
+- install automaticlly = yes and choose any version
+- save
+# go and install snarqube plugins
+- go to plugins
+- go to available plugins
+- look for look for sonarqube if u have not already install it then click on install
+
+# let configure jfrog to jenkins
+- go to manage jenkins
+- click credential
+- click global
+- add credential
+- kind = select username with password
+- username = admin  # this is our jfrog username
+- password = password  # this is jfrog  password
+- ID = JFROG-CRED    # WE WILL NEED THIS WHEN WRITING JFROG ON OUR JENKINSFILE
+- DESCRIPTION = JFROG-CRED

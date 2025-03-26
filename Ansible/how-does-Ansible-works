@@ -1,0 +1,15 @@
+
+
+- Ansible inventory? is a file that contain all the configuration of ur target node/server
+         -ansible inventory, is a file or collection of files that lists  the host or managed by ansible
+         - it includes a list of hostname or ip addresses of the target systems that ansible will interact with
+         - inventory allows hosts to be <grouped> logically based on attributes or roles, making it easier to target specific subsets of systems
+         - inventory can be <static> (manually defined ) or <dynamic> (generated automatically) using script or plugins
+         - inventory allows you to assign <variables> to host or groups, allowing you to customize and fine-tune configurations as needed.
+         - ansible supports various inventory sources such as: <YAML file, dynamic inventory scripts, cloud platforms,> and <external system> like AWS EC2 inventory
+- you write your playbook in (.yml)  ## it is a file, <what is a playbook in ansible> it is a file that will us to define task, define target host
+- control node is the server that has the Ansible install and configure
+- target node/server are the instance you want ansible to carring some task on it like patching it, execute script on it
+- what does Ansible use to get to it target node? <it uses the SSH PROTOCOL>
+
+# what is ad-hoc commands? we use this to run single command example lets say u want to check the kernel,memory,cpu of thousand of servers u can use ad-hoc to do it

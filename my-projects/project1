@@ -1,0 +1,253 @@
+AWS PROJECT 1: Build application Infrastructure on AWS
+  
+  ![image.txt](image-1.png)
+
+Assignment: AWS Project
+Objective:
+Data Service has a client that is running a school site for their students. This client wants to run their application with the entire infrastructure on AWS. Our task is to build and manage the following infrastructure components:
+
+VPC (Virtual Private Cloud)
+
+Subnets (public and private)
+
+Elastic Load Balancer (ELB): to stay in front of the webserver instances.
+
+Auto Scaling Group: to scale up and scale (horizontally) down our instances accordingly. ( CPU over usage, instance terminate)
+
+A couple RDS (Relational Database Service) databases
+
+CloudWatch for app monitoring
+
+We need a notification system to alert us when our system is running, such as when new instances are created or terminated. For this, we will require a notification system like: SNS (Simple Notification Service)
+
+The school’s domain will be jkdhhjfhjfhf.com, and to acquire or purchase this domain, we will need the Route 53 service. We can also create a DNS record with this service. for domain registration and DNS records
+
+Our instances will generate log messages that will need storage, and for this, we can use EBS (Elastic Block Store) and S3 (Simple Storage Service) buckets.
+
+Since our instances will be serving the same content, we need a shared filesystem between them, and for that, we will use the EFS (Elastic File System) service.
+
+We need to manage who can access this infrastructure through the console and to do that, we need to configure access using the IAM (Identity and Access Management) service.
+
+Our instances will need access to the S3 bucket for backups and logs, so we need to create IAM roles. To ensure we can recreate all of this without manual effort, we will use the CloudFormation service or Terraform to write the entire infrastructure as code.
+
+
+TODO: We will have a meeting next week to discuss this project and all its moving parts. You are tasked with researching how this massive project will be executed, drafting your architecture, and preparing for the meeting. Research these services—or some of them—and get ready for next week’s open discussion. You will talk about how you can contribute to this.
+
+For this project, after discussing the app’s architecture, we need to break it down into smaller deliverables or user stories to enable the team to work on it. See the example below:
+
+Tickets / User story:
+1. There is a new app that needs to be hosted in aws called utc
+Create a VPC with the following attributes:
+
+Region: us-east-1
+
+Availability Zones: 1a and 1b
+
+Public Subnets: 2
+
+Private Subnets: 4
+
+NAT Gateway: 2
+
+Internet Gateway: true
+
+CIDR Block: 10.10.0.0/16
+
+Tags:
+
+{
+   "Name": "utc-vpc",
+   "env": "dev",
+   "team": "config management"
+}
+The utc app need to extend the VPC to span across three Availability Zones by adding:
+
+One additional public subnet in 1c
+
+Two additional private subnets in 1c
+
+2. For the utc app, we need 4 security groups for all the tiers
+Create the following security groups:
+
+alb-sg:
+
+Inbound: Allow from everywhere to ports 80 and 443 (HTTP and HTTPS)
+
+Outbound: Allow all
+
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+bastion-host-sg:
+
+Inbound: Allow from my IP to port 22 (SSH)
+
+Outbound: Allow all
+
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+app-server-sg:
+
+Inbound: Allow from alb-sg to port 80 (HTTP)
+
+Inbound: Allow from bastion-host-sg to port 22 (SSH)
+
+Outbound: Allow all
+
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+database-sg:
+
+Inbound: Allow from app-server-sg to port 3306 (MySQL)
+
+Outbound: Allow all
+
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+3. This infrastructure will need a Key Pair:
+Create a key pair named utc-key with a .pem extension.
+
+4. We will have a server in the private subnet with no SSH access.
+Create a bastion host in the public subnet, and copy the utc-key to it with permissions set to 400.
+
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+5. We need 2 EC2 in each availability zone:
+Create 2 EC2 instances in each private Availability Zone (1a and 1b) with the following specs:
+
+Instance Type: t2.micro
+
+AZs: private 1a and 1b
+
+Security Group: app-server-sg
+
+AMI: Amazon Linux 2
+
+Key Name: utc-key
+
+VPC: utc-vpc
+
+User Data:
+
+#!/bin/bash
+yum update -y
+yum install -y httpd.x86_64
+systemctl start httpd.service
+systemctl enable httpd.service
+echo "Hello World from $(hostname -f)" > /var/www/html/index.html
+Tags:
+
+{
+  "Name": "appserver-1a/appserver-1b",
+  "env": "dev",
+  "team": "config management"
+}
+6. Run some tests to:
+Ensure that you can SSH from the bastion host to the EC2 instances in private subnets 1a and 1b.
+
+Verify that Apache is running and able to render content.
+
+7. Create a Target group for Load Balancer:
+Create a target group for the load balancer:
+
+Name: utc-target-group
+
+Target Type: instances
+
+Targets: Both app servers in the private subnet
+
+Protocol: HTTP
+
+Port: 80
+
+VPC: utc-vpc
+
+Protocol version: HTTP1
+
+Health Check:
+
+{
+  "protocol": "http",
+  "path": "/"
+}
+Tags:
+
+{
+  "env": "dev",
+  "team": "config management"
+}
+8. Create a hosted zone in AWS with our domain, or register a new domain in Route 53:
+Check with the configuration management team to see if a domain already exists or if we need to create one from scratch. As we already have a hosted zone in AWS; we just need a subdomain called learning.yourdomain
+
+Make sure we have a hosted zone in any case
+
+9. Request a certificate if one is not already available so we can use the HTTPS protocol, as follows:
+Certificate type: Public
+
+Fully qualified domain: *.yourdomain (this will create a certificate for any subsequent subdomain.)”
+
+10. We need to create a load balancer. ( ALB):
+listener: port 80
+
+targetgroup: utc-target-group
+
+11. we need to create a RDS MySQL database (fully managed by AWS):
+Set up an RDS MySQL database:
+
+Name: utc-dev-database
+
+Username: utcuser
+
+Password: utcdev12345
+
+12. Create an IAM role to grant EC2 instances access to the S3 bucket for backups and logs.
+13. Create an EFS volume and attach it to both app servers.
+14. Set up a cron job on the app servers to upload HTTPD log files to the S3 bucket
+15. Create an AMI from one of the app servers, named utcappserver.
+16. Create a launch template for auto-scaling with the following specs:
+Instance Type: t2.micro
+
+AMI: utcappserver
+
+Security Group: app-server-sg
+
+VPC: utc-vpc
+
+Key Name: utc-key
+
+17. Create an auto-scaling group with dynamic scaling based on CPU utilization:
+Scale out when CPU reaches 80%
+
+Scale in when the CPU goes down
+
+18. SNS and Notifications:
+Create an SNS topic called utc-auto-scaling.
+
+Create a subscription for the topic with the team email and configure auto-scaling notifications using this topic.
+
+19. Automation with Terraform:
+Start discussions around automating this setup using Terraform.
+
+Create multiple modules for the infrastructure.
+
+Documentation:
+Refer to the AWS Web Hosting Best Practices for further guidance.

@@ -1,0 +1,126 @@
+## Configuring the API GATEWAY
+- go to aws and search API GATEWAY AND CLICK CREATE
+- CHOOSE REST API
+- CLICK BUILD REST API
+- select New API
+- Enter the name of the API and click on Create API
+
+### Now let's create the various endpoints (resources)
+NOTE THIS endpoint are called resources , this resources are just the url of all the application build on that particular websit
+<ie url for login page
+< url for payment page
+< url for suport page etc >
+take note ,when the developer say we need an endpoint call login, video, suport etc you go to aws create ur api gateway then create the 
+various endpoint ask my the developer which are also known as resources
+- click on create resource
+- Resource path = /            - Resource name = <paymen    # <this most be on the on the developer code or it will not work> 
+- click on this box CORS (Cross Origin Resource Sharing) Info
+- click create
+- click on the root sign / then click on create resource
+- select /             - RESOURCE NAME = <login>
+- click to tick the box then click creat
+- click on the root sign / then click on create resource
+- select /           - resource name = <suport>
+- click to tick the box then click creat
+# note<if you see the below format of code in any code just no that they are creatind an endpoint resource in api gateway in aws and u shld follow the instruction above, first create the api gate way, then resource following the code then method>
+       #define our Paths
+ note      healthPath = '/login'
+ note      productPath = '/payment'
+ note      productsPath = '/suports'
+
+## lets create the methods for each resource.
+# what is this method all about , 
+NOTE when you type utrian.com this GET MTHODe
+when u sign in is call POST METHOD
+when u DELET ur passwd is call DELETE METHOD
+putMethod, HEALTHMETHOD 
+# BELOW IS THE AMOUNT OF METHOD U ARE TO CREATE FOR EACH OF THE ENDPOIT OR RESOURCE
+HAVE U EVER RELEASE SOMETHING LETS SAY U WANT TO CHANGE UR PASSWD ON A WEBSITE AND IT SAYS ACCESS DENIES THE MEANS THEY DID NOT GIVE U POST MTHODE IE THIS 
+METHOD WAS LEFT OUT FROM THEIR CODE
+             <The login will have just a GET method
+              The payment resource will have GET, PUT, POST, and DELETE methods.
+              The suport resource will have just a GET method.>
+ # FIRST ENDPOINT OR RESOURCES             
+- on the resources u created click on login 
+- click create method  
+- choose the GET METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+# SECOND ENDPOINT OR RESOURCE
+-  A) on the resources u created click on PAYMENT 
+- click on the resource payment
+- click create method
+-choose  GET METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-  b) on the resources u created click on PAYMENT 
+- click create method payment
+-choose   PUT METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+- C) on the resources u created click on PAYMENT
+- click on the resource payment
+- click create method
+-choose  POST METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-  D) on the resources u created click on PAYMENT 
+- CLICK on the resource payment
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+# THIRD ENDPOINT OR RESOURCE support
+-a) CLICK on the resource suport
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-a) CLICK on the resource suport
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+- click on the login resource and then, click on Enable cors
+- On the popup select DEFAULT 5XX # it will allow all the method then save
+- click on the payment resource and then, click on Enable cors
+- click on the suport resource and then, click on Enable cors
+- click on the root sign / aand click on deploy api
+- stage select new stage
+- stage name = any name
+- click deploy
+- u will see ur stage name and the api gateway url
+- copy the url on the browser be adding /payment, /login, /suport and it will take u to the diffn resouces
+
+## note any time u see a code like this just no is about API GATEWAT
+#define our methods
+getMethod = 'GET'
+postMethod = 'POST'
+putMethod = 'PUT'
+deleteMethod = 'DELETE'
+
+#define our Paths
+healthPath = '/health'
+productPath = '/user'
+productsPath = '/users'

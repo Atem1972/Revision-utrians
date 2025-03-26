@@ -1,0 +1,56 @@
+
+
+ - inside the ansible master server lets create a forlder called dev
+ - cd to it 
+ - create a file called inventory.yml
+ - past the below code
+            [webservers]   # u can put anyname here
+             3.3.3.3                # this is the ip address of ur first target node1 plese not the master server    # THIS NEED TO ALWAYS BE CHANGE 
+             4.5.334.33
+             43.43.44.44     <# this is how we can group instance to target>) we
+             55.66.66.66
+            [databaseservers]    # u can put any name here
+             3.3.34.34           # this is the ip address of ur second target node2 plese not the master server           # THIS NEED TO ALWAYS BE CHANGE
+             434.555.55.55
+             555.55.55.55             #<# this is how we can group instance to target>)
+             555.55.55.55
+             55.55.55.55
+
+             [webservers:vars]        #
+              ansible_ssh_private_key_file=~/ansible-key.pem    ## the key name can also be change
+              ansible_user= ec2-user                            ## THIS can also BE CHANGE
+
+              [databaseservers:vars]                            ##
+               ansible_ssh_private_key_file=~/ansible-key.pem    ## the keyname can also be change
+               ansible_user= ubuntu                              ## the user can also be change
+
+#               nb we can also include the master server here if we need to do some update patching etc
+
+- create another file again called vi  ansible.config, past the below code on it
+                            [defaults]
+                            host_key_checking= False
+                            inventory=inventory.yml    ## this inventory.yml most match the file name in line 5
+                            interpreter_python=auto_silent
+                            localhost_warning=false
+                            deprecation_warnings=False  
+                            #log_path= /home/ec2-user/ansible-dev/ansible.log  ## this simply means at the end of this create a file call ansible.log and
+                                                                                in this path /home/ec2-user/ansible-dev/ and put the logs there.
+                                                                               ## all our playbook inventory.yml task output logs will be put in the 
+                                                                               ansible.log file we ask ansible to create it for us , u can open and 
+                                                                               check the logs message after u execute ur playbook
+                              
+
+- run ansible all -m ping   # this command is use to check the connectivity of  the target server   # all means all the target node in the inventory.yml file
+- u can also run just a specific node ie <ansible webserveres -m ping> this will just check only the connectivity of this target server s   OR <ansible all -m ping -l webservers> this is in the case where u have group many server but u just need to check just one of the instance
+# all the below command are known as ansible ad-hoc command
+- run ansible all -a 'uptime'  # <all the output that will display here is from the target node in the inventory.yml file>
+- run ansible all -a 'uname -r'   ## if u have 1000 servers on the target node in the inventory.yml it will display all their uptime,date etc
+- run ansible all -a 'date'
+- run ansible all -m file -a 'path=/tmp/ansible.tex state=touch or directory' ## this command is creating the a file call ansible.txt in the tmp directory to all the target node in the inventory.yml file, (-m file stand for module)  How to get this modules? browse <ansible modules>
+- run ansible all -m file -a 'path=/tmp/ansible.tex state=absent'  ## this command wil go and delete the fill we created in line 45 on all the target node concern using the inventory.yml file
+
+# to write a playbook u can go on the browser search for ansible module to learn how u can write ur playbook
+- example to write a playbook that can create a file, directory , give permission , you can go to ur ansible modules and lern some of the trick
+# lets run ad-hoc command with the module group
+  on ur terminal run ansible all -m group -a 'name=cloud state=present or absent' -b    ##<let explain it , the all stand for all the target node in the inventory file , -m group is the module ie we want to either create or delete a particular group, -a is the agument to say go and create of delete this grp, -b is telling the master node to act as the root user in other to have permission to create it>
+                                                    

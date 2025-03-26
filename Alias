@@ -1,0 +1,6 @@
+
+
+alias g=' git add. ;git commit -m "fff";git push' 
+
+
+this simply mean when i run g do all the above command

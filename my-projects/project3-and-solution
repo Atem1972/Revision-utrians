@@ -1,0 +1,281 @@
+AWS PROJECT 3: Build a User registration API with API Gateway, Lambda and DynamoDB
+
+ AWS Projects  AWS PROJECT 3: Build a User registration API with API Gateway, Lambda and DynamoDB
+In Progress
+
+![image](image.png)
+
+
+Build a CRUD Serverless API with AWS Lambda, API Gateway and a DynamoDB from Scratch
+Objective:
+You are the team head in charge of a project to register employees in your company. Given that this project involves registering users and searching for various users, launching an entire server for this will be of great loss to the company. So your task here is to look for a possible solution that won’t involve launching a whole server, thereby reducing cost. After doing some research and discussing with the developers, you decided to go serverless.
+
+Serverless Solution Components:
+Frontend:
+The frontend application is built by developers using JavaScript, HTML, and CSS. It is hosted on an Amazon S3 bucket to ensure scalability and cost efficiency.
+
+Backend:
+The backend logic is implemented as AWS Lambda functions, ensuring that you only pay for the compute time you consume.
+
+Data Transfer and Storage:
+Data is transferred from the frontend to the backend using AWS API Gateway, which acts as a secure interface. DynamoDB is used as the database to store employee data, providing a fully managed, scalable, and low-latency data storage solution.
+
+AWS Services Used:
+AWS Lambda: Handles the backend logic and CRUD operations.
+
+AWS API Gateway: Serves as the interface for communication between the front-end and back-end.
+
+Amazon DynamoDB: A NoSQL database used to store and manage employee data.
+
+Amazon S3: Hosts the static frontend files (HTML, CSS, JavaScript).
+
+Amazon CloudFront: Distributes content globally with low latency, improving the performance of the front-end application.
+
+Amazon Route 53: Manages domain name registration and DNS routing for the application.
+
+AWS Certificate Manager: Provides SSL/TLS certificates for secure communication between the frontend, API Gateway, and backend services.
+
+Project Documentation:
+For detailed step-by-step instructions on building this serverless CRUD API, refer to the Project Documentation.
+
+
+### solution
+
+# THIS APPLICATION IS JUST TO COLLECT AND SAVE USER DATA
+# THIS APPLICATION IS CALL EVENT DRIVEN BC THE APPLICATION ONLY RUN WHEN SOMEONE HITE THE APPLICATION URL
+# this is a serverless artichtecture
+ ![alt text](image-4.png)
+ let me explain this image
+ - the application code is deploy in s3 bucket the entry point is in s3 bucket
+ - user hite our website, the trafic goes to our ROUTE53
+ - route53 send the trafic to our catch edge location (cloudfront)  and cloudfront pull the content from the s3 and
+ - the trafic hite api gateway before going to the lambda, the is a link that is coming from the api gateway to s3 so that when u hite it,
+ it trigger the lambda function and the lambda function will send your data to dynamoDB FOR IT TO BE SAVE, IT CAN ALSO BE DELETING DATA OR EDITTING IT
+ - API gateway will need access to our lambda
+ - lambda will need access to dynamodb, we shall create a role in IAM for this communication
+ - and we are using https to server the trafic for it to be secure  and 
+ 
+ ## LETS DIVE DOWN TO CREATE IT
+
+ - on aws search cloudfront
+- click on create cloudfront distribution
+- Under the Origin settings section, click on the Origin Domain Name field and select the S3 bucket you created earlier. Then click on Use website        endpoint button.
+- In the Origin Path field, leave it blank
+- For the field Enable Origin shield, select NO
+- Scroll down to the Default Cache Behavior settings section. For Viewer Protocol Policy, select Redirect HTTP to HTTPS.
+- In the Web Application Firewall section, choose Do not enable security protections just for the demo.
+- Next, scroll down to the Settings. Inside the Default Root Object field, enter the filename at the root level, which should be your landing page. I used index.html as my Default Root Object.  ie default root object =index.html
+- click on Create Distribution.
+
+# lets create hosted zone in route53 
+- we belive u have already create configure ur domain
+# Setting records on route53 to direct traffic to CloudFront
+- click on create record
+- on alias
+- route trafic to = alias to cloudfront distribution
+- An alias to a CloudFront distribution and another record in the same hosted zone are global and available only in US East (N. Virginia).= select the
+cloudfront link u created 
+
+# lets request for a certificate in aws
+- search ACM
+- FULLY QUALIFY domain name = dev-guro.info
+- click request
+- validation method = choose DNS OR EMAIL BUT I WILL GO WITH DNS
+- Key algorithm = ANY OF THE BELOW BUT I WILL GO WITH THE FIRST
+- U WILL SEE PENDING VALIDATION
+- SCROW down and click on create record in route53 # before u click here make sure u have created a hosting zone in route53
+- click on create record
+
+### CREATE DYNAMODB (no sequence data base)
+-go to asw search dynamodb
+- click on create tables
+- table name = any name gmt-app-dev
+- partition key = id and it shld be string
+- click create table
+
+# create iam role
+# attach 2 policy
+- cloudwatchfullacess # for the API request
+- amazondynamodbfullaccess for database access
+- go to iam click on create role
+- live it at aws service
+- service case = click drop down select lambda
+- next
+- in permission police search for cloudwatchfullacess # <here lambda want to talk to cloud watch to push the logs to cloudwatch
+- in same permision policy search amazondynamodbfullaccess   # <lambda want to also talk to dynamodb bc he need to send user infformation to dynamodb
+ note u can add many permission police if lambda need to connect to another service, same thing if ec2 need to connect to other services
+- next
+- role name = any name lambda to dynamo-cloudwatch
+- create role
+
+# create lambda function
+#  creat the lambda function and writing the CRUD code
+- Function name = any name
+- Runtime = select the language ur code is writen on ie python, nodejs etc
+# permissions 
+- click on Change default execution role
+- Execution role = click on use an existing role
+- Existing role = select the role name u created earlier
+- create function
+- to edit time out and memory, double click on ur lampda function 
+- click on configure
+- then click edit , after finish save
+- click on code on ur lambda function
+- create a file ending with .py
+- past ur code on the space , check on the code if modification of name is needed
+- clik on deploy
+# all this code can be found in lambda i put it there
+- CREATE another file inside ur lambda function ie custom_encoder.py. 
+- past this code in the second file u created to configure the api gateway
+    import json
+from decimal import Decimal
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj) #return a float version of that decimal
+        
+        return json.JSONEncoder.default(self, obj)
+ - all this code could have still been in one file
+ - click deploy  
+We are done creating the lambda function and writing the CRUD code
+
+## Configuring the API GATEWAY
+- go to aws and search API GATEWAY AND CLICK CREATE
+- CHOOSE REST API
+- CLICK BUILD REST API
+- select New API
+- Enter the name of the API and click on Create API
+
+### Now let's create the various endpoints (resources)
+NOTE THIS endpoint are called resources , this resources are just the url of all the application build on that particular websit
+<ie url for login page
+< url for payment page
+< url for suport page etc >
+take note ,when the developer say we need an endpoint call login, video, suport etc you go to aws create ur api gateway then create the 
+various endpoint ask my the developer which are also known as resources
+- click on create resource
+- Resource path = /            - Resource name = <paymen    # <this most be on the on the developer code or it will not work> 
+- click on this box CORS (Cross Origin Resource Sharing) Info
+- click create
+- click on the root sign / then click on create resource
+- select /             - RESOURCE NAME = <login>
+- click to tick the box then click creat
+- click on the root sign / then click on create resource
+- select /           - resource name = <suport>
+- click to tick the box then click creat
+# note<if you see the below format of code in any code just no that they are creatind an endpoint resource in api gateway in aws and u shld follow the instruction above, first create the api gate way, then resource following the code then method>
+       #define our Paths
+ note      healthPath = '/login'
+ note      productPath = '/payment'
+ note      productsPath = '/suports'
+
+## lets create the methods for each resource.
+# what is this method all about , 
+NOTE when you type utrian.com this GET MTHODe
+when u sign in is call POST METHOD
+when u DELET ur passwd is call DELETE METHOD
+putMethod, HEALTHMETHOD 
+# BELOW IS THE AMOUNT OF METHOD U ARE TO CREATE FOR EACH OF THE ENDPOIT OR RESOURCE
+HAVE U EVER RELEASE SOMETHING LETS SAY U WANT TO CHANGE UR PASSWD ON A WEBSITE AND IT SAYS ACCESS DENIES THE MEANS THEY DID NOT GIVE U POST MTHODE IE THIS 
+METHOD WAS LEFT OUT FROM THEIR CODE
+             <The login will have just a GET method
+              The payment resource will have GET, PUT, POST, and DELETE methods.
+              The suport resource will have just a GET method.>
+ # FIRST ENDPOINT OR RESOURCES             
+- on the resources u created click on login 
+- click create method  
+- choose the GET METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+# SECOND ENDPOINT OR RESOURCE
+-  A) on the resources u created click on PAYMENT 
+- click on the resource payment
+- click create method
+-choose  GET METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-  b) on the resources u created click on PAYMENT 
+- click create method payment
+-choose   PUT METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  then    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+- C) on the resources u created click on PAYMENT
+- click on the resource payment
+- click create method
+-choose  POST METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-  D) on the resources u created click on PAYMENT 
+- CLICK on the resource payment
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+# THIRD ENDPOINT OR RESOURCE support
+-a) CLICK on the resource suport
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+-a) CLICK on the resource suport
+- click create method
+-choose  DELETE METHOD
+- SELECT LAMBDA FUNCTION     #BUT IF IT WAS THAT WE INSTALL APACHE SOMEWHERE THEN WE WILL CHOOSE HTTP  
+- ON THE BOX CALL LAMBDA PROXY INTERGRATION
+- lamda function select ur region  <then>    SELECT THE NAME OF YOUR LAMBDA FUNCTION
+- CLICK CREATE METHOD
+
+- click on the login resource and then, click on Enable cors
+- On the popup select DEFAULT 5XX # it will allow all the method then save
+- click on the payment resource and then, click on Enable cors
+- click on the suport resource and then, click on Enable cors
+- click on the root sign / aand click on deploy api
+- stage select new stage
+- stage name = any name
+- click deploy
+- u will see ur stage name and the api gateway url
+- copy the url on the browser be adding /payment, /login, /suport and it will take u to the diffn resouces
+
+##  Create an S3 bucket
+# COPY THE PROCEDURE FROM PROJECT 2
+CLONE THE URL AND USE ON THIS WEBSITE =  https://github.com/utrains/lambda-api-code.git
+# MAKE SURE U CHANGE THE API LINK WTH URS , COPY THE LINK OF THE API ABOVE PUTNTHERE
+Open the index.js file and change the value of your api_root to that of your API (remember you were asked to take note of the URL after creating your API)
+Copy and paste in the double quotes. ( please add the / at the end as shown in Figure 20 ) ie "    /"
+# const api_root =" https://jhkrukurfsrufsrsg/"
+# copy the s3 url to the browser
+
+#  Testing website
+Click on Create and fill out the form
+Then click ok
+The new user will be created in the database look at Figure 33.
+
+Figure 32: user Creation
+The image shows the newly created user displayed on the website.
+
+Figure 33: A user was successfully added
+Now go to dynamodb and click on explore items on the side menu, then choose the dynamoDB that you created, you should see the items created in the database.
+
+
+
+Figure 34: Exploring items in DynamoDB
+You can see clearly that the S3 bucket link is long and not presentable so you can't give it to a client. You will have to add a custom domain name and https using the certificate manager. The next thing to do is configure Cloudfront, Certificate Manager, route 53, and a custom domain name. Here is the link to the tutorial https://docs.google.com/document/u/0/d/1EGlzhtYLI_3PWh8_tP3fNkOT_nHP4Bws_AnsXp0Ofxo/edit 

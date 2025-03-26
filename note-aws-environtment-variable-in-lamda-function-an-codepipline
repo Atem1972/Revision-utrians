@@ -1,0 +1,13 @@
+in aws when a source code is give to u , to build a codepipline check on the buildspec.yml file is the are some sensitive datedata that u can create a variable with . things like aws <account id =3333333, image name =uuu, container name = jjj , repository name =jjj, etc make a veriable from this go to the buildspec instead of putting this sensitive data there instead call them there eg <$account_id, $image name.
+on the build stage u can write the real value eg <aws account id =3333333, image name =uuu, container name = jjj , repository name =jjj
+
+
+same thing with lambda function code 
+go to configuration search for variable 
+- make varaible out of the sensitive data from ur function code like password = 23343, user_name =gdggg 
+- then return to the code and only call the variable like <$password, $user_name
+
+
+
+explain this in an interview
+python does not use $ to call variable  but this print(user_name) print(passwd)

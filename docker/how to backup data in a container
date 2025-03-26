@@ -1,0 +1,14 @@
+creat a volume # this will persist the data and save
+run docker volume  create dev1  = to creat volume
+run docker volume ls = to see all ur volume
+run docker inspect volume dev1 = this will show u all the information in the volume , 
+## copy path from the mountpoint in docker inspect volume dev1
+
+## lets mount the volume to our container so it can copy all the file and keep it for backup
+docker run -d --name web -v dev1:/usr/local/apache2/htdocs atem1972/img:v2   = -d for detach mode, --name given ur container a name, -v the name of ur volume, path of the image, name of the image u want to run container from
+
+## to see if the container has really been backup run
+run sudo ls (past the path u copy from the mountpoint in line 5
+
+### Now LETS attach our backup to an empty image so we can  bring up a new container
+docker run -d --name web -v dev1:/usr/local/apache2/htdocs -p 8088:80 httpd    ==-d for detach mode, --name given ur container a name, -v the name of ur volume, path of the IMAGE, -P MAPPING PORT, EMPTY IMAGE

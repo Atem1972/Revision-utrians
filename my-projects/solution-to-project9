@@ -1,0 +1,78 @@
+## AWS PROJECT 9: List S3 Buckets that have public access using Lambda Function
+ 
+
+Problem Statement:
+ 
+
+At work, there is an ongoing need to identify and monitor all S3 buckets with public access. Public access to S3 buckets poses a significant risk to the security and confidentiality of company data. Addressing this issue is crucial to prevent unauthorized access, data breaches, and potential compromises.
+# we can make the python code to allow some bucket that are public
+ 
+Solution Approaches:
+ 
+
+There are two main ways to address this problem:
+
+# On-Premise Solution:
+Write a Python script using Boto3 to list all S3 buckets with public access.
+Send an email notification to the security team.
+Schedule the script using a cron job on a Linux machine.
+
+# Cloud-Based Solution:
+Write a Python script using Boto3 to list all S3 buckets with public access.
+Send an email notification to the security team.
+Use an AWS Lambda function as the runtime for the script.
+Schedule the Lambda function using a CloudWatch event. ie we we go to cloudwatch create an event that will trigger our code in lamda to run at our agree time
+
+
+
+small project write a python script to start instance at 7 am and another to to stop instance at 7pm 
+- use conjob if uare on premise and lambda + cloudwatch event if u are on cloud and create and sns notfiction service to inform u if he did it
+- write a python code to delete instances that do not have tag on it
+- scheldule backup of instance using lambda function , we will nd pythond code
+- scheldule database backup using lambda
+- scheldule transfer of AMI from one region to another 
+
+ 
+## Chosen Solution:
+
+# go to SES IN aws to create email
+- click on create identity
+- click on email address
+- emaill address = put ur email
+- click create
+- go to ur email an confirm
+
+# create a lambda function
+- go to aws, click on create lambdafunction
+- choose the code language
+- create
+- copy and past the script in the lambda function
+- on the code modify it with the email u created in SES
+- PLEASE LOOk for sensitive data create an enviroment variable from lambda environment and only call on the python code
+
+# our lambda need to talk to SES AND S3 let create a role and attach policy
+- go to aws iam click on creat role
+- select ec2
+- select lambda
+- other permision police = amazonsesfullaceess and amazons3fulaccess or read only
+- click on add permision
+
+# lets test our lambda function
+- go to test
+- event name = any name 
+- save and click on test
+- if u get and error message of time out then
+- go to configuration/ general
+
+
+# lets set it to run every monday of the week this will  trigger automatically using cloudwatch
+- go to aws and click on cloudwatch
+- click rules create rules
+- name = any name
+- click scheldule
+- click continus to crate rule
+- on cron = 00 8 ? * mon *
+- next
+- click on the drop down a choose lambda
+- select the name of the function u want to trigger
+- click create rule

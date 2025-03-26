@@ -1,0 +1,165 @@
+
+## Jenkins server configuration: JAVA_HOME, git, maven
+In this tutorial, we set up the JAVA_HOME path for Jenkins plugins. We also configure Jenkins to use git and maven plugin
+
+# Prerequisites:
+Before starting this tutorial, you must:
+- Have a GitHub account and know how to use basic Git commands
+- Have GitBash on your system
+- Have a Jenkins server up and running
+- Open and log in to your Jenkins server in your browser
+
+Note At the end of the jenkins server installation using the terraform code, we display the ssh command to connect to the server.
+you can run terraform output in the directory to display it
+
+# 1- Configure the JAVA_HOME path
+As a Java application, Jenkins can be run on various platforms, including Windows, macOS, and Linux, as long as the Java Runtime Environment (JRE) is installed.
+
+NOTE that is why , before installing jenkins , we needed to install a version of java that is supported by jenkins. you can check that in the terraform code we used
+
+Now, after the installation, we need to configure the <Java path >to ensure that Jenkins can locate and use the correct <Java Runtime Environment (JRE)> or Java Development Kit (JDK). This also allows all the plugins that use Java to know in which directory it has been installed.
+The most common approach to configure the Java path is to set the JAVA_HOME environment variable to the path of the desired Java installation.
+
+Login to your Jenkins server from the terminal and let’s follow the steps to configure the JAVA_HOME environment variable:
+First, check the version of Java installed
+java -version
+
+- Find the directory where Java has been installed and copy that path:
+sudo -i
+find /usr/lib/jvm/java-11* | head -n 3
+</usr/lib/jvm/java-11-amazon-corretto.86_64>
+
+
+- Let’s update that path in the <>.bash_profile>  file to set it permanently
+- vi ~/.bash_profile
+
+Go to the Insert mode and move to the section # User specific environment and startup programs
+Insert a line: JAVA_HOME=paste the path you copied. Example:
+JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto.x86_64
+
+Now, modify the PATH variable by adding the new variable created. Example
+# PATH=$PATH:$HOME/bin:$JAVA_HOME
+- modify JAVA_HOME = </usr/lib/jvm/java-11-amazon-corretto.86_64>
+- PATH = $PATH:$HOME/.local/bin:$HOME/bin:$JAVA_HOME
+
+
+Save and quit the vi interface
+
+- Apply the new changes to the .bash_profile file
+ RUN source .bash_profile
+
+- You can display the variable content with
+RUN echo $JAVA_HOME
+
+
+## 2- Install and configure git on Jenkins
+While in the Jenkins server, use the yum command to install git
+- yum install git -y
+
+
+# COPY THE JENKINS URL ON THE BROWSER
+After the installation, you can see the version using the git -- version command :
+git --version
+
+Now we need to configure git on the web interface of Jenkins.
+
+If you have the Jenkins server opened in a browser tab already, log in to the Jenkins server console
+username: devops
+password: devops
+
+Once on the home page of Jenkins,
+Click on Manage Jenkins then on Plugins
+
+Under the Available plugins tab as shown in the image below, search for GitHub integration using the filter 
+Check the box for GitHub Integration
+Click on Install without restart and wait for the installation to complete
+
+- Now, click on Dashboard
+- Go to Manage Jenkins and click on Tools
+
+Set up git on the Jenkins console
+Under the part for Git
+Remove the Default name and put Github
+# Set up the JAVA_HOME path in the Jenkins console
+Scroll up to the JDK part for Java, click on Add JDK button then make sure to uncheck the Install automatically box and enter the JDK name: JAVA_HOME
+In the JAVA_HOME attribute, put  the path to the JAVA_HOME variable (use the echo $JAVA_HOME in the terminal, copy the path, and paste it in Jenkins)
+# IE JDK
+#Name = JAVA_HOME
+#JAVA_HOME = TO GET THE PATH GO TO UR SERVER AN CAT $JAVA_HOME
+#uncheck the box install automatically
+
+# GIt installation ON JENKINS CONSOLE
+=== GIT
+#NME = Github
+#path to git executable? = git
+
+
+Click on Apply then on Save
+
+#  3- Install and configure Maven on Jenkins
+Maven is used to build projects in Jenkins. It is a code-build tool that is used to convert your code to an artifact. This is a widely used plugin to implement continuous integration with Jenkins.
+Follow the steps to install and configure Maven on the Jenkins server
+# a- Download the Maven package
+- Open a new tab in the browser and open the <link https://maven.apache.org/download.cgi
+- Scroll down in the Files section of the page. The line that is marked Binary tar.gz archive is the one we will use.
+- Right-click on apache-maven-3.9.3-bin.tar.gz  (or the version you see with this extension) and Copy the link address
+
+In the Jenkins server terminal, run the command to download the package
+cd /opt
+ls
+run wget paste the copied link here
+ls
+
+- Now unzip the package
+tar -xvf apache-maven-3.9.3-bin.tar.gz
+ls
+
+- You can remove the tar file now if you want
+rm -rf apache-maven-3.9.3-bin.tar.gz
+ls
+
+- Let’s rename the directory to simply maven
+mv apache-maven-3.9.3 maven
+ls
+
+
+
+# b- Setup the M2_HOME and the M2 path in the .bash_profile file
+First, go back to the root directory then open the file
+cd
+vim .bash_profile
+
+Go to the insert mode and add the following lines under the section User specific environment and startup program
+# maven config
+M2_HOME=/opt/maven
+M2=/opt/maven/bin
+
+Also modify the PATH value to add the new variable we have set. Example:
+PATH= $PATH:$HOME/bin:$JAVA_HOME:$M2_HOME:$M2
+
+
+
+Now save and quit the interface. Apply the path changes with the command:
+source .bash_profile
+
+You can display the value of the M2 variable and also the version of Maven installed
+echo $M2
+mvn -version
+
+
+
+## c- Setup Maven on the Jenkins console
+Once on the home page of Jenkins, we will install two plugins for Maven
+- Click on Manage Jenkins then on Plugins
+- Under the Available plugins tab as shown in the image below, search for maven using the filter.  Then check the box for the Maven Integration and for Maven Invoker
+- Click on Install without restart and wait for the installation to complete 
+
+- Now, click on Dashboard and go to Manage Jenkins and click on Tools
+- Under the Maven part, click on Add Maven, uncheck the Install Automatically box then put these configurations:
+# Name: M2_HOME
+# MAVEN_HOME: /opt/maven
+Click on Apply then on Save to save the maven path in our Jenkins web interface
+
+
+Congratulations! You have successfully installed and configured JAVA_HOME, Git and Maven on your Jenkins server. Now, we can run the first job using those plugins. Click on the following link to make some practice: Practice: Git Maven Project
+Exercise: In your AWS EC2 console, create an AMI with the current state of your jenkins server

@@ -1,0 +1,4 @@
+ssh -i jenkins-key.pem ec2-user@3.3.3.3
+- jenkins-key.pem is the key name we gave to our key ourself
+- ec2-user is the user of the instance, it can be ubuntu, alphine etc
+- @3.3.3.3 is the ip address of the instance      

@@ -1,0 +1,37 @@
+
+module "ami" {
+  source = "../ami-creation"                # this simply telling the module where he can get the code to use 
+  source_id = aws_instance.ec2_instance.id  # this simply means create ami from this instance , this a part to our instance
+  ami_name = "jenkins_ami"                  # this is simply the name u want to call ur ami
+}
+
+output "jenkins_ami_id" {
+  value = module.ami.ami_id
+}
+
+run terraform init
+terraform apply
+- go to aws and check if it was created
+- go to ec2, scrowdown to amis , u will see it
+
+
+## please make sure before u destroy the entire infrastructure detach the AMI from the entire infrastructure so that it will not be destroy with others ie
+  - firsrtly comment the resource as seen bellow;
+  
+  /* #like this
+  module "ami" {
+    source = "../ami-creation"                
+    source_id = aws_instance.ec2_instance.id  
+    ami_name = "jenkins_ami"                  
+  }
+  
+  output "jenkins_ami_id" {
+    value = module.ami.ami_id
+  }
+    */ like this
+
+ run terraform state list                                     ##this will show u everything terraform created
+ run terraform state rm module.ami.aws_ami_from_instance.ami  ##  this is to remove a particular resource u donot want terraform to track again
+
+## you can now destroy ur infrastructure
+terraform destroy --auto-approve

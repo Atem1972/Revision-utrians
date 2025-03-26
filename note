@@ -1,0 +1,3 @@
+wrrite a pythond code that will delete role in aws that are 50 days old 
+use lambda to exercute it
+even instance etc
