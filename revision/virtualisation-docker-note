@@ -1,0 +1,13 @@
+free portfolio html website templates puppies
+
+application are moving from monolothic to micro service
+method of SDLC
+A-WATER FALL = PHYSICAL MACHINE like mainframe 
+B-Agil = VM virtual machine. DEPLOYMENT IN VM (delivery in 2weeks sprink)
+C-devops = containerisation, we use docker . DEPLOYMENT IN CONTAINER
+monolothic: everything is tide together ie on our app , the payment, registration, review, subscribtion everything is build under one umbrella ie php,python, java  
+micro service: with micro service ww can use diffn language to build the diffrn application ie we can use python for payment pag, java for subscription etc and they talk together using the url of each other and it is call Api call
+
+
+how did virtualisation comes about, it is a physicall machine that a virtualisation software has been install on it (hypervisor,vitual box)and we can now  have diffn OS eg ubuntu,redhat,centos, debian. we can now run diffn appl on a single physical and this is now call vitual machine bc we can not touch. befor if u want to deploy a single application you will buy one physical machine for only that application this was wast of resources.
+The are two type of hpervisor 1 and 2, with 1 the hpervisor is install directly on physical bf vm are created while on type 2 the hypervisor is install on the operating system of the physical machine bf vm are created

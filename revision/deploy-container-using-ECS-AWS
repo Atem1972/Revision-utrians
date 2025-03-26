@@ -1,0 +1,63 @@
+# Deploy a single container application to ECS
+
+1- Create a cluster.
+Go to the ECS dashboard on your AWS account.
+Click on clusters,  click on Create Cluster.
+     - cluster name= devcluster
+     - default namespace= devcluster
+     - choose aws fargate (serverless)
+     - click clreate
+
+
+
+2- Create a task definition.
+On the sidebar, click on Task definitions. Then click on Create a new task definition.
+            - task definition family ie name=  webapp
+            - container name = webapp
+            - image url = go to ur ECR COPY THE URL OF THE CONTAINER U WANT TO USE AND PAST HERE
+            - ESSENTIAL Container = yes
+ Now just scroll down till the end of the page, then click on Create.  
+
+
+
+   3- Create a Service
+To create the service, Click on Clusters on the sidebar
+Then click on the cluster you created earlier.
+
+On the page that comes up, scroll down to service and click on Create
+        - family = choose webapp u created on task
+        - revision = 1(LATEST)
+        - SERVICE NAME  = ANYTHING
+        - SERVICE TYPE = REPLICATE
+
+Now scroll down to Load Balancing
+Select Application Load balancer for load balancer type.
+Enter the Load Balancer name
+    - Load balancer type = select application load balancer
+    - container = select webapp 80:80
+    - aplication load balancer = select creat a new load balancer
+    - load balancer name = anything
+    - health check grace period = 0
+
+
+    Scroll down to Target group
+Select Create new target group
+then change the name of the target group to DevTarget
+       - click on create new listener
+             port = 80
+             protocol = http
+        - click on create new taeget group
+             target group name = anything
+             protocol = http
+             deregister delay = 300
+             health check protocol = http
+             health check path = /    
+  Once you are done, scroll down and click on Create.   wait for a few minute for the service to be created   
+  make sure http security group port of thi LB is open     
+
+
+  # TO ACCESS OUR APPLICATION ON THE BROWSER GO TO UR LB AND COPY THE DNS LINK AND PUT ON THE BROWSER
+  - U CAN ADD UR ROUTE53 AND SSL CERTIFICATE TO IT 
+   
+
+

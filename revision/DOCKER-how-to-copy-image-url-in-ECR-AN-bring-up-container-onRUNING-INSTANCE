@@ -1,0 +1,30 @@
+https://docs.google.com/document/d/1spbrSaPJWo9_i4LoI5CO5buDlUacDac7JTNeva-PuWE/edit?usp=sharing
+RUN ls ~/.aws  # to see ur aws config file
+run cat ~/.aws/credentials
+
+## how to give access for ur ec2 to aws , example u want to push an image from ur instance to ECR?
+ we should create a role and attach to our instance to give access
+ - go to iam
+ - click on role
+ -  click on creat role
+ - Trusted entity type = click on aws service
+ - Use case = select ec2
+ - click on next
+ - click on administration accesss
+ -next
+ - click creat role
+ - role name = any name
+ - click creat
+ ## go to ur ec2 and attach the role
+ - click on ec2
+ - click on the instance box u want to attach th role to
+ - go to action
+ - click on security
+ - select modify ima role
+ - on the iam role click on the drop down and select the role name u want to attach
+ - click on update iam role
+
+ run ecr get-login-password --region us-east-1 # to verify if ur server has access now to aws after finishing creating
+
+N/B NOTE THAT TO BUILD AN IMAGE U NEAAD A Dockerfile
+ -go to ecr copy the commands there to build and push image and past one after another  

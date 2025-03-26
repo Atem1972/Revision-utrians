@@ -1,0 +1,133 @@
+WK13
+INSTALL and configure terraform on ur laptop
+INSTALLand configureaws cli on ur laptop
+
+ 
+lauching a DOCKER LAB
+
+## 1- Clone Terraform code
+# Create a new directory, DevOpsLab. Our projects and labs will be created in this directory from here on.
+mkdir DevOpsLab
+
+# Navigate to the directory
+cd DevOpsLab
+
+
+# Now create a directory Docker which we will use to create all the Docker labs and projects.
+mkdir Docker
+
+
+# Now move into the directory
+cd Docker
+
+
+# clone the code from GitHub
+git clone https://github.com/utrains/docker-Lab.git
+
+
+# Once the cloning is completed, move into the docker-Lab directory
+cd docker-Lab
+
+
+# At this level, we will explain the code before creating our lab
+
+# 3- Launch Lab
+# To launch the lab, run the commands below on your terminal
+terraform init
+terraform plan
+terraform apply --auto-approve
+
+- ssh to the server
+
+Then copy the SSH command underlined above and paste it to access the server using an SSH connection.
+Once in your server, run the command below to verify if your lab is working
+- run docker ps
+## FINISH LAUNCHING DOCKER LAB
+
+STEP 2
+## GO TO AWS AND CREATE ECR REPOSITORY
+## PUSH IMAGE YOUR BUILD IMAGE FROM YOUR LAPTOP TO ECR REPOSITORY U CREATED
+
+
+## DEPLOY THE IMAGE U PUSH TO ECR USING AWS ECS
+To deploy to ECS, we need to create a cluster, a task definition, and services.
+1- Create a cluster.
+Login to your AWS account and on the search bar tap ECS then click on Elastic Container Service 
+ 
+ # HERE CREAT ECS CLUSTER
+ - click on create cluster
+ - cluster name = any name
+ - infrastructure = select fargate
+ - click create
+
+
+ - CREAT NEW TASK DEFINATION , U WILL SEE A SPACE TO PUT THE URL OF UR IMAGE IN ECR
+   a) task definition = any name
+   b) click on aws fargat , serverless
+   c) container detail, name = google
+   d) url = copy from ecr and past here
+   f) essential container = yes
+   g) port mapping ,port name = any name
+   e) click create task definition
+
+# create service, and service create LB 
+ click on cluster
+  - click on the name of the cluster u created
+  - scrow down and click on service  
+   - SElect capacity provider
+   -capacity provider = fargate
+   - select service
+   - family = select the name u gave to ur task
+   - service name = any name
+   - select replica
+   - desire task = 2 
+   - click on LB
+   - file some space 
+   - click on creat service
+   - check that ur default lb security-group has port 80 open
+
+
+ - COPY THE LAODBALANCER DNS TO THE BROSWER
+
+
+ # lets create cicd codepipline
+ - go to aws search codepipline
+ - click on create codepipline
+ - click on Build custom pipeline
+ - next
+ - Pipeline name = any name
+ - next
+ - Source provider = click on the drop down and sellect   Github(via Github App)
+ - click on connect to github
+ - connection name = any name
+ - click connect to github
+ - click on install new app
+ - select and click on ur github name
+ - when u are in scrow down and click on all repository
+ - click save
+ - click on connect
+ -  Repository name = select the repo name with ur code 
+ - Default branch = main
+ - click on codepipline default
+  - next
+
+  # codebuild stage
+  - click on other build provider
+  - click on create project
+  - Project name = any name
+  - role name = put a role 
+  - AWS_DEFAULT_REGION = us-east-1
+  - AWS_ACCOUNT_ID = PAST UR AWS ACCOUNT ID NUMBER
+  - IMAGE_REPO_NAME = the name of the repo in ecr
+  - IMAGE_TAG = the tag of ur image in ecr
+  - CONTAIANER-NAME = the name of ur container in ecs
+  - click on Buildspec
+  - select Use a buildspec file
+  - Buildspec name = buildspec.yml
+  - next 
+  - Deploy provider = amazon ecs
+  - Cluster name = put the name of ur cluster in ecs
+  - Service name = the name of the service u created in ecs
+  - Image definitions file = imagedefinitions.json
+  - go to iam and creat ur role, look for the role name u created
+  - if deployment faild go to buildspec file in github and edit the container name with the container name in ecs

@@ -1,0 +1,35 @@
+what is ECR in aws ? it is a service in aws that u can use to send and store ur build imamge ,it is an artifact ie an artifact is a place where u can upload and download something, example of an artifact soft jfrog. 
+
+# how can will push image from ec2 to ecr
+A) firtly 
+    -we need to launch an ec2 server, install docker on it
+    - build the image u want to push to ecr artifact in aws .we and get this on our docker note
+
+B) # secondly
+# creat a role between ec2 and ecr
+- give fullaccess to ecr
+- GO TO IAM IN AWS, CLICK on role , click on create role
+- slect aws services, 
+- select ec2 for use case then next
+- Search for the policy AmazonEC2ContainerRegistryFullAccess. then next
+- role name  THEN CREATE
+
+# HOW TO CREATE ECR
+- to create ecr go to aws
+- feel the space and click create
+
+# how to push our image from from our ec2 server to CER
+- GO TO ECR click on the repository u will want to push the image to
+- click on view push command
+- copy each command at a time and run on ur ec2 instance terminal
+- this will push the image to the repo in ecr
+
+# how do will run container in aws?  we use the ECS SERVICE 
+ - go to ecs
+ - click on cluster
+ - click on create cluster
+    a)Cluster configuration
+      - Cluster name = anything
+    b) Infrastructure 
+      - AWS Fargate (serverless), # if u want to run it without using a server ie serverless
+      - Amazon EC2 instances  # using instance to run it

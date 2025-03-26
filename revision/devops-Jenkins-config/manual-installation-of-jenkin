@@ -1,0 +1,165 @@
+
+## Install and configure a Jenkins server manually (using a Bash shell Script)
+ In this lab we will install and configure a jenkins server manually using a script in
+ an AWS EC2 instance. Follow the step to perform the task
+
+# Step 1: Create an EC2 instance in AWS with the RedHat Enterprise image
+# At this level, you know how to create an EC2 instance. Just launch one instance in AWS
+Name: jenkins-server
+- OS: RedHat Enterprise Image
+- Key pair: Use an existing key pair or create one jenkins-key (make sure you have it downloaded for remote connection)
+- Storage and other parameters: Default
+
+# Connect remotely to the EC2 instance, using the ssh command (Use your command copied from the AWS EC2 dashboard).
+ssh -i "C:\Users\hermann90\Downloads\jenkins_key.pem" 
+ec2-user@ec2-54-161-173-21.compute-1.amazonaws.com
+
+
+# Step 2: Install Jenkins on the EC2 instance created in Step 1
+To install Jenkins on our EC2 instance created in AWS, we will create a file in a directory of our EC2 instance. In this file, we will put a shell script for the installation of Jenkins. Finally, we will simply run this script on the remote server.
+In the EC2 server, create a folder called jenkins_ec2 and navigate to this folder using the cd command:
+
+
+- mkdir jenkins_ec2
+- cd jenkins_ec2
+
+# Create a file called install_jenkins_ec2.sh, copy the script below and paste it into this file, then save and quit
+
+
+vi install_jenkins_ec2.sh
+## go to the insert mode before pasting the content
+
+The content should look like the following. After pasting the content, save and exit the vi editor
+
+#!/bin/bash
+#-----------------------------------------------------------------------------------------------------------------#
+# @Autor : Utrains
+# Description : This is the script that will take care of the installation of Java, 
+#               Jenkins server and some utilities
+# Date : 03/22/2022
+#------------------------------------------------------------------------------------------------------------------#
+
+
+## Recover the ip address and update the server
+IP=$(hostname -I | awk '{print $2}')
+echo "START - install jenkins - "$IP
+echo "=====> [1]: updating ...."
+sudo yum update -y
+
+
+## Prerequisites tools(Wget, ...) for Jenkins
+echo "=====> [2]: install prerequisite tools for Jenkins"
+sudo yum install -y yum-presto
+
+
+# Although not needed for Jenkins, I like to use vim, so let's make sure it is installed:
+sudo yum install -y vim
+
+
+# The Jenkins setup makes use of wget, sshpass and gnupg2
+sudo yum install -y wget
+sudo yum install -y sshpass
+sudo yum install -y gnupg2
+
+
+# Let's make sure that we have the EPEL and IUS repositories installed.
+# This will allow us to use newer binaries than are found in the standard CentOS repositories.
+sudo wget -N http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius-release-1.0-13.ius.centos7.noarch.rpm
+sudo rpm -Uvh ius-release*.rpm
+
+
+# gnupg2 openssl :
+sudo yum install -y openssl
+
+
+# Jenkins on CentOS requires Java, but it won't work with the default (GCJ) version of Java. So, let's remove it:
+sudo yum remove -y java
+
+
+# install the OpenJDK version of Java 11:
+sudo yum install java-11* -y
+
+
+# Let's now install Jenkins:
+echo "=====> [3]: installing Jenkins ...."
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo yum install -y jenkins
+echo "=====> [4]: updating server after jenkins installation ...."
+sudo yum update -y
+echo "=====> [5]: Start Jenkins Daemon and Enable ...."
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+echo "=====> [6]: Ajust Firewall ...."
+sudo yum install -y firewalld
+sudo firewall-cmd --permanent --zone=public --add-port=8080/tcp
+sudo firewall-cmd --reload
+echo "END - install jenkins"
+
+
+Give the execute privileges on this file using chmod command:
+
+
+- sudo chmod +x install_jenkins_ec2.sh
+
+
+
+Run this script using sudo access to execute the script
+
+
+sudo ./install_jenkins_ec2.sh
+
+
+# After the installation is completed, you need to logout and reconnect to your EC2 server and check the status of the Jenkins daemon with systemctl.
+
+
+logout
+
+
+
+Log back into your server using your SSH command then check the status of the Jenkins daemon
+
+
+systemctl status jenkins
+
+
+At this level, we have just installed Jenkins on the server. We still have to configure the Jenkins web interface and create an Admin user.
+
+# Step 3: Configure the Jenkins web interface
+
+
+Open the browser and enter the public IP address of your server followed by the port number 8080. 
+Example: 5.10.127.1:8080
+
+# In the terminal of your server, use the command cat to display the server password, then copy the code that appears and paste it in the space provided for the administrator password
+
+
+- sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
+ The installation of Jenkins is almost finished. Click on install suggested plugins, to install some plugins.
+ 
+
+Plugins installation interfaces
+
+Once these plugins are installed, you land on the Jenkins interface to create a user. Fill this window with the following information :
+Username: devops
+Password: devops
+Confirm password: devops
+Full name: Devops admin
+E-mail address: your_email@gmail.com
+Click on Save and Continue button
+
+To finish the configuration, click on Start using Jenkins
+
+The Jenkins dashboard will be displayed.
+In 1, we see that our admin user is logged
+In 2, we have the tab to create the first job. We will dedicate an entire chapter to the creation of Jenkins jobs
+
+ 
+
+
+Clean Up
+When done with cloud resources in AWS it is a good practice to destroy them to avoid further charges.
+Destroy your AWS EC2 instance.
+

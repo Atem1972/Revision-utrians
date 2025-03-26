@@ -1,0 +1,74 @@
+## HOW to give permission to docker?
+sudo usermod -aG docker $USER
+newgrp docker
+docker run hello-world
+docker -d = to run the container on the background (detach mode)
+docker --rm =  this is when u want after stoping a container it shld be remove automatically
+docker -v   = to check version
+docker exec <put container name or id> env = this will show u the environment variable of that container
+docker images = to see all images
+run docker network create net  = to create a network 
+run docker network ls  = to least all the network
+docker ps  = to see all your containers
+docker ps -a -q = to see container id
+docker rm -f $(docker ps -a -q)  = to delete all container runing
+docker rm -f web1 web2 = this will delete only this two containers
+docker pull httpd  = to pull and image from docker registory
+docker -d httpd  = to run container from the image httpd on background (detach mode)
+docker ps -a  = to list all all containers plus exited once
+docker --name =  to give a name to container  ie(docker run -d --name web httpd)
+docker rename = to rename a container ie docker rename web  fun
+docker  run -d --name gam  redis = this will go out there and download redis
+docker stop web
+docker start web
+docker rm -f  web = to delete container
+docker exec -it web bash = to login to a container
+docker exec web cat /etc/os-release  = to see this output without login inside the container
+docker inspect web = this will show u every u need to know about that container
+ 
+
+ curl 127.36.748.244  = just to see if the end point of a server is workng
+ ifconfig  = to see ur network
+
+ webserver application means we can view it through the internet like nginx, httpd etc
+
+HOW CAN U MAP WEBSERVER APPLICATION THAT HAS SAME LISTENING PORT EG 80 OR 8080
+-docker -d --name web1 -p 8080:80 nginx == first is the runtime, detach mode, naming the container, mapping a port to the container, the name of the image we want to run our container from
+
+
+HOW TO ADD WEB CODE IN TO A CONTAINER (foldER var/www/html= file index.html)
+- fisrtly u need to ADD the part of e image u want to use bc we need to send our code on that folder path so we can see it on the browser eg httpd on linux is var/www/html , cd to it and look for (index.html) bc that is the file to put our code
+- or we can login to the container ie( docker exec -it web bash)
+-cd to the path 
+-ls 
+-htdocs
+- in httpd IN LINUX we need to put our code inside (index.html)
+on docker container we can install commands bc most container do not have them install bc of it light weigt nature
+
+vi index.html  (file for httpd)
+
+
+
+
+
+
+-we use the name or id number ti identify containers
+- why does container dies so quickly? bc containers are  ephemeral in nature
+
+
+Yes, containers are often referred to as ephemeral, meaning their lifecycle is temporary and designed to be short-lived. This is an essential characteristic of containerized environments like Docker or Kubernetes. Here's an explanation of what "ephemeral" means in the context of containers:
+
+What Does "Ephemeral" Mean for Containers?
+Short-lived by Nature:
+
+Containers are designed to start up quickly, perform their designated tasks, and then terminate. This is especially true in microservices architectures, where containers handle specific tasks or services and are replaced as needed.
+Stateless:
+
+Containers typically do not retain data after they are stopped or restarted unless explicitly configured with persistent storage. This makes them stateless by default.
+Easily Replaceable:
+
+Instead of modifying an existing container, the typical approach is to stop it and replace it with a new instance. This aligns with immutable infrastructure principles.
+Dynamic Scaling:
+
+In orchestrated environments like Kubernetes, containers can be scaled up or down dynamically to handle varying workloads. These containers can be destroyed as soon as they're no longer needed.
+

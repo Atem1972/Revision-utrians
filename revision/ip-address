@@ -1,0 +1,6 @@
+how to use subnet mask to determine the total number of ip in a give cidr
+256 ip address
+
+- 32-24=8 2*2*2*2*2*2*2*2=256
+512
+32-23=9 2*2*2*2*2*2*2*2*2=512

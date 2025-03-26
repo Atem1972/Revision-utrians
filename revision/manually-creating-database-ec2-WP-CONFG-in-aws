@@ -1,0 +1,116 @@
+# Deploy a WordPress application using Amazon RDS as database
+
+
+There is a WordPress app being actively developed and we need an environment in aws where to test the app before its deployment in production. For this we need a Linux  environment where to run the WordPress files, a database where to keep the data, and a sub domain with dev. keyword.  You are tasked to create this environment in aws.
+# Requirement
+creat route 53
+vpv
+public subnet 2
+private subnet 2
+
+
+
+# step 1a creating ec2, i believe u can creat that 
+- creat ec2 security group
+  - pleease creat key
+  - SUBNET SHOULD BE PUBLIC
+  - please create sg open shh and http from anywhere  
+    
+
+
+  - on the user data put this
+        #!/bin/bash
+sudo yum install wget httpd mysql php php-mysql -y
+sudo wget https://wordpress.org/latest.tar.gz
+sudo tar -xzf latest.tar.gz
+sudo cp -r wordpress/* /var/www/html
+sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+sudo cd /var/www/html
+sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+sudo chown -R apache:apache /var/www/html
+sudo systemctl start httpd 
+sudo systemctl enable httpd  
+
+the above user date will install mysql, php, wget and apache it will also download and copy the wordpress application to www directory
+
+- click on create instance
+
+# step1b creat a database security-group
+1 go to create security 
+2 name = database-sg
+3 description = put anything
+4 vpc = choose the vpc u created above
+5 ccick on add inbound rule
+    a) type  = mysql/auora
+    b) port rang = 3306
+    c) source  = select the security group for our ec2 instance above
+
+
+
+
+# step2 create database  
+   1 go to aws console
+   2 search RDS
+   2 click on DB INSTANCE (0/40)
+   3 click creat database
+   4 choose standard  create
+   5 choose mysql
+   6  Scroll down to the Templates section:  select Free tier
+   ON THE drop down fill the following:
+       a) DB instance identifier : wordpress or any other name
+       b) credential seting, master username:  admin
+       c) master password: hdrjrggj
+       d) confirm master passwd: hdrjrggj
+   leave the settings as default and scroll down to the Addition configuration bloc. u can still - adjust db.t3.mirco,  storage type, allocate storage, storage auto scaling
+# CONNECTTIVITY INFO
+    a) compute resource = click on donot connect to an ec2 compute resources
+    b) vpc = choose our vpc we created above
+    c)db subnet group = create new db subnet group
+    d) public access = no
+    f) vpc security group = choose the database security that we created
+
+   7 Click on Addition configuration.
+             a) database option  initial database name: wordpress
+             b) DB parameter group: default.mysql8.0
+             c) option group: default:mysql-8-0
+             d) on backup click on the box enable autmated backup
+             f) click on create database
+
+
+
+
+
+   #STEP4
+   - ssh into the EC2
+   - RUN ssh -i Downloads/valery.pem/ec2-user@2.2.2.2
+   - run ls /var/www/html  = to see the wordpress content we copy to this path using the user data
+   - sudo vi /var/www/html/wp-config.php
+            # check on the file and adjust db-name, user, passwd host
+              a) ('DB_NAME' , <'here'> ); # from aws
+              b) ( 'DB_user' , <'here'>); #from aws
+              c) ( 'DB_PASSWORD' , '<here'>); #from aws
+              f) ('DB_HOST' , <' put hostname of the database endpoint that we copy in connectivity and security endpoint in aws .> ) #from aws
+      save and quite = :wq
+
+ - Next, find the hostname for your RDS database in the AWS console. In the details of your RDS database, the hostname will be shown as the Endpoint in the Connectivity &  security section
+       a) go to ur aws consol
+       b) open rds 
+       c) click on ur database name
+       f) click on connectivity 
+       g) copy the endpoint id and past to f
+    
+ # u can now check ur browser
+ 
+ 
+   # the below is just to login to the database if u want to do some admin stuff
+  8   run sudo <past the endpoint u copy from g here> mysql -h <endpoint> -P 3306 -u <mymasteruser> -p  # this will login u to ur database
+             - enter ur database passwd
+  
+  9 run  CREATE USER 'wordpress' IDENTIFIED BY 'wordpress';
+  10 run GRANT ALL PRIVILEGES ON wordpress.* TO wordpress;
+   11 run FLUSH PRIVILEGES;
+    12 run  Exit   
+    n/b make sure to remember the username and passwd  
+
+
+ 

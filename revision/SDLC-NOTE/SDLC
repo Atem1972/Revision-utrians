@@ -1,0 +1,17 @@
+
+# WHAT is sdlc? 
+it is the software developement life circle, which stand for the techniques use to collect requrements, code them then release them to application
+# what are the 3 ways to deploy in SDLC ? 
+a) waterfall method
+b) AGILE METHOD
+C) devops
+
+# lets talk about agile method
+- to deliver software to client we go through itoration or spring
+- agile brought scrum master position
+# agil methonology
+- agil scrum methonology : here if u have 10 ticket for a spring/itoration u are only to do that 10 ticket only for that spring
+- kanban methonology :  here u are allow to take extral ticket if u are done with the avialable once. is just the oppossit of agil scrum
+ here we use kanban board to manage project
+- scrumban methonology :here is the mixture of both agil scrum and kanban
+- scrum master is just runing the meeting

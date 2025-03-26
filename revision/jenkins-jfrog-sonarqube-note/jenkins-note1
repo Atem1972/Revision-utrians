@@ -1,0 +1,18 @@
+cd to ami jenkins jfrog to work on ur lab
+# what role is jenkins really doing
+- we automate wwhat the developer normally do manually like 
+a) building the code using automation tools to generate one executive file, if ur code is writen in python or nodejs,.net,etc u most look for that tool that can goes with the language u wrote ur code with and use to build the code so that it can be in one exercutable formate. and each of the tools have their life circle eg for maven tools life circle we have...
+      - maven clean
+      - maven compile
+      - maven test
+      - maven package
+# life circle for Terraform
+           - terraform init
+           - terraform validate
+           - terraform plan
+           - terraform apply  
+# a question to the developer, after u write this ur code ie in python or java, .net? how do u genrate and executable artifact               
+b) scanning the code for vulnerability  (trivy,sonar queue)
+c) we need to put our code in github, we need a tool
+d) to push the code to artifactory like jfrog, s3, ecr , we need to intergrate them to jenkins
+## we need to intergrate all this tools in our jenkins tool for faster automation

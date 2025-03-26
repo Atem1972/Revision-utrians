@@ -1,0 +1,164 @@
+# to login to ur jenkins copy the url and put on the broswer
+- for our use case the USERNAME IS devops and passwd devops
+# inside our jenkins software
+  - click on manage jenkins
+    - for jenkins to talk to third party tool like aws, github we need to configure by clicking SYSTEM IN JENKINS
+    - FOR jenkins to talk to a tool like maven we to install in by clicking tools
+    - for jenkins to talk to s3, jfrog ecr we need to install their plugin by clicking on plugins
+
+
+    # how to create a job in jenkins
+    - click on new item
+# example lets create a job call test
+  - click on new items
+  - put ur job name = test-job
+  - select free style project and u can select any other apart from this
+  - click ok
+  - description= put anything
+  - click on discard old build = max of build to keep= this just a way to tell jenkins the maximum job he shld keep as the jobs keep runing eg 2, 3
+  - source code management ie if ur job going to pull the code from a vcs if yes click on <git> if no click on <none>
+  - build triger  ie do u want something that will triger ur job anytime a new code is push , if yes sellect from the bellow triggers
+  - build step = for now we will select execute shell command for practise
+                   inside it lets run some linux comman
+                   - pwd
+                   - ls
+                   - touch file1
+                   save 
+  - click on build now to build ur job  
+  - check on build history to see ur job  
+  ## how to see the output of ur job ur just run
+  - click  on the successfull of fail job and click on console output  
+  # how to create file and number them
+       pwd
+       touch file_$BUILD_ID  
+
+
+## HOW TO SOLVE THE PROBLEM OF SLOW JENKINS
+      CLICK ON MANAGE   jenkins 
+      click on plugins
+      click on install plugins
+      look for dark theme and uninstall it  
+      restart the jenkins =   go to the jenkins on the browser at ec2-34-34-34-34.compute-8080/restart 
+
+# how to get environment variable in jenkins
+       on the jenkins url add 8080/env-vars.html
+
+## how to use a repo in github on our job in jenkins
+- go the ur github account and copy the url of the repo u want to use
+- go to jenkins click on new job  
+- put ur job name 
+- select freestyle project then ok
+- number of bild
+- source code management= git
+      repossittory ulr = past the repo u copy from ur github account
+      credential = if is a private repo then put credential
+      branches to build= main or any other
+# - build triggers = select how u want  ur job to be trigger
+        select build periodically= * * * * * it will triger this job every minute this is just like cronjob
+        select github hook trigger = u most go to ur github account and set it
+        select triger build remotel = this u can use python script to trigger the build
+        select poll scm = check if the is any changes on the github and if therise triger a build
+
+# the are two ways to begins jenkins pipline
+  - scripted pipline = it start with note 
+  - or declearative pipline = it start with pipline   
+  ## example
+    - number of bild
+- source code management= git
+      repossittory ulr = past the repo u copy from ur github account
+      credential = if is a private repo then put credential
+      branches to build= main or any other
+    - on the space script put ur task
+    - it most start with pipline
+#                pipline{
+#                  agent any   # means run any where
+#                  stages{
+#                        stage('pwd command   # name of the stage){
+#                             steps{
+#                                    sh 'pwd'
+                              }
+                        } 
+
+                       stage('ls command   # stage name){
+                        steps{
+                              sh 'ls'
+                        }
+                       } 
+                  }
+             }
+save
+- click on build now
+
+ ## Example 2
+  - here we need to write our pipline in a file called jenkinsfile with our code in the repo in github
+
+      - go the ur github account and copy the url of the repo u want to use
+      - go to jenkins click on new job  
+      - put ur job name 
+      - select pipline then ok
+      - number of bild
+      - source code management= git
+      - credential = if is a private repo then put credential
+      - branches to build= main or any other
+      - in advance projet option = down and select pipline
+      - definition = select pipline script from SCM
+      - SELECt git
+      - repository = past the url of the repo
+      - credential = u need to put it if is a private repo
+      - brance specifie = select the repo branch ie main or any other
+      - scrow down to script path = put the exact name u call ur jenkins file in the github repo
+      - save 
+      - go to ur vitual stadio code clone the repo with ur code
+      - open it
+      - creat the file call jenkinsfile it most be the same as it is in ur job
+      - u can put the task u want jenkins to run for u in the jenkinsfile
+# example  file jenkins
+                 pipline{
+                  agent any
+
+                  stages{
+                        stage('build' #here is the name of the stage) {
+                              steps{
+                                    sh 'echo build'
+                              }
+
+                        }
+                        stage('command  # here is stage name){
+                              steps{
+                                    sh ' pwd'
+                              }
+                        }
+                  }
+                 }
+   save
+   push the modify code to ur github    
+
+### how to set jenkins trigger using github
+ this is good bc any time we push new code to our repo github will automatcally run a new build on our job for us
+  -to do this let first set it in jenkins
+  - on ur already build job click on configure
+  - go to ur job scrow down to build trigger
+  - select on the box github hook trigger for gitscm polling
+  - copy the jenkins url on ur browser
+  - go to your github account
+  - click on setting
+  - scrow down and click on webhooks
+  - click on add webhook
+  - payload url = past the jenkins url u copy , at the end of the URL IE 8080/github-webhook/
+  - disable SSL
+  - click on add webhook 
+  - 
+
+
+         
+
+  
+### how to see the jenkins stages build graph
+   - click on manage jenkins
+   - plugins
+   - click on install plugins
+   - search for pipeline and install it
+   - click on available plugin
+   - search for pipline stage view install it
+   - 
+

@@ -1,0 +1,116 @@
+w11d2
+
+LAMBDA is an event driven service ie u can put ur application set i a way that it show work only when somebody browserit. 
+.- we can use lambda function to creat trigger
+ -it is pieace of code that will be triggering ur application to run any time a traffic is directed to it
+ -it is a serverless service , u just need to plug ur code in there and go. 
+ -this is also good with settig up a cronjob for updating, deleting, stop instance, start  etc
+ - we can also run container here , all we need to do to do is to plug our image
+ # how to start from scratch
+ - search for lambda in aws
+ - click on create function
+ - name of ur function
+ # Runtime
+ - select the language the code u want to use is writen ie nodejs, python, .net
+ # Architecture-
+ - x86_64
+ - click on create function
+ - crowl down
+ - to past ur code click on code
+ - to test ur code click on test
+ - Test event action = click on Create new event if it is a new event u want
+ - Event name = can be anything
+ - click save
+ - click tets to run the code, u can go to cloudwatch to see the logs messages or click on details there to see
+
+  # configure
+  to adjust memory, to adjust time out, to create role  in lambda click on 
+   for role if lambda need to go and to another service to do something then we need to create a role for it
+ 
+ 
+ 
+ # u can also put this code on the function
+   - import os
+   def lambda_handler(event, context):
+        os.system("cat /etc/os-release")
+        os.system("nproc")
+        os.system("free -g")
+        os.system("pwd")
+        os.system("ls -l")
+    - click on deployed
+    -click on test, feel the space , save then click test to triger or set automatic trigger using cloudwatcch
+
+# lambda function code to creat instance and ww will use cloudwatch to trigger the function
+
+import boto3
+
+def lambda_handler(event, context):
+    iam_client = boto3.client('iam')
+    
+    # List users
+    users = []
+    response = iam_client.list_users()
+    users.extend(response.get('Users', []))
+    
+    # Handle pagination
+    while response.get('IsTruncated'):
+        response = iam_client.list_users(Marker=response['Marker'])
+        users.extend(response.get('Users', []))
+    
+    # Prepare and return user details
+    return {
+        "statusCode": 200,
+        "body": [
+            {"UserName": user['UserName'], "ARN": user['Arn'], "CreatedAt": str(user['CreateDate'])}
+            for user in users
+        ]
+    }
+
+
+   - deploy
+   - creat a role between lamda and iam  #(IAMReadOnlyAccess)
+   - go to configure and select the role
+   - test
+   - set automatic trigger
+   # let set the trigger
+   - go to cloudwatch
+   - go to event , click on rules
+   - create rules
+   - feel the space
+       name
+       click on Schedule
+    - click continus to create rule
+    - click this    A fine-grained schedule that runs at a specific time, such as 8:00 a.m. PST on the first Monday of every month.  or
+      A schedule that runs at a regular rate, such as every 10 minutes.
+    
+    - schedule cron : 00           8           *(everyday)           *         ?                *
+                    minuts        hours        day of the month     month      day of week      year
+    - click next
+    - click on aws service as ur       Target types
+    - click on the   Select a target and choose LAMBDA FUNCTION  
+    - CLICK ON       Target in this account
+    - CLICK ON THE FUNCTION DROP DOWN AND CHOOSE THE FUNCTION U CREATED IN LAMBDA THAT U WANT IT TRIGGER
+    - CLICK NEXT NEXT
+    - CREATE RULE
+    U CAN GO TO CLOUDWATCH LOGS TO SEE UR LOGES
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ # we can click on trigger, select which one u want it to trigar ur code or we can trigger it manually 
+ # an we can click on add destination # to dircte where we want it to go

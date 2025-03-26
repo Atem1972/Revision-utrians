@@ -1,0 +1,30 @@
+containers can talk to each other if they are in the network as seen bellow
+
+
+
+# what is network in docker?  it helps us to isolate containers in specific networks
+- run docker network ls  = to least all the network
+  bridge network::   means it is connected to our local host
+  host network :   means a network that is just share by docker
+  none network : means it can not talk to the internet
+
+- run docker network create net  = to create a network 
+- run  docker network ls = to list all the network
+- run docker run -d --rm --network net -e MARIADB_ROOT_PASSWORD=abc123 -e MARIADB_DATABASE=webserver -e MARIADB_USER=oracle -e MARIADB_PASSWORD=abc123 --name mariadb         mariadb:latest  # this will run u a mariadb container, the -e are creating environment variable in the container
+- run docker ps
+- docker exec mariadb env  = to check the environment variable
+- docker run -d --rm --name wordpress1 -p 80:80 --network net  -e WORDPRESS_DB_HOST=mariadb -e WORDPRESS_DB_USER=oracle -e WORDPRESS_DB_PASSWORD=abc123 -e WORDPRESS_DB_NAME=webserver wordpress  # this will bring up a wordpress container that has been link to our database
+-run docker ps = to least all the container runing
+- take the ip addres of ur server plus port number to the broswer to see wordpress ie 2.2.2.2:80
+## explanation of the commands in 13 above ; 
+                        -d = run it in detach mode
+                        --rm = when i stop this container delete it emidiately
+                        --network net = it means add this network called net to my container  
+
+ ## explanation of lne 16 above;
+                     -d = run it in detach mode
+                        --rm = when i stop this container delete it emidiately
+                        --network net = it means add this network called net to my container
+                         -e WORDPRESS_DB_HOST=mariadb = telling the wordpress which container name  he need to connect to
+
+                                   

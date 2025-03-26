@@ -1,0 +1,5 @@
+
+
+ trivy is use to scan our docker image and maven dependency
+ - we need to install trivy on our jenkins-server , go to the website to get how to install it in linux machine
+ that is all u need to do

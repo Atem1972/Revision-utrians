@@ -1,0 +1,57 @@
+
+sonarqube is a scaning tool which we can integrate it to jenkins to scan our code
+firstly we neeed it to be up and runing in a linux server
+- go to either ur jfro-server or jenkins-server and run the sonarqube tool
+- let run the sonar in a container
+- firstly we need to install docker on this server make sure it is up and runing
+- install docker
+- run a sonarqube container = docker run -d --name sonar -p 9000:9000 sonarqube:i=lts-community
+- run docker ps to see the container
+- take the ip of the server and :9000 on the browser
+- username = admin
+- passwd = admin
+
+  ## how to connect sonarqube to jenkins
+  - click on administration on the sonarqube browser
+  - click on security
+  - click on user
+  - click on the burger under tokens # this will create us a token that will can use to setup sonar to jenkins
+  - on generate token
+  - name = anything
+  - click on generate token
+  - copy the generated token 
+  - go to your jenkins server on the browser 
+  ## how to configure sonrqube in jenkins
+  - click on manage jenkins
+  - click on system
+  - scrow down till u see sonarqube server
+  - click on add sonarqube
+  - name = anything ie sonar
+  - url = go to ur sonarqube on the browser copy the url and past here  end at :9000
+  - server authentification token = here we need to set up a credential
+                      - click on credential in jenkins
+                      - click on global
+                      - click on add credential
+                      - on kind select secret text , since we do not have username and password as in the case of github
+                      - sercret = past the token we generated earlier in sonarqube browser from line 14-23
+                      - ID = anyname , sonar-credential but make sure to remember the name
+                      - description  = sonar-credential
+                      - click create
+                      - go back to line 31 and select the name of the credential we just created   
+ - click on save   
+
+ ## we also need to configure sonarqube tool
+   - click on manage jenkins in jenkins browser
+   - scrowdown till u see sonarqube scaner installation  
+   - click on it
+   - NAME = anyname sonar-tool
+   - check the box install automatically
+   - version , click on drop down and select any version 
+   - save
+
+   ## and we also need to make sure sonar plugins has been install in jenkins , below is how to install it
+   - go to manage jenkins
+   - click on plugins
+   - click on available plugins
+   - search sonarqube 
+   - click install                                  
