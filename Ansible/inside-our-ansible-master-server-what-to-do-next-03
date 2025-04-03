@@ -38,8 +38,9 @@
                                                                                ## all our playbook inventory.yml task output logs will be put in the 
                                                                                ansible.log file we ask ansible to create it for us , u can open and 
                                                                                check the logs message after u execute ur playbook
-                              
 
+
+                              
 - run ansible all -m ping   # this command is use to check the connectivity of  the target server   # all means all the target node in the inventory.yml file
 - u can also run just a specific node ie <ansible webserveres -m ping> this will just check only the connectivity of this target server s   OR <ansible all -m ping -l webservers> this is in the case where u have group many server but u just need to check just one of the instance
 # all the below command are known as ansible ad-hoc command

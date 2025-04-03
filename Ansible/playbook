@@ -9,7 +9,7 @@
         
         
         
-#  1) first playbook 
+#  1) first playbook 1
          --- 
          - hosts = all   ## <this simply means run on all the target server in my inventory.yml file but we can still specify if we want it to run only on
                          on a specific target server on theinventory.yml file by put the name ie <-host = webserver it will run only on server group
@@ -69,7 +69,7 @@ on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means 
 
 
 
-## Second playbook
+## Second playbook2
  vi play2.yml
   
   ---
@@ -105,7 +105,7 @@ on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means 
 
 
 
-# third playbook
+# third playbook3
   vi play3.yml
    
 
@@ -116,6 +116,7 @@ on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means 
      gather_facts: yes
      vars:                 ## here is a declear variable
      f_name: hello world
+     
 
 
 #       tasks:
@@ -123,21 +124,29 @@ on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means 
           get_url:
           url: https://github.com/kserge2001/resume/archive/refs/heads/main.zip
           dest: /tmp/main.zip
+          tags:                # tags are just away to identify a specific task and u can ask ansible on the prompt to run only this task by using his 
+                               #tag name eg <ansibble-playbook play1.yml --tags=package>
+            - package
 
 #        -name:     delete a file in a target server
            file:
             path: /tmp/main.zip
             state: absent
+            tags:
+                file
 
 #          - name: Debug     # this module is use to display something on the screen
               debug:
               msg:  "Hello world"     or   below will work
               var: f_name          ## here we are calling a variabl above
+              tags:
+                 - debug
 
 #         - name: check server uptime
             command: uptime   
             register: uptime_output    ## this simply means the output from line 138 save it for me, reason beig that u may want to display it an check
-                                        what it actualy run. u can use the below line 141-143 to display it   
+                                        what it actualy run. u can use the below line 141-143 to display it  
+                         
 #         - name: display the output variable
            debug:
            var: uptime_output.stdout_line       ## this simply mean go to the task in line 137 check the output in <register:>
@@ -148,4 +157,123 @@ on the terminal run ansible-playbook playbk.yml -l 334.43.34.53    # this means 
 
 - To check syntax of the playbook Run ansible-playbook play2.yml --syntax-check or just --check  
 - To execute the playbook Run   ansible-playbook play2.yml 
+
+## how to assign ansible to run only a specific task in the inventory.yml file
+we can do this by using the agument tags:
+- To execute that <Run ansible-playbook play3.yml -- tags:package, debug>  # this will run only the task with this tag
                                                                          
+
+## how to encript sensible file or data in ansible
+- run  ansible-vault encrypt inventory.yml  press enter ## in the space of inventory.yml u can put any file there that u wise to encrypt
+  new vault password: put anything u can remember
+  confirm new vault password: repeat the password above here 
+- to edit the encrypted inventory.yml Run ansible-vault edit inventory.yml
+        vault password: put the password u created above
+
+## how to change the encrypted file password?
+ Run ansible-vault rekey inventory.yml
+   vault password: put the old passwd
+   new vault passwd: put the new passwd here 
+
+## how to decrypt the passwd u put on ur file
+  RUN ansible-vault decrypt inventory.yml
+
+## how to run inventory.yml that has been encrypted
+  Run ansible-playbook play1.yml --ask-vault-pass
+   vault password: put ur password here  
+
+
+
+
+
+
+##  
+
+
+## How to troubleshot error message in ansible
+ - after the playbook failed, to know in detail what went wrong run
+  RUN ansible-playbook play3.yml -v or -vv or -vvv
+
+
+# this playbook will go and execute this application on our target server and if we take the ip address and the port number of that 
+# target servre we will see our application coming up without us having any direct contact with the instance 
+
+firstly lets create a playbook file call resume.yml
+ vi resume.yml
+    ---  
+    - hosts: webserver
+    become: yes
+    tasks:
+#    - name: installations of packages
+     package: or yum:
+       state: present
+       name: "{{item}}"  ## this is when u have more than one package to install
+       loop:
+       - unzip
+       - wget
+       -httpd
+
+#      -name:   download artifact ie the link to our app
+       get_url:    ## to download something from anywhere ie from google, VCS, AWS , WE need to declaer it as seen here
+       url: https://github.com/utrains/static-resume/archive/refs/heads/main.zip
+       dest: /tmp/main.zip     # the main.zip is a file i want it shld be created and after the download is done the files shld be store there
+
+#     - name:    unarchive main.zip ie unzip main.zip   
+      unarchive:
+      src:/tmp/main.zip   ## here is like where is the file u want me to unzip
+      remote_src: yes
+      dest: /tmp   # here is like after i unzip it where shld i keep
+
+#     - name:  we use this to copy one folder to another folder
+        copy:
+        remote_src: yes
+        src: /tmp/static-resume-main/
+        dest: /var/www/html/
+        owner: apache
+        group: apache
+        mode: '0847 '
+        become: yes   ## to become root user
+
+#     - name:  start daemon     # this step will go to ur target and start the daemon 
+        service or systemd:
+        name: httpd                   ## the name of the daemon to go and start
+        state: started
+        enable: yes
+
+run ansible-playbook resume.yml
+
+
+# how to copy the config file to target machine , ## this is call jinger tamplate 
+# We use this module to copy files with dynamic content in it
+  - create a file in the working directory of the master node call anything ie apache.j2
+            put this below in the file and it was gotten from var.yml
+
+            the url is {URL_link}}
+            THE DESTINATION is {{DESt_path}}
+
+
+
+       
+
+
+  -creste a playbook ie template.yml 
+        ---
+        hosts: all
+        gather_fact: no
+        vars_files:
+         - vars.yml
+        tasks:
+        - name:  copy config file from master node to destination
+        template:
+        dest: /tmp/apache.conf     # this will creat this file call apache.conf on the target server and all that will be copy from will be put here
+        src: /home/ec2-user/ansible-dev/apache.j2
+
+RUN ansible-playbook template.yml
+
+
+
+## how to test my playbook
+
+ - install on the master server run pip3 install yamllink
+ - run  yamllink windows.yaml or play3.yml   ## this will tell u small small eroor on ur playbook
+       

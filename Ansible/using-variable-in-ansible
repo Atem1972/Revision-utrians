@@ -1,0 +1,37 @@
+
+# on ur dev forlder create a file called var.yml
+ 
+ ## Lets create a variable file that will can store some variable  we can  call in our playbook    
+  - create a file called var.yml, on the file put some task that can change or sensible informations in it, an you will only be calling it on ur playbook
+  ex1
+                  URL_link:   https://github.com/kserge2001/resume/archive/refs/heads/main.zip
+                  DEST_path: /tmp/main.zip
+
+
+
+
+# lets write our playbook and called play3.yml
+ vi play3.yml
+---
+  - host: webserver
+     become: = true
+     ignore_errors: = yes
+     gather_facts: yes
+     vars_files:         ## explanation of this, this is a variable that has been declear in this same directory and not in the playbook file 
+           - var.yml    # and we are only calling the file here, the file can be found from line 2-8
+     
+     
+
+
+#       tasks:
+#        - name: download package online
+          get_url:
+          url: "{{URL_link}}"      ## calling value from a variabl in another file within the same working directory
+          dest: "{{DEST_path}}"     ## same here
+          tags:                # tags are just away to identify a specific task and u can ask ansible on the prompt to run only this task by using his 
+                               #tag name eg <ansibble-playbook play1.yml --tags=package>
+            - package
+
+
+to excute the playbook run
+Run ansible-playbook play3.yml

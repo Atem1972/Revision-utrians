@@ -1,0 +1,62 @@
+
+
+## how to ssh to ur instance by clicking on connect in aws, when u create window-seerver instance
+ - click on connect in ec2
+ - click on RDP CLIENT
+ - click on download remote destop file
+ - click on get passwd
+ - on the space call private key content , u need to cat the key name.pem copy the content and past here
+ - click decrypt passwd
+ - check bellow u will see the passwd
+
+ # to connect now to the window server
+ - click on the download icon up
+ - click conect
+ - on passwd past the past passwd we generated above  
+- on the windows browser on the page u open share for powershell and run the below code to install ssh
+
+## check if openssh install on the window server. ### this is just to install ssh daemon on the on server so that ansible can talk to it
+- Get-windowsCapability -online | where-object Name -like 'openssh'
+- Add-windowsCapability -online -Name openSSH.Server~~~~0.0.1.0
+- Get-Service sshd
+- Start-Service sshd
+- Set-Service -Name sshd -StartupType 'Automatic'
+
+
+## go to ur inventory.yml file and put the below in it but note that u need to edit it anytime u want to use
+- vi inventory.yml
+- [wind:vars]
+- ansible_user=Administration  # this was gotten on aws when we where generating the ssh passwd above
+-ansible_password= past the passwd u generated in the window instance in aws
+- ansible_connection=ssh
+-ansible_shell_type=cmd
+
+
+## on the master node before u run the playbook on window target server please install this software on the master
+- run sudo amazon-linux-extras install epel -y
+- sudo yum install sshpass
+
+run ansible wind -m win_ping   # to check if the connection has been establish
+
+
+
+# lets create a playbook to target that our window instance
+create a file calle window.yml and put the below contend in it
+    ---
+    - hosts: wind
+    become_user:yes
+    tasks:
+#    - name:  create a directory
+      win_file:
+            path: c:\user\administration\desktop\ansible_windows_test
+            state: directory
+
+#   - name: Download file
+    win_get_url:
+    url: ## past any link u want it to be downloaded on ur target server
+    dest: ## put it on the path on ur target server u want it to be.  c:\user\administration\desktop\ansible_windows_test
+
+
+## how
+      
+
