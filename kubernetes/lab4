@@ -1,0 +1,277 @@
+
+
+#  Lab 4: Practice on ConfigMaps in Kubernetes
+Prerequisites
+Before starting, you must have a Kubernetes cluster up and running and you must have access to it.
+Part 1: How to create a configmap
+1- Create a configmap from the command line
+a- Using literal values
+Here, we use the --from-literal option to enter one or more key-value pairs.
+Let’s create a configmap to pass in the port number to a pod. The key is port and the value is 3090
+kubectl create configmap my-config1 --from-literal port=3090
+
+
+List the configmaps in the cluster
+kubectl get cm
+
+
+Let’s describe the configmap we created
+kubectl describe cm my-config1
+
+
+
+
+b- Using files
+Here, we use the --from-file option to pass the filename or the directory that will be used to create the configmap. Let's first create a file and put in the content we need
+vi app.configfile
+
+
+The content should look like the following
+port=2000
+environment=staging
+language=english
+
+
+Create a configmap to pass the port value, the language used as well as the environment for the configmap
+kubectl create configmap my-config2 --from-file app.configfile
+
+
+
+Verify the configmap created
+kubectl get cm
+
+Describe the configmap:
+kubectl describe cm my-config2
+
+
+
+c- Using directories
+In your current directory, create a folder we will use to create the configmap
+mkdir configs
+cd configs
+
+In this configs folder, create 2 files called db-config1 and db-config2
+vi db-config1
+
+The content should look like the following
+DB_HOST=db.example.com
+DB_USER=development
+
+The second file
+vi db-config2
+
+The content should look like the following
+max_allowed_packet=64M
+
+Now, switch back to the parent directory and create the configmap using the folder configs
+cd ..
+kubectl create configmap my-config3 --from-file configs/
+
+
+
+List and describe the configmap created
+kubectl get cm
+kubectl describe cm my-config3
+
+
+2- Create a configmap from the YAML file
+The configmap can be created directly from the command line but also using a YAML file in which you specify the data you want to use
+Let’s create the manifest:
+vi my-configmap.yaml
+
+The content should look like the following
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data:
+  mydata: hello_world
+
+Save and exit.
+Create the ConfigMap using the yaml
+kubectl create -f my-configmap.yaml
+
+List and describe the configmap created
+kubectl get cm
+kubectl describe cm my-configmap
+
+
+Part 2: How to use the configmap in pod deployments
+There are four different ways that you can use a ConfigMap to configure a container inside a Pod:
+Inside a container command and args
+As environment variables for the container
+Defining the ConfigMap in YAML and mounting it as a read-only Volume for the application to read
+ Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
+
+1- Using Environment Variables:
+You can set environment variables in your Pod's container specification using the ConfigMap values.
+Example 1: Let’s create a Pod that will consume the data from the configmap called my-configmap (the last configmap we created in the previous section)
+vi my-configmap-pod1.yaml
+
+The content should look like the following
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-configmap-pod1
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+      env:
+        - name: cm
+          valueFrom:
+            configMapKeyRef:
+              name: my-configmap
+              key: mydata
+
+Create the pod
+kubectl create -f my-configmap-pod1.yaml
+
+
+You can verify after the pod is up that the data specified in the configmap is set as an environment variable in the container
+kubectl get pods
+
+
+Get into the pod and print all the environment variable
+kubectl exec -it my-configmap-pod1 -- printenv
+
+
+
+You can see the data from the the configmap is set as an environment variable in the pod.
+When creating the pod, you ca also use the field envFrom instead of env to specify the configmap reference. Here, all the key-value pairs from the specified ConfigMap are set as environment variables in the container.
+vi my-configmap-pod1-1.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-configmap-pod1-1
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+      envFrom:
+        - configMapRef:
+name: my-configmap
+
+
+Create the pod and check the environment variables
+kubectl create -f my-configmap-pod1-1.yaml
+
+You can verify after the pod is up that the data specified in the configmap is set as an environment variable in the container
+kubectl get pods
+
+Get into to the pod and print all the environment variable
+kubectl exec -it my-configmap-pod1-1 -- printenv
+
+
+
+Example 2: Let’create a Pod to consume the data of the configMap called my-config1 (the first config map we created in the previous part)
+vi my-configmap-pod1-2.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-configmap-pod1-2
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      env:
+        - name: port
+          valueFrom:
+            configMapKeyRef:
+              name: my-config1
+              key: port
+
+
+Create the pod and check the environment variables
+kubectl create -f my-configmap-pod1-2.yaml
+
+You can verify after the pod is up that the data specified in the configmap is set as an environment variable in the container
+kubectl exec -it my-configmap-pod1-2 -- printenv
+
+
+2- Using volumes
+Let’s create a Pod that will consume the data from the configmap using volumes
+vi my-configmap-pod2.yaml
+
+
+The content should look like the following
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-configmap-pod2
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: config-volume
+          mountPath: /config
+          readOnly: true
+      ports:
+      - containerPort: 80
+  volumes:
+    - name: config-volume
+      configMap:
+        name: my-config2
+
+Here, the configMap field in the volume specification specifies that the ConfigMap named my-config2 should be mounted as a volume inside the container. The mount path is /config
+Create the pod
+kubectl create -f my-configmap-pod2.yaml
+
+Verify that the volume is successfully mounted
+
+kubectl exec -it my-configmap-pod2 -- ls /config
+
+
+kubectl exec -it my-configmap-pod2 -- cat /config/app.configfile
+
+
+
+3- Using a container command and args
+Let’s use this example. The configmap and the pod specifications are written in the same YAML file. You can seperate them if you want
+vi app-config.yaml
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  default_command: "date"
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-config-pod
+spec:
+  containers:
+    - name: app-container
+      image: busybox:latest
+      command: ["/bin/sh", "-c", "$(STARTUP_COMMAND)"]
+      env:
+       - name: STARTUP_COMMAND
+       - valueFrom:
+           configMapKeyRef:
+             name: app-config
+             key: default_command
+
+This example runs the command given by the $STARTUP_COMMAND environment variable when the container starts. The variable’s value is set to the default_command key within the created ConfigMap.
+Create the objects
+
+kubectl create -f app-config.yaml
+
+
+You can learn more on configmaps using the kubernetes official documentation
+https://kubernetes.io/docs/concepts/configuration/configmap/
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/

@@ -1,0 +1,65 @@
+
+
+####   Create Kubernetes cluster in AWS using Terraform
+In this tutorial, we are going to launch a Kubernetes cluster in AWS using Terraform. Follow these steps progressively to launch and test.
+Prerequisites:
+Make sure you have Terraform installed on your computer or your server.
+Make sure Kubectl is installed and configured if not, follow this documentation to install it on your system
+Make sure you have a good internet connection
+Use the aws configure command to configure your IAM user credentials from your VS code terminal
+Steps:
+1- Open a Git Bash terminal in VS code
+2- Clone the repository and navigate to the folder:
+git clone https://github.com/utrains/provision-eks-cluster-with-terraform
+
+
+cd provision-eks-cluster-with-terraform
+
+
+Open the eks-cluster.tf file and make sure the cluster_version is 1.30. If it is not set to 1.30 then set it and save the file.
+Note: You could use the latest version available at the time you are going through this lab.
+code eks-cluster.tf
+
+
+
+3- Initialize, plan and apply
+terraform init
+
+
+
+If that is the case, then run the command terraform version in your terminal to get the version of terraform installed on your machine. Then go to the version.tf file and modify the value of the required_version to the version of terraform you have.
+Example here: required_version = "~> 1.0.11"
+Now, run the commands to plan and apply
+terraform plan
+
+
+terraform apply --auto-approve
+
+
+
+Just modify the AWS region and redo the step 3 (initialize, plan and apply)
+
+4- Check in your AWS account to see if the cluster is active (Amazon Elastic Kubernetes Service)
+Make sure you check in the region where you launched your cluster. If not, you might not see any clusters in the list.
+At the end of the terraform code, you will have some outputs including the cluster ID, cluster name, the command to update the kubeconfig and the region
+
+5- Update KubeConfig
+aws eks update-kubeconfig --name <your-cluster-name> --region <your-region>
+
+
+
+
+6- Tests
+kubectl get nodes
+
+
+You should see 2 nodes running in your cluster
+
+7- Clean up
+
+To avoid further charges on AWS after practice, use the following command to destroy the cluster as well as all the resources created when you are done practicing.
+terraform destroy
+
+
+
+Note: If you face any issues linked to the availability zone or the AWS region, change the region and try again.

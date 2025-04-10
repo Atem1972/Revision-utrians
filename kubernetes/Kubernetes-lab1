@@ -1,0 +1,371 @@
+
+
+## Lab 1: Kubernetes pods, service, replicaset, deployment
+# Prerequisites:
+Before starting this lab, make sure you have a running and accessible cluster deployed.
+You can create your cluster locally and connect to the master node or launch a cluster in the cloud (AWS, gcloud, azure, Linode) and connect to it.
+
+# Part 1: Deploy the app on the pod and basic networking
+1- Running the nginx server as a pod in a Kubernetes cluster
+Create a manifest file called my-pod.yaml to define the nginx server
+vi my-pod.yaml
+
+
+
+The content of the file should be:
+apiVersion: v1
+kind: Pod
+metadata:
+ name: nginx
+ labels:
+  name: nginx
+spec:
+ containers:
+ - name: nginx-container
+   image: nginx
+
+Save and apply the file to create the pod:
+kubectl apply -f my-pod.yaml
+
+# Verify the status of the pod
+kubectl get pods
+kubectl get pods -o wide
+kubectl describe pod nginx
+
+# 2- Exposing the nginx server within the cluster with the Kubectl expose command
+We can expose the pod using a service directly from the command line with the Kubectl expose command. Here, we expose the pod within the cluster using the clusterIP type of service
+kubectl expose pod nginx --port 80 --target-port 80 --type ClusterIP --name nginx-service
+
+
+# Verify the service with:
+kubectl get svc
+
+
+# You can describe the service to see the port and endpoint details:
+kubectl describe svc nginx-service
+
+# To check if the service is reachable, from the master node, run:
+curl <put-your-service-cluster-IP-here>  eg curl 3.3.3.3
+
+
+
+
+# 3- Exposing the Nginx server outside the cluster with the kubectl expose command
+# To expose the pod outside the cluster level, we use the NodePort type of service. Let’s modify the service yaml file to do that:
+kubectl edit svc nginx-service
+
+Under the specification, modify the type of the service to NodePort. Save and exit
+# this file will open all u need to do is to edit the <type> 
+
+       apiVersion: v1
+       kind: Service
+       metaldata:
+       creationTimestamp: "2023-09-05t14:40:49z"
+       labels:
+        name:nginx 
+        name: nginx-service
+        namespace: default
+        resourceVersion: "3242"
+        uid: dfhgbl-fdgd-fhdg-dghd-
+        spec:
+        clusterIP:3.3.3.3
+        clusteIPs:
+        - 2.2.2.2
+        internalTrafficpolicy: cluster
+        ipFamilies:
+        - IPv4
+        ipFamilypolicy: SingleStack
+        ports:
+        - port: 80
+        protocol: TCP
+        targetport: 80
+        selector:
+        name: nginx 
+        sessionAffinity: None
+        typy: Nodeport    # here is 
+        status:
+        loadBalancer: {}  
+
+
+
+
+
+Verify with:
+kubectl get svc
+
+
+
+You can describe the service to see the port and endpoint details:
+kubectl describe svc nginx
+
+Verify the node on which the pod is running as well as its IP address
+kubectl get pods -o wide
+kubectl get nodes -o wide
+
+Open the web browser on the laptop and access the nginx application through any node’s public IP address and port number allocated by Kubernetes, as in this example it's 32688.
+The pod is reachable outside the cluster. You can see the nginx welcome page displaying as in this example
+
+
+To expose the pod outside the cluster level with our EKS cluster setup, we need to use the LoadBalancer type of service. Let’s modify the service yaml file to do that:
+kubectl edit svc nginx-service
+
+# Under the specification, modify the type of the service to Loadbalancer. Save and exit
+ - on service change type = LoadBalancer
+
+Verify with:
+kubectl get svc
+
+
+You will have the EXTERNAL_IP column displaying the AWS loadBalancer name on which we can access the service.
+Copy that and paste it into the browser to access the service and get the Nginx welcome page.
+
+4- Delete resources
+Use the following to delete the pod:
+kubectl delete pod nginx
+
+
+Use the following to delete the service:
+kubectl delete svc nginx-service
+
+
+Verify with
+kubectl get svc
+kubectl get pods
+
+
+
+Part 2: Questions and answers
+Question 1: Create a new pod with the nginx image
+Answer:
+We can use kubectl run here since the pod does not have many specifications
+kubectl run nginx --image=nginx
+
+The corresponding YAML file would look like
+apiVersion: v1
+kind: Pod
+metadata:
+ name: nginx
+ labels:
+  name: nginx
+spec:
+ containers:
+ - name: nginx
+   image: nginx
+
+Check the pods with
+kubectl get pods
+
+
+Question 2: Determine the node on which the pod have been placed
+Answer:
+kubectl get pod nginx -o wide
+
+
+Question 3: Delete the Nginx pod
+Answer:
+kubectl delete pod nginx
+
+
+Question 4: Create a ReplicaSet with 2 number of pods with Nginx image
+Answer: Here we create a manifest called first-replicaset.yaml. The content should look like the following
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+ name: first-replicaset
+spec:
+ replicas: 2
+ selector:
+  matchLabels:
+   tier: frontend
+ template:
+  metadata:
+   labels:
+    tier: frontend
+  spec:
+   containers:
+   - name: nginx
+     image: nginx
+
+Create the replicaset and apply to the cluster with the command:
+kubectl create -f first-replicaset.yaml
+
+
+List and describe the replicasets
+kubectl get rs
+kubectl describe rs first-replicaset
+
+
+Question 5: Delete any one of the 2 pods from the above replicaset
+Answer: List the pods to get the names with
+kubectl get pods
+
+
+
+Delete one of the pods:
+kubectl delete pod podname
+
+
+
+kubectl get pods
+
+
+Question 6: Scale the replicaset to 5 pods
+Answer: Here we can use two commands: kubectl edit or kubectl scale
+1- With the kubectl edit, you will get the YAML file in the text editor, then modify the number of replicas to 5
+kubectl edit replicaset first-replicaset
+
+
+2- With the kubectl scale, you specify the number of replicas in the command line directly
+kubectl scale --replicas=5 rs/first-replicaset
+
+
+
+Check the pods running:
+kubectl get pods
+
+Question 7: Now, scale the replicaset down to 2 pods
+Answer: Here we can use two commands: kubectl edit or kubectl scale
+kubectl edit replicaset first-replicaset
+
+
+Or
+kubectl scale --replicas=2 rs/first-replicaset
+
+
+Check the pods running:
+kubectl get pods
+
+
+Question 8: Delete the replicaset
+Answer:
+kubectl delete replicaset first-replicaset
+
+
+Verify with
+kubectl get pods
+
+
+Question 9: Create a new Deployment with 2 replicas and use the Nginx image.
+Answer: We can use two methods
+kubectl create deployment first-deployment --image=nginx --replicas=2
+
+
+Or create a manifest with vi first-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: nginx-pod
+  template:
+    metadata:
+      labels:
+        name: nginx-pod
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+
+
+Create the deployment in the cluster:
+kubectl create -f first-deployment.yaml
+
+
+Verify the deployments and the pods created:
+kubectl get deployments
+
+
+kubectl get pods
+
+
+Question 10: Create a test namespace called dev
+Answer:
+The first method is by using the kubectl create command directly from the terminal
+kubectl create namespace dev
+
+
+The second method is to create a manifest (dev-namespace.yaml), then apply it to the cluster
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+
+Then
+kubectl create -f dev-namespace.yaml
+
+
+Question 11: Create a nginx pod in the dev namespace
+Answer:
+kubectl run nginx-pod --image=nginx -n dev
+
+
+You may also choose to create a manifest and apply it to the cluster
+Question 12: Create a new service called utrains-service with the following specifications:
+Name: utrains-service;
+Type: NodePort;
+port: 8080;
+nodePort: 30083;
+selector: utrains-webapp
+Answer: Create the manifest
+vi utrains-service.yaml
+
+
+The content should look like the following
+apiVersion: v1
+kind: Service
+metadata:
+  name: utrains-service
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 8080
+      port: 8080
+      nodePort: 30083
+  selector:
+    name: utrains-webapp
+
+
+Create the service with
+kubectl create -f utrains-service.yaml
+
+
+Question 13: List the services that exist on the system
+Answer:
+kubectl get services
+
+
+Question 14: Delete the service utrains-service
+Answer:
+kubectl delete service utrains-service
+
+
+Question 15: Create a deployment named utrains-deploy using the image nginx with 3 replicas.
+Answer:
+kubectl create deployment utrains-deploy --image=nginx --replicas=3
+kubectl scale deployment/utrains-deploy --replicas=3
+
+
+Verify with:
+kubectl get deployments
+kubectl get pods
+
+
+Question 16: Clean up all the resources you created in the cluster
+Verify the services, replicasets, deployments and pods then delete them progressively
+kubectl get svc
+
+
+kubectl get rs
+
+
+kubectl get deployments
+
+
+kubectl get pods
+
+

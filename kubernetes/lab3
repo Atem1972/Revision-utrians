@@ -1,0 +1,150 @@
+
+
+# Lab 3: Configure a Pod to use a hostPath Persistent volume for storage
+In this lab, the following tasks are performed:
+The cluster Administrator creates a Persistent Volume backed by physical storage
+The developer or cluster user creates a Persistent Volume claim to bind to a suitable PV created by the Administrator
+The cluster user creates a pod that uses the PVC for storage
+Prerequisites
+Launch a Kubernetes cluster and get access to it (It can be in the cloud or on your local machine). This is just for development or testing purposes
+Make sure you can run kubectl command in the cluster
+This tutorial may not work properly if you set your cluster using the Terraform Lab. You can connect on this platform to practice: https://killercoda.com/ Login and authenticate with your GitHub account and select a kubernetes 1.27 playground.
+Step 1: Create an index.html file on your node
+Here, you need to connect to a node and make sure you have sudo access to run the commands. First, create a /mnt/data directory
+
+sudo mkdir /mnt/data
+
+Now, create the index.html file in the /mnt/data directory
+cd /mnt/data
+sudo vi index.html
+
+Put some text in the file
+Hello world! This is our index.html page
+
+
+Step 2: Create a PersistentVolume
+In this part, we create a hostPath Persistent volume.
+
+Create the manifest for your PV:
+vi pv-volume.yaml
+
+
+The content of the file should look like the following:
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: first-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+
+Create the resource
+kubectl create -f pv-volume.yaml
+
+
+View information about the PV
+kubectl get pv first-pv-volume
+
+
+The STATUS must be Available to show that the PV has not yet been bound to a PersistentVolumeClaim
+
+Step 3: Create a persistentVolumeClaim
+Pods use PersistentVolumeClaims to request physical storage. Here, we create a PersistentVolumeClaim that requests a volume of at least three gibibytes that can provide read-write access for at least one Node.
+vi pv-claim.yaml
+
+
+The content of the file:
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: first-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+
+
+Create the resource in the cluster:
+kubectl create -f pv-claim.yaml
+
+
+Verify the status of the PV we previously created
+kubectl get pv first-pv-volume
+
+
+The STATUS must be Bound to show that the PV has been bound to a PersistentVolumeClaim
+
+Verify the PVC:
+kubectl get pvc first-pv-claim
+
+
+Step 4: Create a Pod
+Let’s create a Pod that uses the PVC as a volume
+vi pod-for-pv.yaml
+
+
+The content should look like:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: first-pv-pod
+spec:
+  volumes:
+    - name: first-pv-storage
+      persistentVolumeClaim:
+        claimName: first-pv-claim
+  containers:
+    - name: first-pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: first-pv-storage
+
+
+Create the resource in the cluster:
+kubectl create -f pod-for-pv.yaml
+
+
+Verify the status of the pod
+kubectl get pod first-pv-pod
+
+
+
+Get a shell to the container running in your Pod:
+kubectl exec -it first-pv-pod -- /bin/bash
+
+
+In your shell, verify that nginx is serving the index.html file from the hostPath volume:
+
+apt update
+apt install curl
+curl http://localhost/
+
+
+The output shows the text that you wrote to the index.html file on the hostPath volume: (exit the pod)
+
+Step 5: Clean up
+Delete the Pod, the PersistentVolumeClaim and the PersistentVolume:
+kubectl delete pod first-pv-pod
+kubectl delete pvc first-pv-claim
+kubectl delete pv first-pv-volume
+
+
+Delete the file index.html and the directory /mnt/data if you created it on your node
+sudo rm /mnt/data/index.html
+
+

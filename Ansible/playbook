@@ -277,3 +277,6 @@ RUN ansible-playbook template.yml
  - install on the master server run pip3 install yamllink
  - run  yamllink windows.yaml or play3.yml   ## this will tell u small small eroor on ur playbook
        
+
+
+

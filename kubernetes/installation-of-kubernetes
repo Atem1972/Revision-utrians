@@ -1,0 +1,72 @@
+
+
+## Install Kubectl for Windows, Mac and Linux
+Before launching and using clusters in the cloud, you need some prerequisites like installing Kubectl. The platform uses this command line utility to communicate with the master node API server.
+1- Install Kubectl on Windows
+A simple way to install Kubectl on Windows computers is to use the Chocolatey package manager.
+
+Run the following command to install the kubernetes-cli package:
+choco install kubernetes-cli
+
+To verify the installation, you can check the version installed with the command:
+kubectl version --client
+
+
+
+You might also use the official Kubernetes documentation for the installation of Kubectl on your system: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+
+
+
+# 2- Install Kubectl on Mac OS
+If you are on macOS and using the Homebrew package manager, you can install Kubectl with Homebrew.
+Run the installation command:
+brew install kubernetes-cli
+
+
+Test to ensure the version you installed is up-to-date:
+kubectl version --client
+
+
+# 3- Install Kubectl on Centos or Red Hat-based distributions
+If you are on a Centos server, you can use the following command to install Kubectl:
+
+
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+EOF
+
+
+sudo yum install -y kubectl
+
+
+To verify the installation, you can check the version installed with the command:
+kubectl version --client
+
+
+4- Install Kubectl on Ubuntu or Debian distributions
+To install Kubectl on Ubuntu or any Debian-based system, use the following steps
+1- Update the apt package index and download the latest release with the command:
+sudo apt-get update
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+2- Download the Kubectl checksum file:
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+3- Validate the Kubectl binary against the checksum file:
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+
+If valid, the output is: kubectl: OK
+4- Install kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+When that is done, you can check the version installed with:
+kubectl version --client
+
+
+If you need something else, you can visit the official documentation here.

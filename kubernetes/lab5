@@ -1,0 +1,183 @@
+
+
+### Lab 5: Practice on Secrets in Kubernetes
+Prerequisites
+Before starting, you must have a Kubernetes cluster up and running and you must have access to it.
+Part 1: How to Create a Secret
+Secrets are similar to ConfigMaps but are specifically intended to hold confidential data.
+1- Using the command line
+Here, we use the --from-literal option for the configmap. Let's create a secret that stores the username admin and the password S!B\*d$zDsb= for a database
+kubectl create secret generic db-user-pass1 --from-literal username=admin --from-literal password='S!B\*d$zDsb='
+
+
+
+List the secrets and view the one we created
+kubectl get secrets
+kubectl describe secret db-user-pass1
+
+
+Here, you will realize that the values will not display:
+
+2- Using files or directories
+You can also store your credentials in files and use them while creating the secret object
+Here, we store the username in a file called username.txt and the password in a file called password.txt in the current directory.
+echo -n 'admin' > ./username.txt
+echo -n 'S!B\*d$zDsb=' > ./password.txt
+
+
+Let’s use those files to create a secret
+kubectl create secret generic db-user-pass2 --from-file=username=./username.txt --from-file=password=./password.txt
+
+
+List the secrets and view the one we created
+kubectl get secrets
+kubectl describe secret db-user-pass2
+
+
+You can view and decode the value of the username and the password.
+kubectl get secret db-user-pass2 -o jsonpath='{.data.username}' | base64 -d
+
+
+kubectl get secret db-user-pass2 -o jsonpath='{.data.password}' | base64 -d
+
+
+3- Using a YAML manifest
+Here we want to store a username devops and a password 1f2d1e2e67df in a secret object. First, we need to convert the values to base64
+echo -n 'devops' | base64
+echo -n '1f2d1e2e67df' | base64
+
+The output will be similar to
+
+Now, create the manifest
+vi mysecret.yaml
+
+
+The content could look like the following:
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: ZGV2b3Bz
+  password: MWYyZDFlMmU2N2Rm
+
+
+Create the secret:
+kubectl create -f mysecret.yaml
+
+
+List and view the secret we created
+kubectl get secrets
+kubectl describe secret mysecret
+
+
+Part 2: How to use secrets in Pod definition
+1- Define container environment variables using Secret data
+It is the same process as for configmaps.
+Let’s create a Pod that will consume the data from the secret mysecret
+vi my-secret-pod1.yaml
+
+
+The content should look like the following
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-secret-pod1
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+      - containerPort: 80
+      env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: password
+
+
+Create the pod
+kubectl create -f my-secret-pod1.yaml
+
+
+You can verify after the pod is up that the data specified in the secret is set as an environment variable in the container
+kubectl exec -it my-secret-pod1 -- printenv
+
+
+
+2- Configure all key-value pairs in a Secret as container environment variables
+Here, we can use the envFrom to define all of the secret’s dates as container environment variables
+vi my-secret-pod2.yaml
+
+The content could look like the following
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-secret-pod2
+spec:
+  containers:
+  - name: my-container
+    image: nginx
+    envFrom:
+    - secretRef:
+        name: mysecret
+
+Create the pod
+kubectl create -f my-secret-pod2.yaml
+
+You can verify after the pod is up that the data specified in the secret is set as an environment variable in the container
+
+kubectl exec -it my-secret-pod2 -- /bin/sh -c 'echo "username: $username\n password: $password\n"'
+
+
+
+3- Create a Pod that has access to the secret data through a Volume
+Let’s create a Pod that will consume the data from the secret using a volume mount
+vi my-secret-pod3.yaml
+
+
+The content should look like the following
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-secret-pod3
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: secret-volume
+          mountPath: /etc/config
+          readOnly: true
+      ports:
+      - containerPort: 80
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName: mysecret
+
+Here, the secret field in the volume specification specifies that the secret named mysecret should be mounted as a volume inside the container. The mount path is /config
+Create the pod
+kubectl create -f my-secret-pod3.yaml
+
+
+Verify
+
+kubectl exec my-secret-pod3 -- cat /etc/config/username
+kubectl exec my-secret-pod3 -- cat /etc/config/password
+
+Caution:
+Kubernetes Secrets are, by default, stored unencrypted in the API server's underlying data store (etcd). Anyone with API access can retrieve or modify a Secret, and so can anyone with access to etcd. Additionally, anyone who is authorized to create a Pod in a namespace can use that access to read any Secret in that namespace; this includes indirect access such as the ability to create a Deployment.
+To safely use Secrets, take at least the following steps:
+Enable Encryption at Rest for Secrets.
+Enable or configure RBAC rules with least-privilege access to Secrets.
+Restrict Secret access to specific containers.
+Consider using external Secret store providers.
+For more guidelines to manage and improve the security of your Secrets, refer to Good practices for Kubernetes Secrets.

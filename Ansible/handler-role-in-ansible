@@ -1,0 +1,152 @@
+
+# what is the meaning of dry code?  Dont repeat urself
+what is role in ansible? it is just away to write a real usable playbook ie somebody just need to fit value on ur playbook to do samee thing
+
+lets write a playbook called play6.yml
+ ---
+   - host: webserver
+        become: true
+        tasks:
+#            - name: update all packages
+            package or yum:
+              name: '*'   ### means update all packages
+              state: latest
+
+#          - name:  install apache
+              yum:
+              name: httpd
+              state: present
+
+#          - name:   Start httpd daemon
+              service:
+              name: httpd
+              state: started
+              enabled: true
+
+#          - name: CREATE a file
+              file:
+              dest: /var/www/html/index.html
+              state: touch
+
+#          - name:  to add content in a file on the target server    
+             lineinfile:
+             path: /var/www/html/index.html
+             line: <h1>  this apache webserver was build using ansible </h1>       ## this message will appear on our apache broswer
+              
+#          - name: Restart a Daemon
+             servic:
+              name: httpd
+              state: restarted
+              notify: restart daemond    ## this will notify the handler to always triger the daemon to start when we reboot it
+
+#       handlers:     ## this will triger the restart of the above daemon anytime we reboot it
+            - name: restart daemond
+             service: 
+             name: httpd
+             state: restarted
+
+
+
+
+# execute the playbook      Run  ansible-playbook play6.yml --syntax-check   ## to check sytax
+#                           run yamllint play6.ylm                           ## to check syntax
+#                           RUN ansible-playbook play6.yml      ## to execute playbook                        
+
+
+
+
+
+
+##  ####     Now lets create roles  , this role is a way to write an ansible playbook and some called the role fit his own value he do need to 
+  write the entired playbook ######
+
+-    create a folder called roles
+##    we need to tell ansible where to get the role task
+   - go to your ansible.cfg and write the following
+           roles_path = /home/ec2-user/ansible-dev/roles     ## this is simply telling ansible that if i call a role go to this path and check it
+    - lets cd to the roles we created above
+    - run ansible init apache     ## this comman is to create the role and the name of the role will be call apache
+    - lets create another role  ansible init urld
+    - run ls  , u will see that the is a folder created for all the role we created above
+    - cd to the apache folder , u will see many other sub folder
+#       on meta folder open the main.yml file  ## this file carries information about owner of the role u can edit it put ur own information
+#       on handler forlder is where we put our handler eg
+            
+            --- 
+              - name: restart daemond
+             service: 
+             name: httpd
+             state: restarted
+
+#        on file folder, if you want to copy a file to a target forlder u can write the task here  eg
+               ---
+#        on the default forlder we can put variable in it    
+
+#        on tasks folder is where we define our task eg
+            ---
+              - name: installing apache 
+              yum:                             ## all the bellow variable are this that can change
+              name: "{{apache_package}}"    # #u can fine or writte the content here in th var forld
+              state: "{{pkg_state}}"         # #u can fine or writte the content here in th var forld 
+
+           - name:  starting daemond
+           service:
+           name:  "{{service_name}}"      # #u can fine or writte the content here in th var forld 
+           state: "{{service_state}}"       # #u can fine or writte the content here in th var forld 
+
+            - name: CREATE a file
+              file:
+              path: "{{file_path}}"     # #u can fine or writte the content here in th var forld
+              state: "{{file_state}}"   # #u can fine or writte the content here in th var forld
+
+           - name: file content
+           lineinfile:
+           path: "{{file_path}}"    # #u can fine or writte the content here in th var forlder
+           line: "{{content}}"      # #u can fine or writte the content here in th var forld
+
+#     on the var folder lets put all the variable value since we are calling the value in tasks folder
+                ---   
+                apache_package: hettpd
+                pkg_state: present
+                service_name: httpd
+                service_state: started
+                file_path: /var/www/html/index.html
+                file_state: touch
+                ontent: '<h1> jhfdjf fjhdf jfhj</h1>
+
+
+### how to call the above role ie calling some other person playbook and u only need to fit ur own value  without writing the entire playbook
+   - create folder called ansible-dev cd to it
+   -  vi test.yml
+           ---
+           - hosts:
+           become: true 
+           roles:                     ## here now is normall tasks as we use to use but role
+            - apache                ## this is the name of the role we created above , this name canbe change depending on the name u call ur role
+            - java
+            - nginx
+            - urld
+
+ TO execute it run ansible-playbook test.yml       
+
+ ## to get this role online ie download, on your browser search  ANSIBLE GALAXY
+      - CLICK On roles
+      - u can search on the role task u want ie jave, apache etc
+      - on the drop down on the right near search select download count
+      - choose an click on the person u want to download it role
+      - on the installation copy the link, go to your working machine now
+      - past and run the link u copy on ur ansible master terminal
+      - check on roles and u will fine the roles downloaded
+
+    - THE ARE TWO TYPE OF ANSIBLE PLAYBOOK  IE ANSIBLE CORE AND ANSIBLE TAWA
+    NOT TO DOWNLOAD ROLE ONLINE IN ANSIBLE GALAXY THE CORE VERSION ONLINE AN THAT OF UR MACHINE MOST BE THE SAME
+
+ # molecule is a way to test our playbook using container  
+ ## how to put condition in your playbook?  WE USE THE WHEN STATEMENT 
+ ## HOW to do unit test on ur playbook? run yamllink or --check or --syntax-check
+ ## how to do loop in playbook?  we can use loop 
+ ## what is inventory.yml file? 
+ ## what is idenpotensy in ansible?  it just mean when u run ur playbook multiple time it still give u same result
+ ## what is the diffn bw shell module and command module
+        shell module can be use to run our own linux command
+ ## what are some of the module u have use in ansible       

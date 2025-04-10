@@ -1,0 +1,197 @@
+
+#  Lab 2: Kubernetes - Deploying a stateless and scalable application running Nginx server
+In this lab, we are going to deploy a scalable and stateless application and configure autoscaling for the app
+Prerequisite:
+Before starting, make sure you have:
+A Kubernetes cluster up and running
+GitHub link of the manifest here
+Creating and Deploying the application
+1- Create the manifest file for the deployment
+Let’s create and edit a new file called nginx-deployment.yaml
+vi nginx-deployment.yaml
+
+
+The content of the file should look like the following
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+2- Create the deployment in the cluster
+kubectl create -f nginx-deployment.yaml
+
+
+You can verify the deployments with
+kubectl get deployments
+
+
+You can also display the information about the deployment with:
+kubectl describe deployment nginx-deployment
+
+
+To list all the resources running in the default namespace in the cluster, run:
+kubectl get all
+
+
+3- List the pods created by the deployment
+Use the command:
+kubectl get pods -o wide
+
+
+Or be more specific by running: (this is useful when you have many pods for different applications) The -l option is to specify the label of the pods.
+kubectl get pods -l app=nginx
+
+
+4- Update the deployment manifest
+You can update the deployment by editing and applying the YAML file. This YAML file specifies that the deployment should be updated to use nginx 1.16.1 as an image.
+Edit the content of nginx-deployment.yaml file as follows:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16.1
+        ports:
+        - containerPort: 80
+
+
+Now, apply the new file:
+kubectl apply -f nginx-deployment.yaml
+
+
+Watch how the deployment creates pods with new names and deletes the old pods:
+kubectl get pods -l app=nginx
+
+You can see that the previous pods have been destroyed and new pods created instantly with the new deployment (Verify the names of the pods). Now, describe a pod to see the image that was used for the creation
+kubectl describe pod pod-name-here
+
+Scaling the Nginx Deployment Replicas
+We can use two methods to scale our deployment: either using the command kubectl scale or just updating the number of replicas in the manifest.
+Using kubectl scale command to specify the number of replicas for the nginx deployment
+kubectl scale deployment nginx-deployment --replicas=5
+
+Listing all the pod replicas and using -o wide option to list the nodes hosting the nginx replicas
+kubectl get pods -o wide
+
+You can describe the pods
+kubectl describe deployment nginx
+
+Auto-healing with deployment controller
+You can delete one pod manually and observe the auto-healing behaviour of the deployment
+kubectl get pods
+kubectl delete pods -l app=nginx put-pod-name-here
+kubectl get pods
+
+After deleting a pod, another pod is automatically created immediately to replace the pod that died.
+Update deployment and roll out new versions of pods
+We could also use the kubectl set command to update the nginx image version to 1.17.0
+kubectl set image deployment/nginx-deployment nginx=nginx:1.17.0 --record=true
+
+
+Describe the deployment to confirm the image version is updated to nginx:1.17.0
+kubectl describe deployment nginx-deployment
+
+Verify the status of deployment, replicaset and pods. Notice that a new replicaset is created and a new set of pods is also running to serve the newer version
+kubectl get pods
+kubectl get all
+
+Display the rollout history of the deployment to verify the number of revisions with the command:
+kubectl rollout history deployment/nginx-deployment
+
+
+Updating deployment and fixing failed pods
+1- Let’s use the kubectl set command to update the nginx image version again. This time, let’s put an error on the image version
+kubectl set image deployment/nginx-deployment nginx=nginx:1.191 --record=true
+
+
+2- Display the rollout history of the deployment to verify the number of revisions
+kubectl rollout history deployment/nginx-deployment
+
+
+3- Display the pods to verify if all pods have rollout. But you would find that the rollout is not successful and deployment is stuck.
+kubectl get pods
+kubectl get deployment nginx-deployment
+
+
+4- Describe the deployment to check the reason for the stucked deployment
+kubectl describe deployment nginx-deployment
+
+
+5- Check the status of the rollout using status command
+kubectl rollout status deployment/nginx-deployment
+
+
+6- To investigate the failed/stuck deployment we will pause the deployment and make the changes to fix it
+kubectl rollout pause deployment/nginx-deployment
+
+
+7- Describe the deployment and see that the progress deadline has exceeded
+kubectl describe deployment/nginx-deployment
+
+8- Fix the deployment by setting the correct image. Using kubectl set command to update the nginx image version
+kubectl set image deployment/nginx-deployment nginx=nginx:1.19.1 --record=true
+
+9- Changes will not apply till we resume the deployment. Verify the deployment is still in paused state.
+kubectl get pods
+kubectl rollout history deployment/nginx-deployment
+kubectl get rs
+
+
+10- We can resume the deployment using resume command. So that all changes we have made to the deployment are applied in one go.
+kubectl rollout resume deployment/nginx-deployment
+
+11- Verify the rollout status and Pod status is up and running on fixing the deployment.
+kubectl get rs
+kubectl rollout history deployment/nginx-deployment
+kubectl get pods
+kubectl get deployment nginx-deployment 
+kubectl rollout status deployment/nginx-deployment 
+kubectl describe deployment nginx-deployment
+
+Rollback to previous deployment version
+With the deployment controller, we can easily go back to a previous version of the deployment. Let’s roll back the deployment to the previous version (revision = 2). Also, verify pods are recreated with revision=2 version of the image. And we are back with 5 pods with older image.
+kubectl rollout undo deployment/nginx-deployment --to-revision=2
+kubectl get pods
+kubectl rollout history deployment/nginx-deployment
+
+
+Delete resources
+To delete the deployment, just run de command:
+kubectl delete -f nginx-deployment.yaml
+
+
+After a while, check with
+kubectl get deployment
+
+
