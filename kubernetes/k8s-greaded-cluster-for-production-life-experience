@@ -1,0 +1,91 @@
+
+
+### to get the Kubernetes cluster up and runing clone the below
+ - https://github.com/Atem1972/kubernetes-lab.git
+
+ - to get the kubernetes version RUN <kubectl version>    ## if kubectl does not work then on ur laptop install kubectl, search it online how to install it
+ - to naviget through the cluster ie run k8s command install <kubectl>
+ - to connect to cluster copy the link    connect to cluster = "aws eks update-kubeconfig --region us-east-1 --name utrain-eks-VWd9js" 
+ - run the link above on the prompt to connect to the cluster
+ - run kubectl get nodes  ## u will see work nodes
+ - run kubectl get ns
+ - run kubectl get deployment
+ - run kubectl get pods
+
+ 
+ ### lets create a folder call anything = application
+ # create file now call namespace.yaml  
+                  apiVersion: v1
+                  kind: Namespace
+                  metadata: 
+                        name: dev
+
+lets execute it RUN <kubectl apply -f namespace.yaml>    # this will create namespace call dev                     
+- to see the namespace u created RUN <kubectl get ns>  
+
+### lets create a pod/container , first lets create a file call pod1.yaml
+                         apiVersion: v1
+                         kind: Pod
+                         metadata:
+                               namespace: dev   ## this shld hv already been created bf putx it here
+                               name: my app
+                               labels:
+                                  name: myapp
+                        spec:
+                           containers:
+                                - name: myapp
+                                  image: httpd
+                                  resources:
+                                      limits:
+                                         memory: "128mi"
+                                         cpu: "500"
+                                  ports:
+                                      - containerport: 80   
+  lets execute it  RUN <kubectl -f pod1.yaml>    
+  - to see the pods u created RUN <kubectl get pods -n dev>      ## -n dev is the name attach to our pod   
+  - to see the ip address and the node our pods are deployed on RUN <kubectl get pods -o wide> 
+  - to delete the pod RUN <kubectl delete -f pod1.yaml>  
+
+
+  ## lets deploy multiple pods/container
+  - vi utc-app.yaml
+
+           apiVersion: apps/v1
+           kind: Deployment
+           metadata:
+              #namespace:dev
+               name: utc-app
+           spec:
+               relicas: 4     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:
+                     matchLabels:
+                         app: nginx
+               template:
+                    metadata:
+                        labels:
+                           app: nginx
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: inginx:latest
+                  
+                   N/B WE CAN STILL ADD MORE CONTAINER UNDER EG
+                       - name: httpd
+                         image: httpd:v1
+                       - name: python
+                         image: python:latest   
+
+to execute it RUN <kubectl apply -f utc-app.yaml>  
+- to list all deploymen RUN <kubectl get deploy>
+- to describe deployment RUN <kubectl describe deploy then put the name of the deployment> 
+- to see the number of replicas RUN <kubectl get rs>
+- to see all pods RUN <kubectl get pod>
+- to see the nodes and the ip of the pod RUN <kubectl get pod -o wide>
+- to describe a paticular pod RUN <kubcetl describe pod then put the pod name>
+NB NOTE THAT IN DEPLOYMEN WITH REPLICAS IF U DELETE A POD IT WILL UNTOMATICALLY BRING UP A NEW ONE (SELF healing)
+
+
+                                                                                 
+
+  
+

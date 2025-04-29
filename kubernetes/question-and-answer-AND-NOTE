@@ -1,0 +1,112 @@
+kubernetes.io
+
+# what is kubernetes?   
+ it is an orchestration tools that is use to orchestrate containers
+ #    advantages of kubernetes
+  -  scalability
+  -    high availability, ie    it  means it can easily bring up a pot that dies
+  -  replication
+  -  self healing
+  - loadbalancing
+  - production suport ie we can run kubernetes in production
+
+# what are the compunent of kubernetes or kubernetes artichtecture?
+   - master/control plane node : -is the collective name for a clusters master nodes, it manages the worker nodes and the pods in the clusters
+                                 - in production environments, the contorl plane usually runs across multiple computer and a cluster usually runs multiple nodes
+                                  providing  fault tolerance and high availability
+                                  - a master node has various k8s process running that are absolutely necessary to run and manage the cluster properly ie
+#                                     THE API SERVER,  THE CONTROLER MANAGER,   THE SCHEDULER,  THE ETCD, CLOUD CONTROLER MANAGER
+   - workers node
+  
+## HOW CAN u join or link  a new worker node to a control plane/master node in a cluster?
+ from the master node this is a formular u will do that will generate a command that u will need to take go to the new work node run it there and it will
+ automatically joint the cluster 
+
+
+# what are some of the processes that are running in the master node  OR COMPUNENT OF MASTER NODE
+#  - API SERVER :  
+                this is the process that check permision of any user trying to login to the master node cluster ie check what permision u have , like 
+                                                             read only access, permision to deploy to worker node, write access, execute access
+ # - THE CONTROLER MANAGER:
+                            -THE CONTROLER MANAGER IS Like a monitoring tool ie it monitor the worker nodes so that if a pod/containers is down for any of the
+                             worker node , it will immediately inform the <SCHEDULER> to go and real schedule the failing pod/container
+                             - he is able to know this because he has access of our requirement on the manifest file , so when he check the manifest file and 
+                             see that we need 5 pod and when he check the worker node and realise only 4 pod/container are up and running instead of 5, he will 
+                             informer the <scheduler> to reschedule the pod that has stop. this can be in the case if someone reboot a worker node
+                        
+#  - THE SCHEDULER; 
+                    -THE funtion of the scheduler  is he goes to our manifest file take our requirement goes to the worker nodes and hand them to the KUBELET that is runing on the worker node 
+                     to execute the pod/container for us.   ie it can be that will need 5 pod/container to be up and runing on our 3 worker nodes 
+                  
+#  - THE ETCD;
+                The etcd is where all the inform on the manifest file are kept , like the name of the app deploy, how many has to be deploy, all the 
+                information about that deployment is kept in this ETCD PROCESS. ALL THE INFORMATION ON WHAT IS DEPLOY ON THE MASTER NODE IS KEPT IN THE ETCD
+                
+#  - CLOUD CONTROLER MANAGER;
+                              THIS IS JUST FOR CLUSTER RUNING IN THE CLOUD ie if u want to create a service in aws or azour like LOAD BALANCER, S3 BUCKET 
+                              then this cntroler manager is what will go and create it for so it most be in stall on the master node
+                             
+ 
+                            
+                            
+               ### what are some of the processes that are running in the worker node  OR COMPUNENT OF worker NODE
+
+#        1) KUBELET:
+                     - THIS process that is running on the worker node has the responsibility of, he collect the requirement from the <scheduler>, and execute it for us
+                        the scheduler say execute 5 pod/container, here is the name of the pods, port number, etc, if we need to pull an image the KUBELET  will pull the image depending on the 
+                        requirement given to him by the scheduler from the master node . and where does the schedule get the requirement, from our manifest file
+
+#        2) container run time;
+                                - here is simply what do u want to use to run ur container, ie if is docker then we need to install it here on the worker node,   cio, container D, IE INSTALL the
+                                software u will like to use to run ur container 
+                                
+#        3) KUBE PROXY;
+                       - this is what help on the networking between the pod/container runing on the worker node ie it put connection or communication
+                        or it makes then pods runing on the diffn worker node to talk to each other 
+                        
+NB  Note that all this worker node compunent/processes like KUBELET,CONTAINER RUN TIME,KUBE PROXY should also be install and run on the master node as well                        
+ 
+ # what is the name of the file we use to declear or write our deployment?  
+     - manifest file
+  # the manifest file is writing in which formate? 
+       - yaml   
+
+  # the manifest file is where we write are require to the master node ie tell it how many pod/containers u want  him to run for u on the worker node 
+  # WHEN A CLUSTER IS RUNNING IN THE CLOUD IS CALLED? 
+    - manage cluster, that means something else is managing the cluster for u  
+
+
+## ways i can use  to access k8s cluster
+    -  UI WHICH IS USER INTERFACE; WE CAN use the tool call OPEN LENS  to access the k8s cluster
+    - Api; here u can write a python script that will use some rest api to talk to ur cluster
+    - CLI command line interface; here we will use the tool call <KUBE CTL, HELM ,> to have access to our cluster
+
+# NB NOTE THAT everything in k8s cluster is treated as object ie pods, nodes, services, VOLUME, ANamespace, etc
+# one pod can be running two container and those two container will have same ip address is it will be using the pode ip
+# two container can be runing on the same pode in which one of the container is working as asistance this is called CIDER CALLED
+ 
+
+## some object on the k8s manifest file and what will be put under each object
+  - the file most have either json or yaml formate
+- api version;      something like 3.2.2 . u need to no which version u want to use
+- Kind;
+      here u will indicate which object u want to create ie pods,  services, VOLUME, ANamespace, etc  all this is carry out on the manifes yaml file
+
+- metadata; 
+           name, uid, namespace , we can use namespace if will want to group resources in the cluster then we can put the under separate namespace
+- spec; 
+        container image, port etc    
+
+
+
+## feature of k8s 
+- high availability or no downtime; ie ur app is always accesible to user
+- scalability or high performance; ie u can easily scale up ur app when the load increase and scale down when the load decrease
+- disaster recovery;   if the infrastructure has some problems, u have a mechanism to backup the data and restore the app to it latest state 
+- self healing;
+
+
+
+## kubernetes setup
+ - to set up kubernetes clusters to run and manage containerized app we do the various options
+ 1) deployment using nini

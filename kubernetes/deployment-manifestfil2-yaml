@@ -1,0 +1,29 @@
+# to deploy an app on production using container we use deployment manifest file .yaml. as seen below
+      - vi application.yaml
+
+         apiVersion: apps/v1
+         kind: Deployment
+         metadata:
+             namespace: dev  ## make sure u already have this name space created before indicating it here
+             name: payment-app       ### this is the name u want to call ur deploment
+        spec:
+            replicas: 3                 ## this simply means how many pod u want to create
+            selector:            ### here means if something else need to work with the 3 pods created above , how do i locate/get to it 
+                 matchlabels:
+                         app: utc-app     ## this label most match with any other sever out there u want this deployment to interact with eg namespace
+                         env: dev
+            template
+                metadata:
+                     labels:
+                        app: utc
+                        env: dev
+                spec: 
+                   containers:   
+                       - image: nginx     #### here simply means which image do u want to use to run ur code on it, ie python, nginx, etc
+                         name: pay-app    #### this is how u want to call ur container 
+- lets execute the above RUN <kubectl apply -f deployment.yaml>
+- to see how many deployment runing RUN <kubectl get deployment>    
+- to see all the pod RUN <kubectl get pods>  
+- to see the ip addres of the pods, to see which node/server host our pod/container, duration it hsa been runing, the status if it is runing, name of the pods, to know if any of the pod has been restart RUN <kubectl get pods -o wide>    
+- how to no how many replicase our deployment has ie how many pod/container RUN <kubectl get rs>   
+- to delete pods RUN <kubectl delet pods then go and copy all the pods name and past here>    ### take note once u have a <replicas> even if u delete a pods by mistake or intentionaly, it will automatically bring up a new pods/container up and runing .        

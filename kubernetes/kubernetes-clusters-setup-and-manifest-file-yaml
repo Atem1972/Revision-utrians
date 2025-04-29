@@ -1,0 +1,108 @@
+
+
+## kubernetes setup
+ - to set up kubernetes clusters to run and manage containerized app we do the various options
+ # A) development
+ 1) deployment using ninikube, using Docker destop
+ - this are use for development and testing purpose only. NOT for production
+
+ B) Unmanaged (installer based)
+ 2) Uusing KUBEADM, Using KOPS, Using kubespray
+ - HERE u manage ur master and ur nodes
+
+ c) managed (platform based)
+ 3) AKS(Azure k8s service), EKS(Aws elastic k8s service), GKE (google k8s engine), OKE (oracle container engine for k8s), LKE (linode kubernetes engine)
+   RKE (rancher kubernetes engine)
+ # here ur master is completely managed by the cloud provider  
+ 
+ 
+ # follow this link to practise k8s  https://killercoda.com/playgrounds
+ 
+   - click on that link above 
+   - select k8s 1.31
+   - login using github, google , click github
+   - a prompt will show up , that is the master node
+   -  to check all the nodes u have on that cluster RUN = <kubectl get nodes>
+   - to check namespace RUN = <kubectl get namespace>
+   - to describe something on k8s RUN = <kubectl describe node then put the name of the node>
+   - to check for pods RUN = <kubectl get pods>
+   - to create namespace RUN = <kubectl create namespace then put any name u want to call ur namespace>
+
+# the above are manuall way create in k8s like create namespace, create podes, the better way is to declear all of this in a manifest yaml file and when will execute it , it will create all the namespace , pods etc   
+example1 <the below will create u a namespace>
+      - cd on ur folder
+      - create a file called anything.yaml = 
+      - vi namespace.yaml
+                      apiVersion: v1
+                      kind: Namespace
+                      metadata:
+                         name: dev
+
+TO EXECUTE the above on the prompt RUN = <kubectl apply -f then the name of the file namespace.yaml>  # this will create u a namespace
+# RUN kubectl get namespace ## this will display all namespace and u will see the want u just created
+- To delete the namespace u created above RUN = kubectl delete -f then the name of the file namespce.yaml
+
+
+# example2 lets create pod/container
+-bring up an httpd image ,to do so 
+- RUN = <kubectl run app1 --image httpd 
+- to see all the pods/container run, RUN= <kubectl get pods>  # if u see 1/1 it means only one container is runing on that pod, u can see 2/2 meaning 2 run
+- to get more information about the pod/container, RUN= <kubectl get pods -o wide>  # u will get information like ip adress of the pod and which node 
+                                                                                       is the pod run in
+- to check if that our pod/container has connection RUN= <curl then past the ip address of that pod/container>
+- let describe this pod/container RUN = <kubectl describe then the name of the pod/container app1>   # this will give u more details about ur pod/container
+                                       u will see information like the name of the pod/con, namespace its runing on, node and ip address, Label etc
+- to edit our pod/container RUN = <kubectl edit then the pod/container name app1> 
+- how to delete a pod/container RUN = <kubectl delete pod then the name of the pod/container app1>     
+
+## lets create a pod and deploy it USING MANIFEST YAML FILE
+     vi pod.yaml
+                apiVersion: v1
+                kind: pod     # simply means the service u want to deploy
+                metadata:         ## simlply means what name u want to call the pod, will u want to label it under which environment ie dev,qa,uat
+                     name: app2
+                     labels:
+                     env: dev
+              
+               spec:           ## simlpy means what do u want to use to run ur application ie container
+                  containers:   ## simply means our application is a container application
+                   - name: app    ## measn call the container app
+                     image: httpd   ## means what software are u calling to use and bring up ur code , it can be a webserver like apache,nginx, or python 
+                  
+                  -name: app1    ##  this  simply means we can declear as many containers as posible under container
+                     image: python3
+- lets execute it  RUN <kubectl apply -f pod.yaml>  
+- to check if the pod was created RUN <kubectl get pod>    
+- to describe the pod RUN <kubectl describe then the pod name app2      ## scrowdown to event to have a better understanding  
+- to get the ip address of the pod run <kubectl get pod -o wide> 
+- to delete pod RUN <kubectl delete -f pod.yaml>
+
+
+# to modify pod.yaml ie u want to change something like label, change image, do the following below
+ - vi pod.yaml
+  after finishing doing all the changes close it 
+ - delete the pod that the containers are runing on it RUN <kubectl delete -f pod.yaml> 
+ - RUN APPLY AGAIN <kubectl apply -f pod.yaml>
+  
+                      
+### lets depploy a pod that belongs to a specific namespace
+
+           vi pod.yaml
+                apiVersion: v1
+                kind: pod     # simply means the service u want to deploy
+                metadata:             ## simlply means what name u want to call the pod, will u want to label it under which environment ie dev,qa,uat
+                    namesppace: dev   ## u can only use this dev as a namespace if u have formerly created it ie kind: namespace
+                     name: app2
+                     labels:
+                     env: dev
+              
+               spec:           ## simlpy means what do u want to use to run ur application ie container
+                  containers:   ## simply means our application is a container application
+                   - name: app    ## measn call the container app
+                     image: python   ## means what software are u calling to use and bring up ur code , it can be a webserver like apache,nginx, or       python  
+- Now execute it RUN <kubectl apply -f pod.yaml >   
+-  to list pods on a specific namespace RUN <kubectl get pod -n dev>
+- to delete a pod that was specify to run on a specific namespace RUN <kubectl delete pod app2 -n dev>  ## the -n dev stand for e name of our namespace
+# N/B NOTE that if u do not specify which namespace u want ur pod to run on it , it will run on the fedault namespace
+
+   
