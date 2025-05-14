@@ -1,0 +1,6 @@
+
+TAke note,
+  if u can not fine the value of this command ie connect-to-cluster = aws eks update-kubeconfig --rgion us-east-1 --name utrains-eks-7jwqem    ,, what 
+  u simply need to do is copy the content of that file manuall then locate where ~/.kube/config is vi to it and past the content of ur cluster in there 
+
+  NB WE DO NOT DEPLOY DATABASE IN THE CLUSTER  BUT THE DATABASE INFORMATION CAN BE KEPT IN THE CLUSETR LIKE USERNAME, ETC

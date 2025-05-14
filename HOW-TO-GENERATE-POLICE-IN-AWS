@@ -1,0 +1,6 @@
+
+ON GOOGLE SEARCH TYPE <aws policy generator>
+ 
+        select type of policy : iam policy
+        effect = allow
+        aws service = select the police u want to give permition ie ec2 

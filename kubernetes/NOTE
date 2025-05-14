@@ -1,0 +1,5 @@
+
+The are so many mechanism we can use to access our cluster , like checking the pods , nodes, deployment, service etc.  some of the mechanism are
+- kubectl or kube cudle, it is the most common use command line tool
+-api
+- or any other mechanism

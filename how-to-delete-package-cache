@@ -1,0 +1,8 @@
+
+RUN  <sudo apt clean>  ### the above command removes all cached files, which includepackage downloads and repository metadata
+RUN <sudo dnf clean all> ## deleting the package cache on dnf-base distributions
+RUN <sudo sysctl vm.drop_caches=1>   ## to clear package cache
+RUN <sudo sysctl vm.drop_caches=2>  ##to clear pagecache, dentries, inodes
+RUN <rm -rf ~/.cache/mozilla>  ##  this will delete browser cache firefox
+T o see how many minutes set on our tmp/  RUN  vi /usr/lib/systemd/system/systemd-tmpfiles-clean.timer
+if u  make changes above then RUN <sudo systemctl daemon-reload>  RUN THIS ALSO<sudo systemctl enable --now systemd-tempfiles-clean.timer>

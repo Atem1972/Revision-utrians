@@ -1,0 +1,93 @@
+
+- To start make sure ur cluster is up and runing, ie have master node and work node
+- always run terraform out copy the value attach to Connect-to-cluster and run it on the command line prompt
+- To see all the node in that cluster RUN <kubectl get nodes>
+
+# lets create a deployment object called vi donner-app.yaml
+                   
+                    apiVersion: apps/v1
+           kind: Deployment
+           metadata:
+              #namespace: pork  # this help to partition our cluster in a way that we can identify who is in control of what, especially in lower env
+               name: utc-app
+           spec:
+               relicas: 6     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:           ## it simply means if somebody or another object which to connect to this pods above then  indicate on ur file the 
+                                   matchLabels value which in our case here is <app:nginx> or <env:dev> seen below
+                  matchLabels:
+                         app:  my-application        ## this app: nginx most match with that of servive if we want any type of LB infront of our pods
+                         env: dev
+               template:
+                    metadata:
+                        labels:
+                           app: my-application
+                           env: dev
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: 455452245698.dkr.ecr.us-east-1.amazonaws.com/awscicd:v2.0  
+                                                                          # THis last image was taken from ECR IN AWS COPY THE URI AND PAST HERE IN IMAGE :
+                         ports:
+                           - containerPort: 8082
+                         resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+                              limits:
+                              memory: "128Mi"
+                              cpu: "500"
+                         requests:              ### when limits above is equal to request below is known as <garanty >  BUT when it has only limites is  
+                              memory: "128Mi"    is known as <besteffort> in    QOS
+                              cpu: "500"
+- To execute it RUN <kubectl apply -f donner-app.yaml>  
+- To list all deployment in this cluster RUN <kubectl get deployment>  # it will tell u e name of the deploymen and how many pods are there, and duration 
+                                                                         it has been runing
+- To see pods RUN <kubectl get pod> 
+- To list all pods in all the namespace RUN <kubectl get pod -A>  # TO KNOW MORE on where the pod are runing, RUN <<kubectl get pod -A -o wide>
+- How to know which pod is runing on which worker node RUN <kubectl get pod -o wide>
+- To descript pod RUN <kubectl describe pod then put the pod name>
+- To see how many replicas runing RUN <kubectl get rs>
+- RUN <kubectl rollout status deployement utc-app>
+- RUN kubectl rollout status deployment utc-app
+- RUN <kubectl rollout undo deployement utc-app>
+
+
+## lets create external loadbalancer in aws and put infront of our pods above
+###   external loadbalancer
+   vi service.yaml
+              apiVersion: vi     
+              kind: Service
+              metadata:
+                   namespace: pork
+                   name: my-service
+              spec:
+                 type: LoadBalaner  ## this will go and create a loadbalancer in aws and it will be put infront of our pod/c to distribute traffic
+                                    ## for this to happen cloud control manager most have been configure in the master node and work node
+                 selector:               ## this simply means when we are deploying appliction we will indicate this selector there by putinx our selector
+0                   app: my-application     <name = my-selector ie use this selector name i hv put here to know where the LB I Want u to use is located ---
+                 ports:                   and my pods shld be behind it .all trafic shld be directed through it
+                -  name: my-service-port
+                   protocol: TCP
+                   port: 80
+                   targetport:  8082  
+- To execute RUN <kubectl -f service.yaml>  
+- RUN kubectl get service
+- RUN kubectl describe svc then the name of the service ie my-service  
+- to see the application on the browser , <describe the service, scrow down to LoadBalancer Ingress copy it value and past on the browser              
+
+
+## The is always a file in our cluster that catche all the cluster inform as we run them , is called?  .kube/config
+if you empty this file the cluster automaticall breakdown nothing workers again.
+- To to see this file RUN <ls ~/.kube>
+-To see the content of the file RUN <cat ~/.kube/congig> 
+- to delet it run ( > ~/.kube/config)  if u run kubectl get pod nothing will show, but if somesone give me the content of it own k8s cluster config file
+                                                                    and i put on my own config file i will automatically have access to his cluster
+                                                                                   
+- To bring it back run terraform output copy the value in connect to cluster and RUN it on ur terminal, this will help to dome the content of my cluster 
+                                                                      to the config file where k8s go and read
+
+## how to login to k8s pod
+- RUN <kubectl exec -it put the name of the pod  -- bash>  but if we just want to run command on the pod wwithout login in to it run <kubectl exec -it put the name of the pod  -- pwd or cat or etc>   
+
+
+
+
+
+

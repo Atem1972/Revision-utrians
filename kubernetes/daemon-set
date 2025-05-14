@@ -1,0 +1,29 @@
+what is a daemon set? it is one of the Kind in k8s object, where u say execute this my applicetion  one pod per node ie if i need my application to replicate 5 pods/container , please put each pod per node
+
+- we can also use this daemonset kind to agregate logs ie collecting logs meassages from all our pod and asemble them somewhere for us to have a look
+ # some other tools we can use to monitor the cluster and collect logs(agrigate logs) are promitus and grafana
+
+example:
+  create a file daemonset.yaml
+         
+           apiVersion: app/v1
+           Kind; DaemonSet
+           metadata:
+              name: anything
+              labels:
+                 K8s-app: fluented-logging
+           spec: 
+              selector:
+                  matchLabels:
+                       name: fluent-elasticsearch
+                  template:
+                     metadata:
+                       labels:
+                         name:  fluent-elasticsearch                        
+            spec:
+               containers:
+                 - name:  fluent-elasticsearch
+                   image: nginx  
+-To execute it RUN <kubectl appyl -f daemonset.yaml>  
+               RUN <kubectl get pod>  or k get pod -o wide
+               RUN <kubectl get daemonset>                        

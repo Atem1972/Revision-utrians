@@ -1,0 +1,4 @@
+ this is  one of the k8s loadbalancing service type
+  explanation, when we build and app it is always with frontend and backen, and the frontend is what customer are seeing in public, if we are require to put a loadbalancer then we will go with <external loadb> . with the backend app that talks with the frontend through their api , in this case if we are require to put a loadb in any of the backend app then we can put <cluster ip loadbalancer>
+
+  another example wordpress application we need to put external loadbalancer  while database application will can put internal loadB<cluster ip)>

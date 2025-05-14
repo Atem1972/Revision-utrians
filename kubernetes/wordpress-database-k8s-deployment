@@ -1,0 +1,158 @@
+
+# diagram ,  here we need to write 7 manifest file
+             create namespace.yaml
+              domain
+#                | pointing 2 our LB BELOW
+#                |
+         external-service.yaml(LB) ,TO balance our WDPRESS PODS/CONTAINER type of lb to be created <LB OR NODEPORT>  
+#                | LB POINTING TO OUR WORDPRESS 4 PODS/CONTAINERS as the entrypoint of our app
+#                |
+             wordpress pod/con, here we need to use deployment.yaml object, configmap to stORE DB-NAME, SECRET TO STORE DB username and password
+                 |                wordpress app need to consum the database name, database username and database password
+#                |
+        internal-service(LB) To balance our database pods/containe, we need cluster-ip.yaml as our lB
+#                |
+#                |
+        deploy mysql database 4 pod/container. we need deployment.yaml as our kind, configmap.yaml to store database-name, secret to store username $ paswd
+
+# NB  note that we can write all of this in one manifest file  all we need to do is to separate them with 3 ---    
+
+
+
+ 
+ 
+ 
+ 
+  ####                         Our wordpress-database application  
+                               CREATE A FOLDER CALL APP-CONFIG
+
+  # LETS create namespace.yaml file
+                 apiVersion: v1
+                 kind: Namespace
+                 metadata:
+                   name: wordp-db
+---
+# lets create secret.yaml file
+                 apiVersion: v1   
+                 kind: Secret
+                 metadata:
+                 namespace: wordp-db 
+                      name: wp-secret
+                 type: opaque
+                 data:
+                    username: jhdfjsejs=!   ## this username has been encypted using base64 , the real username is DB-NAME 
+                                            RUN ON THE TERMINAL <echo -n "put the original username here" | base64>  , COPY THE ENCRYPTED PW AND PAST ON USERNAME
+                    mysql_passwd:  lskhfjshk       ## this pass has been encypted using base64 , the real username is DB-NAME
+                                                      RUN ON THE TERMINAL <echo -n "put the original mysql_passwd here" | base64>  , COPY THE ENCRYPTED PW AND PAST ON mysql_passwd
+                                                    
+---
+
+# lets create configmap.yaml file
+               apiVersion: vi 
+               kind: ConfigMap
+               metadata:
+               namespace: wordp-db
+                 name: wpconfigmap  
+               data:
+                  db_url: mysql-service    ### here is the name of mysql service/LB we deploy below ## is calling the url of our database(mysql)
+                
+---
+# lets create Wp-deploy.yaml file 
+                 apiVersion: apps/v1
+                 kind: deployment
+                 metadata: 
+                     name: wp-deploy
+                     namespace:  wordp-db
+                 spec: 
+                    replicas: 2
+                    selector:
+                       matchLabels:
+                           app: wordpress
+                    template:
+                         metadata:
+                            labels:  
+                               app: wordpress
+                 spec:
+                    containers:
+                      - name: wordpress
+                        image: wordpress:4:8-apache
+                        ports:
+                        - containerPort: 80
+                        env:
+                         - name: WORDPRESS_DB_HOST
+                           valueFrom: 
+                              configMapkeyRef:
+                                 name: wpconfigmap          ### here is the name of my  configmap       
+                                 key: db_url
+                         - name: WORDPRESS_DB_PASSWORD      
+                           valueFrom:
+                              secretKeyRef:
+                                  name: wp-secret             ### here is the name of my secret
+                                  key: mysql_passwd
+
+---
+# lets create mysql-deploy.yaml
+                        apiVersion: apps/v1
+                        kind: Deployment 
+                        metadata:
+                          namespace:   wordp-db
+                          name:  mysql-db
+                        spec:
+                           replicas: 2
+                           selector:
+                               matchLabels:
+                                    app: mysql
+                           template:
+                              metadata:
+                                labels:  
+                                  app: mysql
+                        spec:
+                          containers:
+                              - name: mysql
+                                image:  mysql:5.6
+                                ports: 
+                                   -containerPort: 3306
+                                env:
+                                 - name: MYSQL_ROOT_PASSWORD      ## u can put anything here
+                                   valueFrom:
+                                   secretKeyRef:
+                                   name: wp-secret                ### here is the name of my secret
+                                   key: mysql_password
+                                
+                                    
+---
+
+lets creat service.yaml   ## this service/LB is for wordpress  , EXTERNAL LB
+              apiVersion: vi
+              kind: service
+              metadata:
+                namespace: wordp-db                                  
+                name:  wp-service
+              spec:
+                type: LoadBalancer
+                selector:
+                  app: wordpress
+              ports:
+                - protocol: TCP
+                  port: 80
+                  targetPort: 80  
+
+---
+lets create service1.yaml            ## this  service/LB is for mysql
+              apiVersion: vi
+              kind: service
+              metadata:
+                namespace: wordp-db                                  
+                name:  mysql-service
+              spec:
+              type: ClusterIP
+                selector:
+                  app: mysql
+              ports:
+                - protocol: TCP
+                  port: 3306
+                  targetPort: 3306 
+
+ To excute all at ones RUN <kubectl apply -f .             
+           
+                               

@@ -1,0 +1,49 @@
+
+what is config map in k8s? it is and object in k8s that will can use to declear a variable in the cluster. , ie thoes those thing in our manifest file
+                           that can be change at anytime such image URL, PORT NUMBE, ETC  (is variable are sometime call property file)
+# what is Secret in k8s? is same as config map just that here we use it when data are more sensitive  
+
+example1 
+          create file vi config-map.yaml
+
+                apiVersion: vi
+                kind: ConfigMap
+                metadata: 
+                    name: wap
+                data:             # bellow variable we have store to be call in other deployment
+                  port: "80"
+                  color: "green"
+                  env: "dev"
+
+- To execute RUN <kubectl apply -f configmap.yaml>   
+                 <kubectl decribe configmap wap>   
+
+#   illustrate of the above
+       create file pod.yaml
+
+                  apiVersion: v1
+                  Kind: pod 
+                  metadata:
+                      name: configmap-pod
+                  spec:
+                     containers:
+                       - name: nginx
+                         image: nginx
+                         ports:
+                            - containerPort: 80
+                         env:
+                           - name: PORT_NUMBER
+                             valueFrom:
+                                configMapkeyRef:
+                                  name: wap 
+                                  key: port  ## here u need to put the name of the variable declear above ie port : 80   the name is port and value is 80
+
+- to execute RUN <kubctl apply -f pod.yaml>    
+                 <kubectl get pod>  
+- To print all env variable in a pod/container RUN <kubectl exec -it configmap-pod -- printenv>                                            
+
+
+
+
+
+                     

@@ -1,0 +1,130 @@
+
+#### Advance scheduling
+
+# how to scheldule a pod/container to a specific node
+# bellow are the various method we can use to do advance schelduling
+             1) nodeName: here u just need to indicate the name of the server
+             2) node selector: here u can say schedule it on node with os-ubuntu, node having 500 cpu and above or anything etc
+             3) node affinity/or node anti affinity: here u can tell the schelduler not to schedule a port in a paricular node
+             4) pod affinity/anti affinity: here u simply schedule as look for any pods that are runing already on the cluster with this kind or label or 
+                                            name of this and that ,do not schedule this new pods on those node have those pods
+             5) Taints and toleration: taints means we can put a mark on a node that will not allow any pod to be schedul on(tainting the node) it, while toleration means 
+             the node with Taints we can only schedule pod on that node with tiants if the pods has tolerance on it
+
+
+# Example 1
+1) nodeName mthode
+- create a file call anything ie vi advance.yaml     
+                  apiVersion: v1
+                  kind: Pod
+                  metadata:
+                     # namespace: dev   ## this shld hv already been created bf putx it here
+                      name: my app
+                      labels:
+                      app: myapp
+                  spec:
+ #                   nodeNAME: nodeone.example.com       ## to get the nodename RUN <kubectl get node> then copy the name of the node u want to schedul ur 
+                                                           pod on and replace it with nodeone.example.com
+                    containers:
+                      - name: afro-app
+                        image: httpd
+execute it normally as we do
+- kubectl apply -f advance.yaml
+- kubectl get pod -o wide  
+
+# example2
+2) node selector
+## how to use label to schedule pods on nodes
+- run kubectl get node 
+- then copy the names of the node ur want to put label on them
+-  RUN kubectl label node <then past the node names u copy above>city=ossing
+- press enter
+- to see the above label RUN <kubectl describe node then past the node name here>  ## to get the node the RUN kubectl get node
+
+ vi selecctor-scheduler.yaml
+      
+                  apiVersion: v1
+                  kind: Pod
+                  metadata:
+                     # namespace: dev   ## this shld hv already been created bf putx it here
+                      name: my app
+                      labels:
+                      app: myapp
+                  spec:
+ #                     city: ossing  # this simply means schedule this pods only on node that have this label <city=ossing> where to see this label on 
+                                       ur node, on the terminal RUN <kubectl describe node then past the node name here> . it can hv many label list below
+                    containers:
+                      - name: afro-app
+                        image: httpd
+ EXECUTE IT  RUN kubectl apply -f  delector-scheduler.yaml                   
+# NB HERE WITH CAN EVEN USE THE OS IE UBUNTU,CENTOS OR MEMORY OR ANYTHING , THAT WILL CAN TELL THE SCHEDULER TO CHECK IF THE NODE HAVE BEFOR THEY CAN SCHEDUL OUR ON THEM  
+
+# example3
+3) Taints and toleration: 
+ Noschedulw;          do not schedule new pod
+ PreferNoschedule;     schedule only if no other choices
+ NoExecute;           if a pod was already running that pod needs to exit
+
+# ILLUSTRATION
+
+- run kubectl get node 
+-HOW TO Taint a node,  RUN <kubectl taint node <then past the name of the node u want to taint> color=green:Noschedule or preferNoschedule or NoExecute>
+- How to remove tiant on a node RUN (<kubectl taint node <then past the name of the node u want to taint> color=green:Noschedule-        )
+- To see the tainted node RUN <kubectl describe node past the name of the node here>
+
+A) example of Taint
+               - vi utc-app.yaml
+
+           apiVersion: apps/v1
+           kind: Deployment
+           metadata:
+              #namespace:dev
+               name: utc-app
+           spec:
+               relicas: 4     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:
+                     matchLabels:
+                         app: nginx
+               template:
+                    metadata:
+                        labels:
+                           app: nginx
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: inginx:latest
+                         ports:
+                           - containerPort: 80
+# THis 4 pod deployment will not be deploy on that node that will have taint, it will aviod that node and deploy our pod on other node
+- How to remove tiant on a node RUN <>
+
+B) Toleration 
+       vi tole.yaml
+             
+           apiVersion: v1
+           kind: pod
+           metadata:
+              #namespace:dev
+               name: utc-app
+           spec:
+              containers:
+                 - name: web1
+                   image: httpd
+                   ports:
+                     - containerport: 80
+                       name: httpd
+                       protocol: TCP
+              tolerations:
+                - key: "color"
+                  operator: "Equal or exit"  # quall means this something we have put(taint) on the node colour=green 
+                  value: "green"
+                  effect: "NoSscedule"    ## on that node this was what we taint it with noschedule, put in mind it may have been taint with prefernoschedu
+
+lets execute it RUN <kubectl apply -f tole.yaml >
+                    <kubectl get pod> or <kubectl get pod -o wide>
+                      
+
+
+
+
+

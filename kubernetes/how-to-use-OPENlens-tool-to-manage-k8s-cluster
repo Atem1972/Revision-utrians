@@ -1,0 +1,10 @@
+
+firstly we need to install the tool OPENLENS on our labtop
+- CLICK on the install app and open
+- click on browse cluster in catalog  to open it
+- NB for any thing to have access to our cluster it most have had access to the config file ie ~/.kube/config
+- click on cluster on the left conner
+- on labels , click on the config file below , this will connect u to ur cluster
+- when u eventually get in the cluster , on the left conner u will see  NODES, WORKLOADS, CONFIG, NETWORK, STORAGE, NAMESPACE, EVENT, HELM, ACESS CONTROL
+-  TO SEE ur node clicke on node, 
+- to describe ur node click on the node name u want it to describe and it will open u a describtion of that node

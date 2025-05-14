@@ -1,0 +1,173 @@
+
+the mongodb will represent our database <backend>  while mongo-db will represent our entrypoint <frontend>
+
+lets start the creations
+
+## create namespace file  = namespace.yaml
+                    
+                    apiVersion: vi
+                    kind: Namespace
+                    metadata:
+                      name: mongodb
+execute it RUN <kubectl apply -f namespace.yaml>
+
+
+### lets  create secret file = secret.yaml
+
+              apiVersion: v1
+              kind: Secret
+              metadat:
+                 namespace: mongo
+                 name: mongo-express
+              type: Opaque
+              data:
+                mongo_username: skhrgsuh=#d     ### this is an encryted usename with base64,  original is <root>   
+                mongo_password: lihfs;if=vkd     ### this is an encryted usename with base64,  original is <passWo0@!>   
+ execute it RUN <kubectl apply -f secret.yaml>   
+
+
+ ## create configmap file = vi config-map.yaml
+
+                apiVersion: vi
+                kind: ConfigMap
+                metadata: 
+                    namespace: mongo
+                    name: wap
+                data:             # bellow variable we have store to be call in other deployment
+                  data_host:  mongo-service   ## this is the name of our service.yaml for mongodb
+#                 data_port: 27017    ## this was not use but if u want to use in future u can use
+                  mon_init_db: admin
+ execute it RUN <kubectl apply -f configmap.yaml> 
+
+
+## lets create deployment = deploy-mongodb.yaml
+                   
+                   apiVersion: apps/v1
+                   kind: Deployment
+                   metadata: 
+                       namespace: mongo
+                       name: mongo-db
+                   spec:
+                     replicas: 2
+                     selector:
+                        matchLabels:
+                            app: mongo-db
+                        template:
+                          metadata:
+                             labels:
+                               app: mongo-db    
+                          spec:
+                             containers:
+                              - name: mongo-db
+                                image: mongo:4.4.3
+                                ports:
+                                  - containerPort: 27017  ## we can make this a variable
+                                env:  
+                                  - name: MONGO_INITDB_ROOT_USERNAME
+                                    valueFrom:
+                                        secreKeyRef:
+                                           name: mongo-express  ## this is the name of our mongo-express secret.yaml above
+                                           key: mongo_username              ## the key is requesting the variable from secret
+
+                                   - name:   MONGO_INITDB_ROOT_PASSWORD
+                                     valueFrom:
+                                        secreKeyRef: 
+                                           name: mongo-express     ## this is the name of our secret
+                                           key: mongo_password        ## the key is requesting the variable from secret
+
+                                   - name: MONGO_INITDB_DTABASE
+                                     valueFrom:
+                                        configMapKeyRef:
+                                           name: wap               ## this is the name of our configmap.yaml
+                                           key:  mon_init_db          ## the key is requesting the variable from configmap.yaml
+ execute it RUN <kubectl apply -f deply-mongodb.yaml> 
+
+
+
+## lets create service/LB = service-mongodb.yaml
+                                         
+                     apiVersion: v1
+                     kind: Service
+                     metadata:
+                        name: mongo-service    ### this name will be use in our configmap in data_host put this service name there
+                        namespace:mongo 
+                     spec:
+                       type: clusterIP
+                       selector:
+                           app:  mongo-db
+                       ports:
+                        - protocol: TCP
+                          port: 27017
+                          targetPort: 27017    
+execute it RUN <kubectl apply -f service-mongodb.yaml>
+
+
+## lets create mongoexpress = mongoexpress-deploy.yaml
+
+                   apiVersion: apps/v1
+                   kind: Deployment
+                   metadata: 
+                       namespace: mongo
+                       name: mongo-express
+                   spec:
+                     replicas: 2
+                     selector:
+                        matchLabels:
+                            app: mongo-express
+                        template:
+                          metadata:
+                             labels:
+                               app: mongo-express   
+                          spec:
+                             containers:
+                              - name: mongo-db
+                                image: mongo-express:0.54.0
+                                ports:
+                                  - containerPort: 8081  ## we can make this a variable
+                                env:
+                                  - name: ME_CONFIG_MONGODB_SERVER
+                                    valueFrom:
+                                      configMapKeyRef:
+                                        name:  wap     ## the name of our configmap above
+                                        key:  dat_host    # from our variable in configmap
+
+                                  - name:  ME_CONFIG_MONGODB_ADMINUSERNAME
+                                    valueFrom:
+                                    secretKeyRef:
+                                       name: mongo-express
+                                       key: mongo_username
+
+                                 - name:  ME_CONFIG_MONGODB_ADMINPASSWORD
+                                    valueFrom:
+                                    secretKeyRef:
+                                       name: mongo-express           ### the name of our secret above 
+                                       key: mongo_password          
+execute it RUN <kubectl apply -f mongoexpress-deploy.yaml>
+
+
+## lets create service/LB for mongoexpress = mongoexpress-service.yaml
+
+                     apiVersion: v1
+                     kind: Service
+                     metadata:
+                        name: mongoexpress-service    ### this name will be use in our configmap in data_host put this service name there
+                        namespace:mongo 
+                     spec:
+                       type: LoadBalancer
+                       selector:
+                           app:  mongo-express       ## this most be same with our selector in deploy
+                       ports:
+                        - protocol: TCP
+                          port: 80
+                          targetPort: 8081   
+ execute it RUN <kubectl apply -f mongoexpress-service.yaml>  
+ RUN <kubectl describe  service mongoexpress-service -n mongo > look for the LB URL AND PUT ON THE BROWSER    ### -n mongo is the namespace name                                         
+
+
+
+
+
+                
+
+
+

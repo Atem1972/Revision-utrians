@@ -1,0 +1,273 @@
+
+
+### to get the Kubernetes cluster up and runing clone the below
+ - https://github.com/Atem1972/kubernetes-lab.git
+
+ - to get the kubernetes version RUN <kubectl version>    ## if kubectl does not work then on ur laptop install kubectl, search it online how to install it
+ - to naviget through the cluster ie run k8s command install <kubectl>
+ - to connect to cluster copy the link    connect to cluster = "aws eks update-kubeconfig --region us-east-1 --name utrain-eks-VWd9js" 
+ - run the link above on the prompt to connect to the cluster
+ - run kubectl get nodes  ## u will see work nodes
+ - run kubectl get ns
+ - run kubectl get deployment
+ - run kubectl get pods
+
+ 
+ ### lets create a folder call anything = application
+ # create file now call namespace.yaml  
+                  apiVersion: v1
+                  kind: Namespace
+                  metadata: 
+                        name: dev
+
+lets execute it RUN <kubectl apply -f namespace.yaml>    # this will create namespace call dev                     
+- to see the namespace u created RUN <kubectl get ns>  
+
+### lets create a pod/container , first lets create a file call pod1.yaml
+                         apiVersion: v1
+                         kind: Pod
+                         metadata:
+                               namespace: dev   ## this shld hv already been created bf putx it here
+                               name: my app
+                               labels:
+                                  name: myapp
+                        spec:
+                           containers:
+                                - name: myapp
+                                  image: httpd
+                                  resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc
+                                      limits:         ## WHEN is only limite the quality of service is called <bestEffort>
+                                         memory: "128Mi"
+                                         cpu: "500"
+                                  ports:
+                                      - containerport: 80   
+    
+
+  lets execute it  RUN <kubectl -f pod1.yaml>    
+  - to see the pods u created RUN <kubectl get pods -n dev>      ## -n dev is the name attach to our pod   
+  - to see the ip address and the node our pods are deployed on RUN <kubectl get pods -o wide> 
+  - to delete the pod RUN <kubectl delete -f pod1.yaml>  
+
+
+  ## lets deploy multiple pods/container
+  - vi utc-app.yaml
+
+           apiVersion: apps/v1
+           kind: Deployment
+           metadata:
+              #namespace:dev
+               name: utc-app
+           spec:
+               relicas: 4     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:
+                     matchLabels:
+                         app: nginx
+               template:
+                    metadata:
+                        labels:
+                           app: nginx
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: inginx:latest
+                         ports:
+                           - containerPort: 80
+                         resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+                              limits:
+                              memory: "128Mi"
+                              cpu: "500"
+                         requests:              ### when limits above is equal to request below is known as <garanty >  BUT when it has only limites is  
+                              memory: "128Mi"    is known as <besteffort> in    QOS
+                              cpu: "500"
+                               
+                   N/B WE CAN STILL ADD MORE CONTAINER UNDER EG
+                       - name: httpd
+                         image: httpd:v1
+                       - name: python
+                         image: python:latest   
+
+to execute it RUN <kubectl apply -f utc-app.yaml>  
+- to list all deploymen RUN <kubectl get deploy>
+- to describe deployment RUN <kubectl describe deploy then put the name of the deployment> 
+- to see the number of replicas RUN <kubectl get rs>
+- to see all pods RUN <kubectl get pod>
+- to see the nodes and the ip of the pod RUN <kubectl get pod -o wide>
+- to describe a paticular pod RUN <kubcetl describe pod then put the pod name>  ## below describe pods u will see something call quality of service class (QOS)= BESTEFFORT,bursTable(u give minimum and maximum it shld consum),garanty pod(u tell it what resource to use), , this simply means how much resource u want the pod/container to consum in the cluster eg cpu,ram etc. u can either limite the amount to be use or allow it use as it can
+- to describe a particular node RUN <kubcetl describe node then put the node  name>
+NB NOTE THAT IN DEPLOYMEN WITH REPLICAS IF U DELETE A POD IT WILL UNTOMATICALLY BRING UP A NEW ONE (SELF healing)
+
+
+ 1) types of QOS(quality of service)
+  a- BestEffort
+           spec:                                                                          
+               resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+                     limits:           ## this means consum as much as u want, no limit
+                        memory: "128Mi"
+                        cpu: "500"
+
+   b- garanti
+            spec:
+                 resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+                      limits:               ##  this means consum only 128mi from start to end
+                         memory: "128Mi"
+                         cpu: "500" 
+                      request:
+                          memory: "128MI"
+                          cpu: "500"    
+  to know if u are using garanti the limits will be same with request as seen above
+
+  
+  c- bursTable                                           
+       spec:
+         resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+             limits:            ## this means u can start consuming at 150mi but end at 250mi
+                memory: "250Mi"
+                cpu: "500" 
+             request:
+                memory: "150MI"
+                cpu: "500" 
+   when limits memory is greater that request memory limits is known as <BossTable>             
+# what is omkill? it is a program that is kill by the kernel for asking for resouces that it was given to him
+
+
+# k8s has two types of strategy in the deploy object,ie when we edit, update our pod/container we can either use: rolling update or real creare
+1- rolling update: it simply mean kill the pod one after another befor bring a new one up
+#            on deploy.yaml u can add the strategy but normally by default it will go with rollingupdate
+                            spec: 
+                                strategy:
+                                    rollingupdate:
+                                          maxSurge: 25%        # this 25% means we will be updating 25% at a time as will bring up new pod, it canbe 50%
+                                          maxUnavailable: 25%  # this 25% means make sure is only this % is unavaliable as u update
+                                    type: Rollingupdate
+
+2- real create: it simply means kill all the pod at the same time then bring up new ones
+
+To edit deployment object RUN <kubectl edit deploy then put the name of the deploy>
+
+
+
+
+###   what is Service object in k8s? this is LoadBalancing service in k8s in which we use to expose our application ie u can access our apliaction frm it
+###   The are couples types of services 
+ 
+ 1) cluster ip service(LB): this is the case where we use our internal loadbalancer to access our cluster internally. here an internal lb is put infront
+                              of our cluster and we can access that cluster through that internal LB
+    ## lest illustrate cluster ip service
+    - create a file call anything.yaml ie vi service.yaml
+    #  internal laodbalancer
+              apiVersion: vi     
+              kind: Service
+              metadata:
+                   name: my-service
+              spec:
+                 selector:               ## this simply means when we are deploying appliction we will indicate this selector there by putinx our selector
+0                   app: my-selector      <name = my-selector ie use this selector name i hv put here to know where the LB I Want u to use is located ---
+                 ports:                   and my pods shld be behind it .all trafic shld be directed through it
+                -  name: my-service-port
+                   protocol: TCP
+                   port: 80
+                   targetport: 80                    
+
+To execute this RUN kubectl apply -f service.yanl
+we can run kubectl  get service,  
+kubectl describe service then put the service name,  ## u will see the namespace it is run on, the selector, service type, endpoints of the 
+                                                       pod/container he is sending traffic to  
+# please take note that this cluster service is only accessible internally and not on the browser 
+
+
+###   external loadbalancer
+2) loadbalancing service
+                  apiVersion: vi     
+              kind: Service
+              metadata:
+                   name: my-service
+              spec:
+                 type: LoadBalaner  ## this will go and create a loadbalancer in aws and it will be put infront of our pod/c to distribute traffic
+                                    ## for this to happen cloud control manager most have been configure in the master node and work node
+                 selector:               ## this simply means when we are deploying appliction we will indicate this selector there by putinx our selector
+0                   app: my-selector      <name = my-selector ie use this selector name i hv put here to know where the LB I Want u to use is located ---
+                 ports:                   and my pods shld be behind it .all trafic shld be directed through it
+                -  name: my-service-port
+                   protocol: TCP
+                   port: 80
+                   targetport: 80 or 8082          
+RUN kubectl apply -f service.yanl
+RUN kubectl describe service then put the service name,
+
+# below is deployment object to illustrate the above  service                         
+create file called utc-app.yaml
+                    apiVersion: apps/v1
+           kind: Deployment
+           metadata:
+              #namespace:dev
+               name: utc-app
+           spec:
+               relicas: 4     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:
+                     matchLabels:
+0                         app: my-selector   ## this means look for any service within the cluster label app = my-selector put e above pods behind it
+               template:                      # all trafic coming to the pods will pass throgh it
+                    metadata:
+                        labels:
+                           app: nginx
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: inginx:latest  OR kserge2001/pod-host  OR  455452245698.dkr.ecr.us-east-1.amazonaws.com/awscicd:v2.0  
+                                                                           THis last image was taken from ECR IN AWS COPY THE URI AND PAST HERE IN IMAGE :
+                         ports:
+                           - containerPort: 80
+                         resources:           ### this is to set pod limit on how much resource it shold consum eg cpu, hdd, memory etc 
+                              limits:
+                              memory: "128Mi"
+                              cpu: "500"
+                         requests:              ### when limits above is equal to request below is known as <garanty >  BUT when it has only limites is  
+                              memory: "128Mi"    is known as <besteffort> in    QOS
+                              cpu: "500"
+                               
+                   N/B WE CAN STILL ADD MORE CONTAINER UNDER EG
+                       - name: httpd
+                         image: httpd:v1
+                       - name: python
+                         image: python:latest 
+run kubectl apply -f then put tha file name utc-app.yaml
+run kubectl describe put the name of the deploymen utc-app                          
+
+THE service object and deployment object where both use to illustrate this concept, take note on the spot make with <0>
+
+
+3) nodeport service:    this are service that can be access through a node ie u can use one node to access ur application  
+
+                  ###   external loadbalancer
+
+                  apiVersion: vi     
+              kind: Service
+              metadata:
+                   name: my-service
+              spec:
+                 type: Nodeport 
+                 selector:               ## this simply means when we are deploying appliction we will indicate this selector there by putinx our selector
+0                   app: my-selector      <name = my-selector ie use this selector name i hv put here to know where the LB I Want u to use is located ---
+                 ports:                   and my pods shld be behind it .all trafic shld be directed through it
+                -  name: my-service-port
+                   protocol: TCP
+                   port: 80
+                   targetport: 80 or 8082  
+                   nodeport: 30001  # it will choose a port between 30000 to 32767  , this can be use when the is no way to use cloud loadbalancer, take 
+                                      the ip address of any of the node with the port number of nodeport u can access ur apllication on browser
+
+EXECUTE IT AS NOW
+
+
+4)  external serice or name : simply mean , it is just exposing a dns name, lets say u have a database link and u donot was to deployed it on the app, then u can deployed it as a service on the app, people will be hitting the service without them knowing they are indirectly hitting database 
+                                 
+              apiVersion: vi     
+              kind: Service
+              metadata:
+                   name: my-service
+              spec:
+                 type: ExternalName 
+                 externalname: mysql  ## here just put the name of ur data base
+ 
+ lets explain this service type , in this external service it does not have port, it simply means   that when people hitt the service name my-service it definaly mean is the database dns they are indirectely hitting . this is usually just to expose a data base name in the cluster           
+
