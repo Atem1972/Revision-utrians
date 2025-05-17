@@ -1,0 +1,3 @@
+
+WHAT IS CONFIG FILE IN K8S (~.kube/config) ? it is a yaml configuration file that carries all the information about that k8s cluster,user,and contexts which are use 
+                                          by the kubectl command line tool to interact with the cluster. <it is use to manage access limitation in the cluster

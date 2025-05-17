@@ -1,0 +1,66 @@
+
+# how can u be on ur laptop and create resource in aws accounts ie for different people account
+- tell them to  u <access key id and secret access key > and let them send it to use so u can use them to configure aws on ur laptop . on ur laptop all u need 
+
+- to do this is to RUN <aws configure --profile  put the name of the account owner ie either ojong,or clovis,or ako>  and a drop down will appear as seen bellow
+                       <aws configure --profile ojong or dev or qa or prod>  and a drop down will appear as seen bellow 
+       
+        Aws Access key ID [Noon]:    <put the access key that was send to u  by eithere ojong or clovis or ako here > 
+        Aws secret Access key [Noon]:  <put the secret key that was send to u  by eithere ojong or clovis or ako here > 
+        Default region name [Noon]:  us-east-2  ## it can still be another region  
+        Default output format [Noon]: json
+u can hit enter
+
+
+
+
+# how to see all the diffn access and secret key u have for all the diffn account
+ RUN <cat ~/.aws/credentials>
+
+
+# how to tell terraform on which account in aws u want him to create this infrastructure, ie is it in ojong aws accoun, or clovis aws acount, or ako aws acct
+all u need to do is on the provider/region block add and argument called <profile>
+see the ex on how to give terraform the instruction
+
+# vi provider.tf
+ provider "aws" {
+  region = "us-east-1"
+  alias = "us1"          ## this was use to easy us tell terraform which region he should create our resource bellow
+  profile =   <put the name (clovis) u gave to ur aws configure when u use the access and secret key to creat connect between ur laptop and the aws accounts>
+                       as seen in line 5 
+                  
+}
+
+provider "aws" {
+  region = "us-east-2"
+  alias = "ohayo1"         ###  ## this was use to easy us tell terraform which region he should create our resource bellow
+    profile =  ojong        ## to no about this check on line 2-12
+}
+
+provider "aws" {
+  region = "us-west-1"
+  alias = "us-west2"           ## this was use to easy us tell terraform which region he should create our resource bellow
+    profile =  ako          ## to no about this check on line 2-12
+}
+
+
+
+#          lets create a vpv
+
+    resource "aws_vpc" "vpc1"{
+    cidr_block = "10.0.0.0/16
+    provider = aws.us1
+    }
+
+# another vpc code
+    resource "aws_vpc" "vpc2"{
+    cidr_block = "196.168.0.0/16
+    provider = aws.ohayo1
+    }
+
+
+# another
+    resource "aws_vpc" "vpc1"{
+    cidr_block = "10.0.0.0/16
+    provider = aws.us-west2
+    }

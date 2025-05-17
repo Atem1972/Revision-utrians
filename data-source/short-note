@@ -1,0 +1,5 @@
+
+## what is data source all about?  
+for example someone has created an ec2 manuall or even if he use terraform and u are ask to create that same resouce in anothere region or that same region ie
+they want u to exact all the information use to create the other resource and use it to create another exact resource. 
+- what u simply need is to ask them to send use the instance ID OF THAT EC2 and u can use data source to create that same instance.

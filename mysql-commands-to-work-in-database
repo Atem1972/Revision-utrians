@@ -1,0 +1,39 @@
+##
+
+# coomands for sql database
+   
+
+#   Here's a breakdown of common SQL commands and what they create:
+#   Data Definition Language (DDL):
+- CREATE DATABASE: 
+Creates a new database within the database management system (DBMS). This command defines the structure of the database, including its tables, views, and other objects. 
+CREATE TABLE:
+ Creates a new table within a database. A table is a structured collection of data organized into rows and columns, with each column representing a specific attribute of the data. 
+ALTER DATABASE:
+ Modifies the properties of an existing database. 
+ALTER TABLE:
+ Modifies the structure of an existing table, such as adding or deleting columns, changing data types, or adding constraints. 
+DROP DATABASE:
+ Deletes an existing database and all its associated tables and data. 
+DROP TABLE:
+ Deletes a specific table from the database. 
+# Data Manipulation Language (DML):
+SELECT:
+ Retrieves data from one or more tables based on specified criteria.
+INSERT:
+ Adds new rows (records) into a table.
+UPDATE: 
+Modifies existing data within a table.
+DELETE: 
+Removes rows from a table based on specified conditions. 
+# Data Control Language (DCL):
+GRANT: Grants specific privileges (permissions) to users or roles, allowing them to perform certain actions on the database.
+REVOKE: Revokes privileges granted to users or roles. 
+# Transaction Control Language (TCL):
+COMMIT: Saves all changes made within a transaction permanently.
+ROLLBACK: Discards all changes made within a transaction, reverting to the state before the transaction began.
+SAVEPOINT: Sets an intermediate point within a transaction, allowing for partial rollback. 
+Other Important Commands:
+USE: Selects a specific database to work with. 
+CREATE VIEW: Creates a virtual table (view) based on the results of a SELECT query. 
+CREATE INDEX: Creates an index on a table, which can improve query performance.

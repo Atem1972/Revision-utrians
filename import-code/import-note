@@ -1,0 +1,3 @@
+
+## what is import all about?
+  for example the is a resouce that was created manually and now the want u to make it in a way that terraform can have a track of it, ie they need a statefile of that resouce. then we need to use<the block call import>

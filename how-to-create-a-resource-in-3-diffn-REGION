@@ -1,0 +1,44 @@
+
+# LETS say u have 3 diffn instance and that instance need to be created in 3 diffn region, what are u going to do
+- create all the provide/region u want the diffn resource to be created on and give them diffn name by using <alias> as seen bellow
+
+
+    vi provider.tf
+ provider "aws" {
+  region = "us-east-1"
+  alias = "us1"
+}
+
+provider "aws" {
+  region = "us-east-2"
+  alias = "ohayo1"
+}
+
+provider "aws" {
+  region = "us-west-1"
+  alias = "us-west2"
+}
+
+# to be able to create each of the below resource in to their perspective region then will need to to include and argument called <provider> to the resource we are creating as seen bellow
+
+# below are the resouces i want to create in each of the above region
+
+    lets create a vpv
+
+    resource "aws_vpc" "vpc1"{
+    cidr_block = "10.0.0.0/16
+    provider = aws.us1
+    }
+
+# another vpc code
+    resource "aws_vpc" "vpc2"{
+    cidr_block = "196.168.0.0/16
+    provider = aws.ohayo1
+    }
+
+
+# another
+    resource "aws_vpc" "vpc1"{
+    cidr_block = "10.0.0.0/16
+    provider = aws.us-west2
+    }

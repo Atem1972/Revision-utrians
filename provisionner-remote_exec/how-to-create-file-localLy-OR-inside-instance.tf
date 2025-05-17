@@ -83,8 +83,14 @@ provisioner "local-exec" { # all of this will run just on our local laptop
 provisioner "local-exec" {
   command = "touch provisioner.txt"
 }
+
+
+
+
+
+
  
-# this will be executed inside our instance
+#   #this will be executed inside our instance, ie this file will be create in our runing instance
     provisioner "remote-exec" {
       inline = [ 
         "sudo yum update -y",
@@ -106,7 +112,7 @@ provisioner "local-exec" {
 
 
      
-      # how to copy a file we created locally using LOCAL EXEC TO OUR INSTANCE ONLINE
+#      # how to copy a file we created locally using LOCAL EXEC TO OUR INSTANCE ONLINE
       provisioner "file" {
         source = "provisioner.txt" # this file was created locally but will are copying it to our instance
         destination = "/home/ec2-user/prvisioner.txt"
