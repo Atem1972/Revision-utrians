@@ -1,0 +1,200 @@
+
+some of the question u will be ask is how do u secure ur cluster? 
+- by given limited access to user of the cluster, we can use namespace to limite every to their own area, and will set limitation to their namespace
+- we can use <(RBAC ie ROLE BASE AECCESS CONTROL) access, air dapt,active directory  to give limited access to the cluster>
+ . WE HAVE ADMIN LEVEL ACCESS :      they have permition  to node, admin processes <then we will create cluster role to be able to do this?
+  . AND NAMESPACE  : but if we are using but namespace to limit the acccess <then we will create ROLE to do this> 
+                          - creat a role
+                          - create service account(SA) link it to the role
+                          - generate token
+                          - creat a config file, save it to ~.kube/config, what ever access we put here for user is what he or she will have
+
+
+
+- air dapt: lets say we have 1000 servers machine , and will need to add user john to all the machine . than to be login in to each of the machine adding john , it will be stressful, but we can add all those servers on the air dapt and on the air dapt we can create a user john and he will have access to all the 1000 servers. it is a centralise place to manage user in a company
+- active directory: it is a centralise user place,
+- NB note that in the cluster the is no way to manage user and group, if u most do it then , u most do it externally , u can use vendor app, active directory
+
+
+# NB LEts say u are working in a company and u want to access the cluster , the will send u the config file that carries all the configuration like limited access to the clusetr, all the pod, node, configuration are on that config file, but as u wait the config file , u most first install KUBECTL BC IS WHAT u need to work on the k8s cluster. when u recieve the config file , u need to copy all the content on it to .KUBE FILE 
+
+
+
+
+---------------------------------------------------------------------
+# Here is the admin that has full access to the cluster
+here we have access to the cluster
+### Illustration of given limited access to someone on the cluster
+  - linux machine login credential
+     ssh kubeuser@104.200.19.11           ### tis is to examplain , the manager send u the login to a linux server
+      password = abc
+- make suer the have install kubectl on this linux machine      
+- we need to give valery below acces to the cluster ie we need to him either dev namespace access, or qa namespace access so that he can get acceess to e cluster, As seen bellow
+
+- On our k8s cluster CD TO the main folder then creat a new folder called <RBAC>
+ ## - cd to RBAC then create a file called <namespace.yaml>
+
+                       apiVersion: v1
+                       kind: Namespace
+                       metadata: 
+                          name:  dev or qa
+lets excute it RUN <kubectl apply -f namespace.yaml>  
+                RUN<kubectl get ns>   
+
+---
+  since the access we want to creat is limited just on a specific namespace that is why we need to create but a role.yaml but if we want but <cluster role> then
+   on kind: put <ClusterRole>  then remove namespace totally , now u can call it cluster role and not Role
+  ## lets create a role-access.yaml 
+
+               apiVersion: rbac.authorization.k8s.io/v1
+               kind: ROLE
+               metadata:
+                   name: dev-role
+                   namespace: dev
+               rules:
+                 - apiGroupes: [""]
+                   resources:  ["pods", "service" ]  ## what this means when will send valery our cluster he will have  access to pods and service only
+                                                     we can still add or remove object in this Resource: ie secret, configmap, deployment or remove pods
+                   verbs:    ["get", "list", "creat"]     ## what this means , this will limit valery on what he can do with the pods and service access he have
+                                                        ie here if valery RUN get pods , he will see all the pods but he can run kubectl describe pods,
+                                                        valery has access to create but does not have access to delete
+LETS execute it RUN <kubectl apply -f role-access.yaml>                                                       
+                RUN <kubectl get role -n dev>
+
+---
+ ## lets create a service-account.yaml  to assum the role above
+
+                            apiVersion: v1
+                            kind: ServiceAccount
+                            metadata:
+                              name: dev-sa
+                              namespace: dev 
+let execute it RUN <kubectl apply -f service-account.yaml>
+               RUN <kubectl get -n dev>   
+
+---
+ ## lets creat a file called role-binding.yaml  
+  ie put the role.yaml with service-account.yaml to assum the role     
+
+               apiVersion: rbac.authorization.k8s.io/v1
+               kind: RoleBinding 
+               metadata:
+                   name: dev-role-binding
+                   namespace: dev
+               subject:
+                 - kind: ServiceAccount        ### this is serviceAccount information we created above
+                   name: dev-sa
+                   namespace: dev
+
+               roleRef:
+                  kind: Role                   ### this is role information we created above
+                  name: dev-role
+                  apiVersion: rbac.authorization.k8s.io/v1
+Lets execute it RUN <kubectl apply -f role-binding.yaml>
+                RUN <kubectl get rolebinding -n dev>  
+
+
+ ## lets generate a token for the user,
+ this will can use it to limit the user ie we can generate a token for just 2hrs , 2days etc and it will expired and the user will lost access to that cluster               
+
+----
+## Lets create a config file that will be send to the new employee, 
+ this is the file we need to send to the new employer to gain access to this cluster 
+
+                 apiVersion: v1
+                 clusters: 
+                   - cluster:
+                        certificate-autority-data: {cluster-ca}   ## To get this RUN <cat ~/.kube/config> , copy every under certificate-aoutority-data and 
+                                                                    past here on the gap cluster-ca, it looks like token information
+                                                                   ## here is this cluster own config file
+                                                           
+                        server: {server-dns}   ## To get this RUN <cat ~/.kube/config>  , copy everything under server: and past on server-dns 
+                                              ## here is this cluster own config file
+                     name: {cluster-name}     ## To get this RUN <cat ~/.kube/config>  copy everything on name: and past here in cluster-name  
+                                              ## here is this cluster own config file
+                 contexts:
+                   - context:
+                        cluster: {cluster-name}    ## To get this RUN <cat ~/.kube/config> ,  copy everything on name: and past here in cluster-name   
+                                                   ## here is this cluster own config file
+                        user:  {dev-sa}              ## put the new employer name or the name of our serviceAccount which was <dev-sa>
+                     name: {context-name}       ## To get this RUN <cat ~/.kube/config>  , copy everything on current-context an past here on <context-name 
+                                                ## here is this cluster own config file
+                 current-context: {context-name}     ## To get this RUN <cat ~/.kube/config> , copy everything on current-context an past here on <context-name 
+                                                     ## here is this cluster own config file
+                 kind: Config 
+                 users: 
+                  - name: {valery or dev-sa }         ## put the new employer name or the name of our serviceAccount which was <dev-sa>
+                    user:
+                       token: {past the token u generated above on line 96} 
+We are not executing this file only copy and send to the new employee                               
+# - COPY everything under this config file and  send it to the new employee , he will use this to again access to this cluster
+
+# NB  IF the admin of this cluster cat ~/.kube/config  and he copy every in it and send to the new employee he will have full access to the cluster also,
+# ALL the new employee need to do is to install kubectl on it linux machine, create a .kube folder , create config file under the folder vi to it and past all that was send to him in side that file and close, he will automaticall get full access to the cluster as admin
+
+On the prompt RUN <kubectl create token (put the name of the serviceAccount we created above ie dev-sa) -n dev  --duration-=2hrs >    # we can remve duration
+ -  A token will appear copy it and keep somewhere because u will need it later
+
+ # lets refresh our cluster so that we will be sure it has all the cinfig files
+ - cd to the cluster folder
+ - lets first connect to our cluster by RUNING: CONNECT-TO-CLUSTER =  RUN THIS ON UR PROMPT, <aws eks-kubeconfig --region us-east-1 --name utrains ks-HVCOad> 
+-  if u want to lust access to a cluster delete the .kube/ ie RUN   >~/.kube/config
+ - To reconnect again to the cluster RUN the above command again ie  <aws eks-kubeconfig --region us-east-1 --name utrains ks-HVCOad> 
+
+                     
+               
+                                                         
+
+
+            
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+###### NEW EMPLOYER SERVER
+######## below is the new worker we want to send him the config file to have access to the cluster , but before we send it to him we want to make sure we limite his access to the cluster as seen above
+
+here we do not yet have access to the cluster
+# creat a user in the linux machine after u login
+ RUN sudo useradd valery
+ when it ask for passwd put the = abc above
+ RUN sudo passwd valery
+  enter new passwd for valery = gsf32
+
+  # HOW TO LOGIN AS VALERY IN that linux machine
+  RUN ssh valery@104.200.19.11  press enter
+  put the passwd for valery = gsf32
+
+  RUN kubectl version    ## to see if it has been install on this machine
+   
+ # take node that that we do not yet have access to any cluster , to check it RUN <kubectl get node or ns pod> it will give eror message  
+
+
+
+ ## How to get access to the cluster after recieving the file from the admin above
+ MAKE SURE U HAVE INSTALL KUBECTL ON THAT UR SERVER
+  - create a folder called .kube ie mkdir .kube
+  - cd to the folder
+  - create file called config ie touch confi
+  - vi to config and past all the file that was send to u by the admin and save ie :wq
+  - get out from the .kube directory, return to home directory
+
+  TO test it to see if u have access to their cluster RUN <kubectl get pod>
+                                                      RUN <kubctl get ns> , kubectl get pod  etc
+  - RUN pod/container: <kubectl run app --image=nginx -n dev>  ## the -n dev is the namespace , it most be included bc his access is limited to a particular namespace
+  - to see the pod/container RUN <kubectl get pod -n dev>                                                  
+  NB the are some comman that will not work bc the admin did not give u permition                                                     
+
+
+ 
+
+## what if the new employee send a ticket to the admin that he need delete and list access what will the admin do?
+- the admin will need to go back to the role-access.yaml verbs: { he will add "delete", "list"}
+- same if the new employee need some access to object , the admin will still login to the role-access.yaml on resource: {he will add "pod","namespace"}
+- we will go on the prompt and RUN <kubectl apply -f role-acces.yaml>
+- and he will just inform the new employee to run his command again like kubectll get ns, k get pod etc
+
+
+
+
