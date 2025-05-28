@@ -1,0 +1,119 @@
+
+# HOW DOES SPLUNK SERVER COLLECT LOGS FROM ANOTHER SERVERS, WE JUST NEED TO CONFIGURE FORWORDER IN THE OTHER SERVER
+
+
+
+
+
+
+
+
+if u are not the one that setup the splunk server then someone will send u the url,username and passwd of the splunk to browse and login to it
+
+add DATA:  here u just need to take the logs from another server and load it here
+ - u can monitor cloud resources, network, operating system, security, u can upload data from my computer
+ - while forworder is when we configure another server to be sending data in this splunk server in real time
+
+ 3 click on search & REPORT: this is where u go and search for data, click on data Summary, u will see all the diffn host
+ - at work when the say server has a problem u will go to <host>  u will fine all the server runing on that splunk as seen in line 8,
+ - On source u will just see all the path where the data was collected from
+ - sourcetype is the type of log that u want like boot log, cron log,
+ - for u to be able to search for host , u shild know the hostname, of search bar under host put the name there and that exact host will pop up then u can start looking for what u want on logs
+ 
+
+### Practice,  monitoring logs of servers and application
+At work , we have some issues happening on some servers and application that u need to investigate. the best place to start will be to check the logs from the monitoring tools: 
+please go ahead, log into the splukk UI and see if u can find something 
+
+
+#### SCENARIOS TO INVESTIGATE ON THE SERVER:
+# - the server jfrog went down on the 12th of november arount 2pm , please investigat and see if u can find out what the issue was.
+           . go to splunk , click on data, then click on data Summary
+           .  under host search for the server hostname in our case is jfrog , click on it
+           . u will see the total events that has happen on that server, to see it look at the top left coner
+           - to search for the logs in a specific date or real time, go on the right coner u will see search , click on the drop down arrow select if is last 15mis logs u want to see
+           - to look for logs on exact time and date click on DATE NAD TIME RANGE
+           -  IF the is a particular issue u are looking for on that particular host like if the server was reboot, who sudo,, on the search bar on the left write reboote and it will give u allthe reboot logs only
+           - to search for a logs message on a particular , on the search bar on the left put host=put host name here, jfrog source= put the path here ie /var/log/secure user, command or host=jfrog source=/var/log/secure user | stats count by user
+           host=jfrog surce=/var/log/secure/ COMMAND | stats count by COMMAND   . after the search u can click on Visualzation, click column chart choose which of the chart. u can download the rsult by clicking on the download icon
+           sourcetype=access_combined | stats count by status
+           - this above goes as well to the bellow ie line 41to45
+           - click all field on the little hamburger
+
+
+# - the jfrog application running on the jfrog server went down on the 12th of november b/w 11hr and 12hr and u need to figure out why and who was working on it
+# - try to get the list of all users logged in to the jfrog host on the 9th of novenmber
+# - check all the user that have used the sudo command in the last 7 days on host jfrog
+#- check if a user with useername serge has accessed the server in the last week
+# - identify whether the following errors occured on the apache web server 24 hours ago and describe their significance: 500, 401,502
+              
+
+
+
+
+
+
+
+
+#### HOW to link your servers to Splunk server to collect ur logs for monitoring
+ REQUIREMENT. cd /opt
+            - Install splunkforwarder on ur own instance server
+         RUN sudo  wget -o splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz "https://download.splunk.com/products/universalforwarder/releases/
+              9.0.4/linux/splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz"
+         run sudo tar -xvzf splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz -C /opt 
+         RUN SUDO RM -F splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz
+         RUN cd splunkforwarder/bin/
+         run sudo ./splunk disable boot-start
+         run sudo groupadd splunk
+         run useradd -m -d /home/splunk splunk -g splunk
+         run chown -R splunk:splunk /opt/splunkforwarder
+         run .splunk enable boot-start -systemd-manager 1 -user splunk -group --accept-license
+              it will require u to put admin-username=admin or any other name  and admin-user-passwd= abcd1234 , put ur own
+         run ./splunk start
+
+## what if we want to uninstall splunkforwarder
+        RUN /opt/splunkforwarder/bin/splumk disable boot-start   
+        run /opt/splunkforwarder/bin/splunk sourcetype
+        run kill -9 'ps -ef | grep splunk | grep -v grep | awk '{sprint $2;}''
+        run rm -rf /opt/splunkforwarder
+        run userdel splunk
+        run groupdel splunk    
+
+
+## set the default hostname of the splun forwarder
+      RUN sudo /opt/splunkforwarder/bin/splunk show servername  
+          put username and passwd ie admin   and abbc1234  
+      RUN sudo /opt/splunkforwarder/bin/splunk set servername <put the name that u want it to display in the main splunk server here> ie my-instance
+      run sudo /opt/splunkforwarder/bin/splunk set default-hostname < past the name of ur server in line 86 here> ie my-instance
+      run sudo hostnamectl set-hostname <past the name of ur server in line 86 here> ie my-instance
+
+
+
+## Configuring the log on splunk forwarder  
+            RUN CD /opt/splunkforwarder/bin/
+            run sudo .splunk and forwarder-server <put the main splunk server ip and port here> ie 20.3.3.3:9997 
+                 put the username=admin passwd=abc1234         
+            run sudo ./splunk list forwarder     
+
+
+ # now lets tell splunkforwarder where to get the log ie path to the log in our my-instance  
+      run sudo ./splunk add monitor /var/log
+      run sudo ./splunk add monitor 
+      run sudo ./splunk list monitor  
+      optioaml  run sudo ./splun and monitor /opt/artifactory-oss-6.9.6/logs  ## to add folder to monitor the log
+
+# lets restart splunk
+  run sudo ./splunk restart     
+
+
+   go to ur splunk on the browser an check this instance     
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,202 @@
+
+
+## Pipeline with AWS CodePipeline, Code Build and CodeDeploy
+
+Objectives:
+
+In this project, we will create a pipeline to update and deploy the single container application we deployed to ECS. We are going to use AWS CodePipeline, AWS CodeBuild, and CodeDeploy.
+
+# Purpose:
+The purpose of this lab is to teach how to automate the process of building, updating, and deploying a single-container application to Amazon ECS (Elastic Container Service) using AWS services such as CodePipeline, CodeBuild, and CodeDeploy. The automation streamlines the development workflow, eliminating the need for manual deployment, and ensures a seamless CI/CD pipeline.
+
+# Prerequisite:
+ Make sure you have gone through the project to deploy a single container application to ECS (link here)
+
+# 1- Create a project repository.
+Open a Git bash terminal on Visual Studio Code and clone the project from GitHub :
+git clone https://github.com/utrains/static-app.git
+
+# Now move into the static app repository
+cd static-app
+
+# Now run the command below:
+rm -rf .git
+
+# Now go to your GitHub account and create a new repository
+create repository
+On your GitHub account, click on new
+Enter a repository name of your choice and click on Create.
+
+# Once the repository is created, go to VS Code and run the commands below (make sure you are in the static app directory which you cloned above)
+git init
+git add .
+
+# when you created the repository, some commands were given to push to the repository. 
+copy the commands circle below and run them.
+
+# You should get the output below:
+
+You can now go to your repository and verify if the files were successfully pushed.
+
+# Now, let's head over to our AWS account and create a code pipeline to deploy and update our application.
+
+# 2- Create a code pipeline.
+
+- Sign in to the AWS Management Console and open the AWS CodePipeline console. Choose Create pipeline.
+
+- In Choose creation option Choose Build custom pipeline and click on next
+
+- Enter the name of your pipeline, in my case I used WepApplication
+- Allow the rest as Default and click on next
+
+
+# In the next step, we will add the source of our code, which in our case is GitHub
+
+# 2a- Adding the Source Stage
+
+- In Choose source select GitHub(via  GitHub App)
+- Now click on Connect to Github
+
+
+You will be redirected to a new window to create a new Github connection 
+Write a name for your new connection and click on Connect to GitHub
+
+- Now choose the GitHub account where the project repository is located and click on Continue
+
+- Scroll down and click on Authorize AWS Connector for GitHub 
+
+-Click on install the new app
+
+- Now choose again the GitHub account where the project repository is located and click on Continue
+
+- Scroll down and click on All Repositories then save
+
+- Then click on Connect 
+
+-Now choose the project repository and  branch and click on Next
+
+
+
+
+# 2b- Add build stage
+
+On add build stage choose Other build providers then select AWS CodeBuild
+
+
+# Now click on Create Project.
+- On the page that shows up, enter the project name I used WebApplication. You can leave the description since it's optional.
+- Now scroll down to Environment bloc
+- Scroll down and click on Additional configuration
+
+Then in the additional settings, scroll down to Add Environmental Variable.
+Add the variables below.
+
+AWS_DEFAULT_REGION : us-east-1
+AWS_ACCOUNT_ID :  Copy your account (see how in the following pictures)
+IMAGE_REPO_NAME : dev # chsnge this
+IMAGE_TAG : dev  change this
+CONTAINER_NAME : webapp  change this
+
+# Note that the Container name is the name you gave to the container when creating your task definition in the previous project. Also, the IMAGE_REPO_NAME and IMAGE_TAG are the ECR repository name and the image tag respectively
+
+# Now scroll down to buildspec.
+- Enter the build spec file name shown below : buildspec.yml
+- Once you are done, scroll down and click continue to code pipeline.
+
+This message shows that you’re successfully created your Build project you can click on next
+
+
+# 2c- Skip test stage 
+
+On Add test stage click on Skip test stage 
+
+
+# 2d- Create and configure dependencies ressources
+
+Now before continue, we need to create the cluster and the service that  will be used in the deploy stage, To do this:
+Go to  the project  Build and Push docker image to ECR to create the repository
+When it’s done go to the project Deploy a single container application to ECS to create the cluster the task and the service 
+Note: If you was already going through these project and your resources was not deleted you can skip this section 
+When it’s done go back to the AWS CodePipeline
+
+# 2e- Add deploy stage
+
+- Select Amazon ECS for the deployment provider
+
+- Then select your region, cluster name and service name.
+- Under the image definition section,= enter imagedefinitions.json
+
+Now you must be in the review section and before clicking on Create the pipeline, we need to allow our pipeline to access our ECR repository.
+ 
+# 2f- Grant AWS ECR permissions to our pipeline
+
+We will need to modify the role used by our codedeploy to add AmazonEC2ContainerRegistryFullAccess, follow these steps to do so:
+Open a new tab and login to your AWS account
+On the search bar tap IAM and click on it 
+
+- In the AWS IAM dashboard click on Roles
+
+- Search for the role name we entered for the pipeline, which in my case is (codebuild-Webappli-service-role) click on the role 
+
+- On the page that shows up, click on Add permissions Then on Attach policies
+
+- Now search for AmazonEC2ContainerRegistryFullAccess
+- select the policy, then click on Add permissions
+
+
+ 
+# 3- Launch the pipeline.
+
+Now that it’s done go back to AWS CodePipeline 
+Click on Create the pipeline to Launch the pipeline
+Now you will need to wait for the pipeline to execute completely.
+Once the execution is completed, you will get all stages green.
+
+
+# 4- Test pipeline.
+# 4a- Modify the application and push the changes
+
+Open the repository you cloned in 1 Visual Studio Code
+On Visual Studio Code, open a Git bash terminal
+Make sure to be in the static-app directory
+cd static-app
+
+Open the index.html file
+code index.html
+
+Then modify line 92 and add : Welcome to the automated utrains website 
+
+On your terminal, commit and push the code
+git add .
+
+
+git commit -m "added a welcome message"
+
+
+git push
+
+
+# 4b- Verify if the pipeline is processing
+
+Once the push is done, head over to your pipeline, and you will see that it has been started.
+
+
+
+# 4c- Go the deployed application and see the changes
+
+- Once the deployment is done, head over to ECS and select the cluster you created in the previous project
+
+- Then scroll down and click on the service you created
+
+- Now click on View load balancer
+
+- In the LoadBalancer, copy the DNS name and paste it into the browser
+
+You will notice the change we made.
+
+So this will reduce the stress of building applications and deploying them manually.
+
+
+
+
+

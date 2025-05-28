@@ -1,0 +1,359 @@
+
+##  Installing Splunk step by step into a separate drive (EBS volume) using Terraform
+Introduction
+In this tutorial, we will learn how to install Splunk on an EC2 instance created using Terraform. Before installing let's set up the environment to install Splunk server and Splunk forwarder.
+
+You can download and install Splunk Enterprise for free using its 60-day trial version which indexes 500 MB/day. All you need to do is create an account at Splunk Enterprise.
+After 60 days, you can convert to a perpetually free license or purchase a Splunk Enterprise license to continue using the expanded functionality designed for enterprise-scale deployments.
+This is the relationship of a few Splunk attributes to their default ports during installation:
+Attribute
+Default Port
+Splunk default port
+8000
+Splunk management port
+8089
+Splunk KV Store
+8191
+
+Table 1: Splunk Attributes & Default Port Values
+Open virtual studio code.
+Make a directory splunk and move it
+mkdir splunk 
+cd splunk
+
+
+Create a Terraform file and paste the code below
+code provider.tf
+
+
+Paste the code below in it
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.0"
+    }
+  }
+}
+
+
+# Configure the AWS Provider
+provider "aws" {
+  region = "us-east-2"
+}
+
+
+Now create another Terraform file and paste the file below into it.
+code create_splunkserver_fowarder.tf
+
+
+Paste the code below in the newly created file.
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.0"
+    }
+  }
+}
+
+
+# Configure the AWS Provider
+provider "aws" {
+  region = "us-east-2"
+}
+
+
+# Create a VPC
+resource "aws_vpc" "my-vpc" {
+  cidr_block = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "splunk VPC"
+  }
+}
+
+
+
+
+# Create Web Public Subnet
+resource "aws_subnet" "web-subnet" {
+  vpc_id                  = aws_vpc.my-vpc.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-2a"
+
+
+  tags = {
+    Name = "splunk-subnet"
+  }
+}
+
+
+# Create Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.my-vpc.id
+
+
+  tags = {
+    Name = "splunk IGW"
+  }
+}
+
+
+# Create Web layer route table
+resource "aws_route_table" "web-rt" {
+  vpc_id = aws_vpc.my-vpc.id
+
+
+
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+
+  tags = {
+    Name = "WebRT"
+  }
+}
+
+
+# Create Web Subnet association with Web route table
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.web-subnet.id
+  route_table_id = aws_route_table.web-rt.id
+ }
+
+
+
+
+  # Create Web Security Group
+resource "aws_security_group" "web-sg" {
+    name        = "splunk security group"
+    description = "Allow ssh inbound traffic"
+    vpc_id      = aws_vpc.my-vpc.id
+ 
+    ingress {
+      description = "ssh from VPC"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+   
+    ingress {
+    description = "http port"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    }
+   
+    ingress {
+      description = "acces to the splunk server"
+      from_port   = 8000
+      to_port     = 8000
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+
+    egress {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+ 
+    tags = {
+      Name = "splunk-SG"
+    }
+}
+ 
+# Generates a secure private k ey and encodes it as PEM
+resource "tls_private_key" "ec2-key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+# Create the Key Pair
+resource "aws_key_pair" "ec2-key" {
+  key_name   = "keypair10"  
+  public_key = tls_private_key.ec2-key.public_key_openssh
+}
+# Save file
+resource "local_file" "ssh_key" {
+  filename = "keypair10.pem"
+  content  = tls_private_key.ec2-key.private_key_pem
+}
+
+
+#data for amazon linux
+
+
+data "aws_ami" "amazon-2" {
+  most_recent = true
+
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]  
+  }
+
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+
+  owners = ["amazon"]
+}
+
+
+
+
+#create ec2 instances
+
+
+module "ec2_instance" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = ">= 3.0"
+
+
+  for_each = toset(["splunk-server", "splunk-forwarder"])
+
+
+  name = "instance-${each.key}"
+
+
+  ami                    = "${data.aws_ami.amazon-2.id}"
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.ec2-key.key_name
+  monitoring             = true
+  vpc_security_group_ids = ["${aws_security_group.web-sg.id}"]
+  subnet_id              = aws_subnet.web-subnet.id
+
+
+  # Assign different user_data files based on the instance type
+  #user_data = file(
+  #  each.key == "splunk-server" ? "splunk_server_userdata.sh" : "splunk_forwarder_userdata.sh"
+  #)
+
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+ 
+}
+resource "aws_volume_attachment" "this" {
+  for_each = module.ec2_instance
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.this[each.key].id
+  instance_id = each.value.id
+  force_detach = true
+}
+
+
+resource "aws_ebs_volume" "this" {
+for_each = module.ec2_instance
+  availability_zone = "us-east-2a"
+  size              = 30
+  tags = {
+    Name = "Myvol-${each.key}"
+  }
+}
+
+
+# print the url of the splunk server and the splunk forwarder
+
+
+output "ssh_splunk_forwarder_command" {
+  value = "ssh -i ${local_file.ssh_key.filename} @${module.ec2_instance["splunk-forwarder"].public_dns}"
+}
+
+
+output "connexion_link_for_the_splunk_server" {
+  value = "http://${module.ec2_instance["splunk-server"].public_ip}:8000"
+}
+
+
+output "ssh_splunk_server_command" {
+  value = "ssh -i ${local_file.ssh_key.filename} ec2-user@${module.ec2_instance["splunk-server"].public_dns}"
+}
+
+
+
+
+Note: Before launching the creation of your instance, make sure that your IAM user is properly configured! aws configure You need your Access key ID ,Secret access key for setting up the configuration
+If you forgot how it’s work create an IAM user following this tutorial here
+Once your IAM user is configured in your terminal, run these commands
+terraform init
+terraform plan
+terraform apply --auto-approve
+
+
+After the 3 commands work very well, open your EC2 instance dashboard in the aws console it will look.
+Everything went well you should get this in Figure 2:
+
+
+Figure 1:  successful installation
+Let’s prepare the ESB volume for the installation
+
+a- ssh into the splunk server using the output of your terraform code:
+ 
+b- Once you’re connected, display disk with this command $ sudo lsblk
+
+Figure 2: Display the EBS Volume
+b- Check if there is any filesystem on the EBS volume: $ sudo file -s /dev/xvdh
+
+Figure 3: No filesystem inside the EFS volume
+c- Install the program that will help you to format the EBS volume by running the following command $ sudo yum install xfsprogs
+d- Use this command to format the disk $ sudo mkfs -t xfs /dev/xvdh you will get something as in Figure 5.
+
+Figure 4: EBS formatting result
+e- Run the following commands to mount the EBS volume!
+cd /opt
+sudo mkdir splunk
+sudo mount /dev/xvdh /opt/splunk
+
+
+f- Run the $ df -h you will see that the new EBS volume is formatted and mounted on the EC2 instance.
+
+Figure 5: EBS Volume successfully mounted
+Installation Process
+To configure a Splunk Enterprise instance on an Amazon EC2 instance, connect to your EC2 instance through the SSH command provided at the end of the instance creation and then refer to the following instructions.
+To sign in to your Splunk account and copy the wget link to download according to the distribution of your Linux system (for this tutorial let’s use .tgz file) Go here.
+
+Figure 6: Downloading Splunk for Linux
+02. Move to the directory in /opt the default directory for Splunk $ cd /opt
+03. Paste the command for downloading the tar file $ sudo < paste here>
+
+Figure 7: Downloading Splunk tar
+04. Extract the Splunk image in /opt.
+The following is an example. $ sudo  tar xvzf <splunk_package_name.tgz> , this command will create a splunk folder in /opt if it doesn’t exist.
+
+Figure 08: Splunk Folder
+05. Move into /opt/splunk/bin by using this command $ cd splunk/bin/
+06. Install the Splunk image and accept a Splunk license:
+Run  $ sudo ./splunk start --accept-license  , this command will also start the Splunk server
+Set the username admin and password abcd1234 but you can still set any else of your choice.
+if you want to restart make sure that you are in /opt/splunk/bin and run $ sudo  ./splunk restart
+
+Figure 09: starting Splunk server
+07. To open the Splunk server interface: 
+Run terraform output in your Git bash terminal 
+then hold Ctrl and click on the connexion_link_for_the_splunk_server (or copy it and paste it inside the browser) 
+
+Congratulations you have successfully deployed a Splunk server on an EC2 instance.
+
+Figure 10: Splunk user interface
+08. Enable Splunk at the startup $ sudo ./splunk enable boot-start
+Once you are logged in your Splunk server should look like in Figure 15.
+
+Figure 11: Healthy system
+Conclusion
+In this tutorial, you learned how to install Splunk on a Linux EC2 instance created using Terraform. we attached the EBS volume on the instance because the default disk size is 8Go and doesn’t support the Splunk server. You can create your EC2 instance manually and extend the root storage size during the creation process: in this case, you will not need to add an EBS volume.

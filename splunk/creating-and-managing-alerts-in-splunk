@@ -1,0 +1,95 @@
+
+###
+## Create and manage alerts in Splunk
+Introduction
+In this tutorial, we will learn how to create and manage alerts in Splunk.
+Prerequisite:
+we are using the same data that we used in the previous tutorial. You can get it Here!
+In case you missed the part where we are preparing your Data kindly follow this part Here
+
+1- Uploading Data
+
+On the Splunk home page: Click on Add Data
+Click on Upload
+Click on Select file and upload the file secure.log which is in the www1 folder
+Click on Next
+For the name of the source type put secure and Click on Save
+In Host field value let's put linux-secure
+Let's create a new index for the secure log data: click on Create a new index
+In the Index Name field, put the value security as index and click on save.
+Click on review, then click on submit.
+2- Create a scheduled alert in Splunk
+A scheduled alert is an alert that runs on a regular interval, making it a type of scheduled search. You can specify the schedule and trigger conditions, and you can define the alert actions that take place when the alert is triggered.
+let’s go…
+At this point click on start searching
+In the search bar, type the following command to get all events containing the words "failed" and "password".
+
+
+source="secure.log" host="unix-secure" index="security" sourcetype="secure" failed password
+
+
+From the result page, click on Save As select Alert
+Give the name of the alert: Login failure alert
+Change the value of the time when the alert will expire and put 7 days
+Change the value to is greater than 30 this means the system will send you an alert when the number of events is greater than 30.
+
+Figure 1: Creating an Alert Part1
+Click on Add action and set the priority to High, Finally click on save
+
+
+
+Figure 2: Creating an Alert Part2
+
+
+Click on Permissions
+
+Figure 3: setting permissions
+Let’s keep everything as default and click Save
+You are now taken to your Alerts page where you can see details of your alert settings and edit them by clicking the link next to them.
+Figure 4: Alert page
+
+Click on the Alert menu you will see all the created alerts.
+3- Create a real-time alert in Splunk
+A type of alert that searches for events continuously in real-time. Real-time alerts can trigger alert actions on a per-result basis. They can also trigger alert actions when results meet user-defined conditions within a rolling time window.
+Click on searching and reporting
+Click on Data Summary
+Click on Sources, type secure in the search bar and select /var/log/secure
+Now you are in the search menu. In the search bar, type this command
+
+host=splunk source="/var/log/secure" sourcetype=linux_secure Authentication failure
+
+
+
+Click on Save As select Alert
+Give the title of the alert: Authentication failure alert
+Set the alert type to Real-time.
+Set Expires value to 3 days
+Click on Add Actions and select Add to Triggered Alerts, Click on it and set severity on Critical
+Finally, click on Save.
+
+
+
+Figure 5: real-time alert
+Click on Alert in the menu bar, your two alerts are there. Great Job!
+let’s go back to Visual Studio code
+Log in on the Splunk server through SSH
+Type the command su
+Enter anything as the password until you get an Authentication failure
+Go back to the Splunk server web interface, open the Alert menu
+Click on the Authentication failure alert that you set earlier!
+Do you see your Alert? Say yes!
+
+
+
+Click on Views Results if you want to get more results.
+Congratulations, be proud of you, now you can set up an alert on Splunk. Good job!!!!
+Destroy the infrastructure
+Once you have done with this tutorial, you need to destroy the infrastructure to avoid more charges from AWS.
+Go back to visual studio code
+cd in the directory where we created instances (~/splunk/splunk-terraform-1)
+run the command: terraform destroy -auto-approve
+Conclusion
+
+
+In this tutorial, you learn learned how to create schedule alerts and real-time alerts.
+

@@ -1,0 +1,170 @@
+
+
+### Splunk Queries, Data Visualization and Dashboard in Splunk
+
+Introduction
+You are already familiar with Splunk in case you miss it kindly follow these tutorials.
+Deployment of Splunk  server and Splunk forwarder Here
+Uploading, Monitoring, and using forwarded data Here
+In this tutorial, we will talk about Splunk queries and data visualization in Splunk which which means we will focus more on creating queries in Splunk.
+
+1- Splunk Queries
+Running some Splunk searches and extracting data from Splunk.
+1.1- Filtering data
+Login into the Splunk server
+Click on Search and Reporting: you have the menu(Search, Analytics, Datasets, Reports, Alerts, …)
+Click on Data summary
+Click on unix (This assumes that you followed the tutorial on uploading data in Splunk)
+Change the time criteria to All time
+
+Figure 1: No Filtering applied yet
+Use the mouse and roll over text:
+Click on 200 and select Add to search.
+Click on "http://www.buttercupgames.com" and select Add to search.
+What do you notice? The number of events starts decreasing
+Click on Mozilla and Add to search
+Click on Macintosh and Add to search
+Finally, the result of your query looks like in Figure 2: there you have all the requests From users with MAC through Mozilla Browser which succeeded.
+
+Figure 2: Result of a query
+
+Display only events with a status of 503: status = 503
+To list all errors in the 500 range:  status = 50*
+To return results containing events with a status in the 500 range or a 404 status we add "OR status=404" in our search:  status = 50* OR status=404
+
+
+Display any events with a status greater than 400: status >400
+To exclude any events containing a status of 400 from our events: status !=400
+Search the productId field by "SC-MG-G10": productId = "SC-MG-G10"
+In the search bar type productId = "SC-MG-G10", under selected fields click on action, and click on purchase: You create another query of all events concerning the purchase of the product SC-MG-G10
+
+Figure 3: Query-specific data
+Querying real-time Data…
+Remember we monitor data of our Splunk server  in the second section of the previous tutorial Here
+Click on Search and Reporting
+Click on Data summary
+Click on Splunk (This summary is monitoring the /var folder of our Splunk server)
+Change the time criteria to All time(real-time)
+
+Open visual studio code
+Move into the terraform folder splunk-terraform/
+Type terraform output
+Copy and paste the ssh command of the Splunk server ssh_splunk_server_command
+Type the command su
+Enter anything as the password until you get an Authentication failure
+Go back on the Splunk web interface, you will see the same as in Figure 4 you are in the real-time mode
+
+Figure 4: Real-time mode
+On the Splunk summary filter click on /var/log/secure and Add to the search
+
+
+
+Figure 5: Displaying mode
+
+While you are adding an option to the search bar, Splunk is building a query.
+1.2- Create a table with the result of a query
+The Following query displays all events concerning the root  in the file "/var/log/secure"
+
+Example 1: host=splunk source="/var/log/secure" "USER=*" | table _time USER host action 
+This command creates a table with the result of the query with 4 columns  _ time, user, host, and action 
+
+Figure 6: the result of a request
+Example 2:  host=splunk source="/var/log/secure" "USER=*" | table _time USER host action | sort time is performing the same action as the previous one and in addition to that, sort the result by time.
+Example 3:  host=splunk source="/var/log/secure" "USER=*" | table _time USER host | rename USER as client. This Query creates a table with time, client, and host as columns.
+For learning more about queries in Splunk look at the official tutorial on SPL Here.
+2- Report and Dashboard in Splunk
+Set up a visualization in Splunk using queries that we created before in such a way that even after login out of the system, once back in, you can still have access to the result of previous queries.
+Click on Search
+Click on Search history
+In the column Actions, click on  Add to Search  Near to the query that you want to run again and press Enter. In our case let’s click on Add to search near to the last query and see what happens.
+2.1- Create a report
+You already know how to search in Splunk. But what if you find yourself running the same searches over and over? This is where reports come in.
+Go to the home page of the Splunk server
+Click on Search and Reporting
+Click on Data Summary
+Click on unix and select All time as the time criteria.
+In the search bar add status = 200. In the search, you should have host=unix status=200
+When you click on a field name, you have links to quick reports, values returned, and statistics for those values.
+Click on status  to display a quick report
+In the Search Bar write host=unix sourcetype=access_combined_wcookie | stats count as occurence by status Press Enter to launch the query.
+
+
+
+Figure 6: Result of a command
+Click on Visualization you will get a report as in Figure 7 corresponding to the column chart (it can be different for you don’t worry).
+
+Figure 7: Visualization of different status of the access log
+2.2- Create a Dashboard
+On the Splunk home page: Click on Add Data
+Click on Upload
+Cli’s create a new index for the secure log data: click on Create a new index
+In the Index Name field, put the value accesskg as index and  click on save your screen should look like in Figure 8:
+
+Figure 8: Uploading secure log data
+Click on Review and finally click on Submit.
+Click start searching and you have successfully uploaded your data into Splunk.
+Run this command to see different status
+
+source="access.log" host="unix-secure" index="accesskg" sourcetype="access_combined_wcookie" | stats count as occurence by status | sort occurence
+
+
+
+Click on Visualization to see the graph.
+
+Figure 9: Column Chart diagram
+Click on Column Chart and select Pie Chart.
+
+Figure10: change  Column Chart to Pie Chart
+
+
+
+Figure 11: Pie chart diagram
+Click on Pie Chart, select Column Chart
+Click on Format, X-Axis, on Label Rotation chose the first option and See how Labels are changing on the X-axis.
+
+
+
+Figure 12: Column Chart with label rotation
+Check the Trellis button  to split your data by a selected field as in Figure 13
+
+Figure 13: splitting data
+
+
+Uncheck the Trellis button.
+Click on Save As just above the Search Bar
+
+Select the new dashboard.
+Give the name Status Dashboard as the Dashboard Title
+Fill in the Description, select Classic Dashboards, and fill also the Panel Title as in Figure 14
+
+Figure 14: New Dashboard settings
+Click Save to Dashboard and View Dashboard
+Congratulations you created your first dashboard with Splunk!
+Click on Edit
+Click on Add Input select time
+Click on the pencil to edit the input
+Set the label to a Change time range, check the Search on Change box, and change the value of the token to timerange picker uses. Change the Default value to All time.
+Click on Apply
+
+Figure 15:  Time input settings
+
+
+Save the Dashboard
+Click on Edit and click on the search icon as in Figure 16.
+
+Figure 16: search bar icon
+
+
+Select the time range we created and Apply, Save the dashboard.
+
+Figure 17: select time range
+
+
+Refresh the page
+
+
+
+Click on Export, select Export PDF and you are done!
+To  go further you can learn how to use the new framework of Splunk called Dashboard Studio Here
+Conclusion
+In this tutorial, we learn how to create a query, Table, and visualize data. We also saw how to create a report and dashboard and we hope you enjoyed it! Then in the next lab, we will see how to create and manage alerts on Splunk through this link.

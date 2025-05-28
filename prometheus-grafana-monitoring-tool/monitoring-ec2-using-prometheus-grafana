@@ -1,0 +1,152 @@
+
+
+## Monitoring using Prometheus and Grafana
+Introduction
+In this tutorial, we are going to automatically set up an environment for  Prometheus and Grafana using Terraform. This terraform code will create 3 EC2 Instances, one instance for the Prometheus server, one for Grafana, and the other one for the Node Exporter. It will automatically set the security group, the subnet, and the default ports for SSH, Prometheus, Grafana, and the Node Exporter.
+If you want to learn how to do it manually, you can follow these links because here, we will not go into detail.
+Install Prometheus and Grafana here.
+Installing node exporter and Linking to Prometheus here.
+
+
+Prerequisites:
+Terraform installed (installation steps here)
+AWS CLI installed (installation steps Here)
+IAM user with administrator access created and configured in the terminal with AWS CLI (link here)
+Setting up the environment
+Open virtual studio code.
+Make a directory prometheus-grafana and move it
+mkdir prometheus-grafana
+cd prometheus-grafana
+
+Clone the environment.
+git clone https://github.com/utrains/prometheus-grafana-env.git
+cd prometheus-grafana-env
+
+Once your IAM user is configured  in your terminal, run these commands
+terraform init
+terraform plan
+terraform apply --auto-approve
+
+You should get this as in Figure 1:
+
+Figure 1: Installation Successful
+Check that everything is running very well:
+
+Prometheus:  Open URL <Public-IP-Adress:9090>
+Connexion_link_for_the_prometheus_instance = "http://3.21.165.91:9090"
+
+
+
+Figure 2: Prometheus home page
+Grapfana: Open URL <Public-IP-Adress:3000>
+Connexion_link_for_the_grafana_instance = "http://18.188.104.218:3000"
+
+Figure 3: Gafana Login page
+The node Exporter: Open URL <Public-IP-Adress:9100/metrics>
+Connexion_link_for_the_client_instance = "http://3.144.5.207:9100/metrics"
+
+Figure 3: Node exporter metrics
+Pull metrics with Prometheus
+To enable Prometheus to pull the data collected by the node_exporter, we need to add a new job in the prometheus.yml file.
+Go back to the Prometheus server’s terminal (The EC2 instance) where Prometheus is installed using the ssh command:
+
+Open the prometheus.yml file:
+sudo vi /etc/prometheus/prometheus.yml
+
+Let’s scroll down to the scrape_configs section to add the node exporter job_name as well as the target server (the machines where the node exporter is installed)
+Your file should look like this
+
+Figure 4: Targets configuration
+where 192.168.43.11:9100 is the IP address and port of the node exporter.
+Stop and start Prometheus for the new settings to be considered:
+sudo systemctl stop prometheus.service
+
+
+sudo systemctl start prometheus.service
+
+In your browser, go to your Prometheus page and add the targets on the link as follows: http://34.201.100.137:9090/targets
+You will find targets running, one will be a node exporter.
+
+Figure 5: Prometheus target dashboard connected with the Linux server
+After this, we will integrate Prometheus into Grafana and create a dashboard for better analysis
+Intergrating prometheus and grafana
+As we installed Grafana and Prometheus on two different servers, let's connect them so that Grafana can display Prometheus metrics.
+Go to Grafana’s home at http://18.214.99.204:3000/
+
+
+Click on the toggle menu near Home,
+Click on the Dropdown button of the Connections menu
+
+Figure 6 Adding a data source
+Select Data Source Data Sources.
+Click on Add data source and click on Prometheus
+Set the URL as the Prometheus server’s IP with port 9090. In this example, we are running Prometheus and Grafana on two different servers so it would be http://public-ip-addres-of-prometheus:9090
+
+Figure 7: Grafana configuration
+Scroll down till the end of the page and click on Save & Test. You will get a success message that the Data source is working as in Figure 8:
+
+Figure 8: Successful setting up of data sources
+Grafana is successfully connected to Prometheus it's time to create a dashboard.
+To make it easy, we will use the existing node exporter dashboard, which is present on Grafana’s official website to monitor Linux server metrics.
+Click on the Grafana logo to go to the home page,
+Click on the toggle menu near Home,
+Click on Dashboard, click on New, and select Import
+
+Figure 9: Starting the import process
+In Import via Grafana: The open observability platform | Grafana Labs, put the dashboard id 1860 and click on Load.
+Fill in the name (or allow the default name).
+
+
+Figure 11: Finalizing the importation
+Then select the source as Prometheus and click on Import.
+The complete node exporter dashboard will get imported. All metrics like system load, RAM used, CPU busy, etc. are getting monitored on Grafana successfully.
+
+Figure 12: The node Exporter Dashboard
+Sometimes you may need to save your dashboard for future exploitation. let’s keep our dashboard.
+click on the disk icon at the top as shown in Figure 12.
+
+Figure 13: Saving a dashboard
+Check the boxes according to want your Dashboard to be displayed the next time.
+Click on Save.
+Click on the profile picture and click on Sign out.
+
+Figure 14: login out process
+On the Grafana login page put admin as login and admin as password
+
+Click on the toggle menu near Home,
+Click on Dashboard, you will get  Figure 15,
+
+Figure 15: Grafana displays a saved dashboard
+Click on General, and all the dashboards that you saved will appear. click on the name of the saved dashboard: in our case, click on Node Exporter Full. Bingo you get the dashboard that you saved previously.
+Now after setting the data source, we can import the pre-existing open-source dashboard from Grafana Labs using the Dashboard ID.
+Goto Grafana Dashboard and search for Linux Memory
+
+Figure 16: Grafana lab dashboard 2747 Linux memory
+
+
+Click on the result of the research and then copy the board ID .e.g 2747
+
+Figure 17: dashboard 2747 Linux memory
+Click on Home,  click on Dashboard,  click on New select  Import, and enter the board ID. e.g. 2747
+
+Figure 18: Import Grafana dashboard with dashboard ID
+Click load and then select the data source as Prometheus
+
+
+
+Figure 19: Select Prometheus as the preferred data source
+
+
+Finally, Click on Import
+You should be able to see the memory dashboard
+
+Figure 20: Grafana dashboard
+Destroy all the resources that you created by running the following command.
+
+
+terraform destroy --auto-approve
+
+Conclusion
+
+
+In this tutorial, you learn how to deploy Prometheus, Grafana, and the node exporter. You learned also how to create and save dashboards in Grafana. these are tools that you can use to monitor Linux servers.

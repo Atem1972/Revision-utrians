@@ -1,0 +1,51 @@
+
+before the below make sure u are using but helm to deploy ur cluster
+
+
+##  MOMITORING THE CLUSTER
+ # lets add a monitoring tool in our cluster call prometheus
+  - go to ur browser type helm.sh
+  - click on chart
+  - on the serch package write prometheus
+  - look for official
+  - click on the prometheus log and open it
+  - look for get repository info, copy what is under it take to u vsc and install it , not on cluster, make sure is prometheus and grafana together
+
+ ## befor we install helm ,lets first create a namespace so that we can install it in a specific namespace
+  RUN <kubectl create ns monitoring>  ## this will create namespace
+  RUN <helm install (put the name u want it to be called here )-n monitoring prometheus-community/kube-prometheus-stack>  ## this will install prometheus and grafana  -n represent namespace,
+  RUN <kubectl get all -n monitoring>  ## this will u everything under this namespace
+  To edit prometheus and grafana service type RUN <kubectl edit service/prometheus-grafana -n monitoring>  # look for type change to loadBalancer
+  to check if it was change RUN <kubectl get all -n monitoring> ## copy the LB URL AND GO ON THE BROWSER
+  TO UNSTALL RUN <helm uninstall prometheus -n monitoring>
+
+  # HOW to login to the grafana
+  - RUN <kubectl get secret -n monitoring>
+  - RUN <kubectl describe secret prometheus-grafana -n monitoring>
+  - RUN <kubectl edit secret prometheus-grafana -n monitoring>   ### here u will see the admin passwd and admin user copy it go to the termina an decrypt 
+  - RUN <echo (past the admin passwd u copy here) |base64 -d >   ## this will decode it and show u the original passwd
+  - RUN AGAIN <echo (past the admin username u copy here) |base64 -d >        ## this will decode it and show u the original username
+
+  # Lets navigate through the grafana webpage
+  - click on the hamburg on the left
+  - click on dashboard, then new on the right then import   ## the id is 3119
+  - click on what u want to see ie pod, node etc and it will display it and from there u can start moniyoring the cluster
+
+
+
+
+
+
+
+
+
+
+
+                                        
+
+
+
+
+                          ##app1 is the name, we can put any name
+                            this is done in vsc not on linux sever
+-   

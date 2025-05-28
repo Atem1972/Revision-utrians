@@ -1,6 +1,6 @@
 w11d2
 
-LAMBDA is an event driven service ie u can put ur application set i a way that it show work only when somebody browserit. 
+LAMBDA is an event driven service ie u can put ur application set in a way that it show work only when somebody browserit. 
 .- we can use lambda function to creat trigger
  -it is pieace of code that will be triggering ur application to run any time a traffic is directed to it
  -it is a serverless service , u just need to plug ur code in there and go. 
@@ -77,7 +77,7 @@ def lambda_handler(event, context):
    - go to event , click on rules
    - create rules
    - feel the space
-       name
+    - name = anything
        click on Schedule
     - click continus to create rule
     - click this    A fine-grained schedule that runs at a specific time, such as 8:00 a.m. PST on the first Monday of every month.  or

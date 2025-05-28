@@ -1,0 +1,135 @@
+
+
+## Installing node exporter and Linking to Prometheus
+We will install the node exporter on our Linux server to collect the Linux metrics
+To do that, open a new terminal and log in to the Node exporter server through ssh. This is where we will use Linux server: the other EC2 instance that we created in the previous tutorial.
+Connect to the EC2 using the SSH command
+
+ssh -i "keypair.pem" ec2-user@ec2-3-89-242-146.compute-1.amazonaws.com
+
+
+Download the node exporter using wget
+wget https://github.com/prometheus/node_exporter/releases/download/v1.0.0-rc.1/node_exporter-1.0.0-rc.1.linux-amd64.tar.gz
+
+
+Extract the downloaded file
+tar -xzf node_exporter-1.0.0-rc.1.linux-amd64.tar.gz
+
+Now, create a system user for the node exporter with the following command:
+sudo useradd -rs /bin/false nodeuser (the -r option will create a system account)
+
+Move the node_exporter binary from the extracted package to /usr/local/bin
+sudo mv node_exporter-1.0.0-rc.1.linux-amd64/node_exporter /usr/local/bin/
+
+Let’s create a system service file for node_exporter in the /etc/systemd/system/ folder
+sudo vi /etc/systemd/system/node_exporter.service
+
+
+Now copy the code below and paste into the file, save, and exit
+[Unit]
+Description=Node Exporter
+After=network.target
+ 
+[Service]
+User=nodeuser
+Group=nodeuser
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+ 
+[Install]
+WantedBy=multi-user.target
+
+
+Let’s reload the system daemon, start and check the status of the node_exporter service:
+sudo systemctl daemon-reload
+
+
+sudo systemctl start node_exporter
+
+
+sudo systemctl status node_exporter
+
+
+
+
+Figure 1: Node exporter status
+Now, let’s add a firewall rule to allow node exporters.
+
+Figure 2: Security Group
+
+sudo systemctl start firewalld
+sudo firewall-cmd --zone=public --add-port=9100/tcp --permanent
+# Reload firewall service.
+sudo systemctl restart firewalld
+
+
+
+Enable node exporter on system boot.
+sudo systemctl enable node_exporter
+
+
+View the metrics browsing node exporter URL: http://Your-IP-Address:9100/metrics
+Example: http://192.168.43.11:9100/metrics
+
+Figure 3: Metrics
+Pull metrics with Prometheus
+To enable Prometheus to pull the data collected by the node_exporter, we need to add a new job in the prometheus.yml file
+Go back to the Prometheus server’s terminal (The EC2 instance) where Prometheus is installed
+Open the prometheus.yml file:
+vi /etc/prometheus/prometheus.yml
+
+Let’s scroll down to the scrape_configs section to add the node exporter job_name as well as the target server (the machines where the node exporter is installed)
+Your file should look like this
+
+Figure 4: Targets configuration
+where 3.89.242.146:9100 is the IP address and port of the node exporter.
+Stop and start Prometheus for the new settings to be considered:
+sudo systemctl stop prometheus.service
+
+
+sudo systemctl start prometheus.service
+
+
+In your browser, go to your Prometheus page and add the targets on the link as follows: http://34.201.100.137:9090/targets
+You will find targets running, one will be a node exporter.
+
+Figure 5: Prometheus target dashboard connected with the Linux server
+After this, we will just integrate Prometheus into Grafana and create a dashboard for better analysis
+Intergrating Prometheus and grafana
+As we installed Grafana and Prometheus on two different servers, let's connect them together so that Grafana can display Prometheus metrics.
+Go to Grafana’s home at http://18.214.99.204:3000/
+
+
+Click on the toggle menu near Home,
+Click on the Dropdown button of the administration menu
+
+Figure 6 Adding a data source
+Select Data Source Data Sources.
+Click on Add data source and click on Prometheus
+Set the URL as the Prometheus server’s IP with port 9090. In this example, we are running Prometheus and Grafana on two different servers so it would be http://public-ip-addres-of-prometheus:9090
+
+Figure 7: Grafana configuration
+Scroll down till the end of the page and click on Save & Test. You will get a success message of the Data source is working as in Figure 8:
+
+Figure 8: Successful setting up of data sources
+Grafana is successfully connected to Prometheus: it's time to create a dashboard.
+To make it easy, we will use the existing node exporter dashboard, which is present on Grafana’s official website to monitor Linux server metrics.
+Click on the Grafana logo to go to the home page,
+Click on the toggle menu near Home,
+Click on Dashboard, click on New, and select Import
+
+Figure 9: Starting the import process
+In Import via Grafana: The open observability platform | Grafana Labs, put the dashboard id 1860 and click on Load.
+Fill in the name (or allow the default name).
+
+Figure 10: start the importation
+
+Figure 11: Finalizing the importation
+And then select the source as Prometheus and click on Import.
+The complete node exporter dashboard will get imported. You can see that all the metrics like system load, ram used, CPU busy, etc. are getting monitored on Grafana successfully.
+
+Figure 12: The node Exporter Dashboard
+This gives you an idea of how to set up Grafana and Prometheus for server metrics. You can further practice by setting up monitoring on multiple Linux servers and setting alarms too.
+
+
+NOTE to do that u will need to install node_exporter in all those servers and configure them on prometheus

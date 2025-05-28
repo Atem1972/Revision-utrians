@@ -1,0 +1,70 @@
+
+- the cluster is make up of the control plane and workers node
+- both the control plane and workers node are linux machine and the servers will need maintenance
+- the servers can be runing centos, ubuntu, debian, redhat
+# when we talk on maintening this servers
+     1) patching the servers:  what does this mean server maintenance, ir RUNING <yum update -y, apt update -y>
+        - it means to update the server to latest veersion to avoid vulnerability
+        - this patching is done to every linux machine monthly interval, or two weeks interval
+
+
+ ## how to do patching in k8s cluster worker nodes, dont forget that they have pod/containers runing in them so u can not patch all at same time 
+ - first u need to take the server out of service
+ - patch the server
+ - reboot the server
+ - bring the server back to servic
+# How will u go about it? 
+- firstly will need to tell the scheduler not to deploy any pod on that particular work-node , he should remove all the pod run on this node and reschedule somewhere else.  
+- now we can start doing maintenance on that server   
+- After with are done with the maintenance, we need to bring it back to service by telling scheduler that u can now deploy on the server
+
+
+## how to take a node out of service to do maintenance
+    example
+let RUN deployment on the promt and later we can creat manifest file deployment
+ RUN <kubectl create deployment -- app1 --replicas=4 --image=httpd -o yaml > deploy.yaml >    OR we can create a yaml file to write it 
+
+     deploymen.yaml
+          apiVersion: app1/v1
+          kind: Deployment
+          metadata:
+             name: app1     ### this will be deploy in the default namespace since we did not indicate any namespace to be deploy on it
+          spec:   
+              relicas: 4     ## this simply the number of pods we want on each container ie httpd will run 3 container, nginx 3 container, python 3 contai
+               selector:
+                     matchLabels:
+                         app: nginx
+               template:
+                    metadata:
+                        labels:
+                           app: nginx
+                    spec: 
+                       containers:
+                       - name: nginx-container
+                         image: inginx:latest
+                         ports:
+                           - containerPort: 80   
+To execute RUN <kubectl apply -f deployment.yaml>  
+           RUN <kubectl get deployment>  ## u we see 4 pods ready <but if we deploy it on a namespace then we could have add -n dev or any u gave ur namespace
+           RUN <kubectl get pods>,
+           RUN <kubectl get pods -A>  ## THIS will show u all the pods runing on that cluster 
+           RUN  RUN <kubectl get pods -A -o wide>  ## THIS will show u all the pods runing on that cluster including default pods
+           <kubectl get pods -o wide> ## this will show u which node they where deploy on
+
+After runing the <kubectl get pods -o wide> , choose the node u want to do maintenance   ie NODE IP-10-0-1-0.internet is the node i choose to start with the maintenance. please dont forget that pods/containers are runing on that node already 
+# lets take the node out of service now
+- RUN <kubectl cordon then past the name of the node ie ip-10.0.1.0.internet>   ## this means donot scheldul here
+- To check if the node has been cordon RUN <kubectl get nodes>  ## on Ready u will see schedulingDisabled
+- TO remove the pods from this disable node RUN <kubectl drain then past the name of the disabled node here --ignore-daemonsets --delete-emptydir-data>  ##
+                                                this will evict all the pods runing on this node to other node that are still live
+- To check if it eventually evit the pods to other node RUN <kubectl get pod -o wide>     
+
+## How to bring back the cordon node back to servive
+- RUN <kubectl uncordon then past the name of the node u have cordon ie ip-.10.0.1.0.internet>
+- to check if it has been uncordon RUN <kubectl get nodes>
+
+
+can we automate this patching using some automation tools
+
+
+

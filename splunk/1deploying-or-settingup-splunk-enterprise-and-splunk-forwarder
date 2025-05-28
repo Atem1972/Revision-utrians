@@ -1,0 +1,149 @@
+
+## Deploying Splunk Enterprise and Splunk Forwarder
+
+# Introduction
+In this tutorial,  you will set up the environment by installing the Splunk server and Splunk forwarder. We created the Terraform for you already; you will just have to run and set up everything.
+You will find the Terraform script for setting up the environment here (https://github.com/utrains/splunk-terraform.git)
+
+# Optional:
+-  If you want to learn how to install a Splunk server on an EC2 instance kindly follow this link (https://docs.google.com/document/u/0/d/1ftukrcyTWNdTY_3UTN70_zyF1uJ_ywA4ylPkZdyT8R8/edit)
+-  If you want to learn how to install the Splunk server  into a separate drive (EBS volume) using Terraform module click here (https://docs.google.com/document/d/1p-MvI5EbAe5o9o0ZDwHXDm0GClCwF__n_8jxNEtcE7M/edit?usp=sharing)
+
+# diagram AWS CLOUD, availability zone, vpc, internet gatway, public subnet, SPLUNK SERVER EC2, 2 EC2 SERVERS FOR SPLUNK FORWORDER, CIDER 10.0.0.0/16 ,SUBNET 10.0.1.0/24
+
+Figure 1:  Example of a Splunk architecture
+
+
+## Deployment process
+- Open visual studio code.
+- Make a directory splunk and move it
+  mkdir splunk 
+  cd splunk/
+
+
+# Paste the code below to clone the repository
+
+git clone https://github.com/utrains/splunk-terraform.git
+
+- Move into the folder that you cloned
+- cd splunk-terraform/
+
+# Run the following commands:
+
+Warning: Before creating your instance, make sure that your IAM user is properly configured! aws configure You need your Access Key ID and secret access key for setting up the configuration
+If you forgot how it works, create an IAM user following this tutorial
+Create an IAM user with Administrator Access and configure it in the terminal using AWS_CLI
+Once your IAM user is configured in your terminal, run these commands:
+
+- terraform init
+- terraform plan
+- terraform apply --auto-approve
+
+
+
+# Figure 2:  successful installation
+To open the Splunk server interface; hold Ctrl and click on the connexion_link_for_the_splunk_server (or copy it and paste it inside the browser)
+Congratulations you have successfully deployed a Splunk server on an EC2 instance.
+
+# Figure 3: Splunk user interface
+Log in  Splunk server with username: admin and password = abcd1234 should look like in Figure 4.
+
+Figure 4: Healthy system
+
+
+
+
+
+## 2- How to use splunk server to monitor ur instance . to do that install Splunk forwarder on urinstance and configure it
+# take note that on the main splunk server splunkforwaeder is install and listening to a particular port
+
+In this tutorial, we will learn how to install Splunk Forwarder on an EC2 instance. In the first part of this tutorial, we launch the server and enable forwarding on port 9997.
+# To verify that, use the following steps:
+- Open the Splunk server in the browser,
+- Click on Settings, Then on Forwarding and receiving
+- Click on Configure receiving you will see that port 9997 is already enabled for receiving data as shown in Figure 5.
+
+
+# Figure 5:  Receiving data is enabled
+Run the following command to display the outputs
+- terraform output
+
+# Figure 6: Copy the SSH command
+This command will launch the Splunk forwarder
+- sudo /opt/splunkforwarder/bin/splunk enable boot-start --accept-license
+
+
+Set the username: splunk and password: abcd1234 but you can still set any else of your choice.
+If you get the message highlighted in green in Figure 7,  don’t consider the rest: the error message means that you don’t need additional configurations.
+
+## Figure 7: successful execution
+In case you didn’t get the message as highlighted in Figure 7 you should go to the next section to troubleshoot.
+# Troubleshooting
+If after running the previous command, you got this error message in Figure 8
+
+# Figure 8: Error while launching the Splunk forwarder
+Run these commands
+- cd /opt/splunkforwarder/bin
+- sudo ./splunk disable boot-start
+- sudo ./splunk enable boot-start -systemd-managed 1 -user splunk -group splunk
+- sudo ./splunk start
+
+
+## Figure 9: Successful output
+# 3- Configuring the log
+After installing Splunk Forwarder, we need to configure the log files from which to collect data.
+Run this command to change users.
+- sudo chown -R splunk:splunk /opt/splunkforwarder
+
+
+#Let’s run these commands: 
+- cd /opt/splunkforwarder/bin/
+- sudo ./splunk add forward-server <server-ip-address>:9997
+
+
+# Then, enter the Splunk username: splunk and password = abcd1234
+
+
+
+## Figure 10: Successful forwarding
+Run the command
+- sudo ./splunk list forward-server
+
+You will get the list of all the servers where logs will be forwarded
+
+
+
+## Figure 11: List forward-server-inactive
+
+# We need to tell the forwarder where to find data. To indicate to the forwarder which file or folder to monitor, Let’s run the command
+- sudo ./splunk add monitor /var/log
+
+
+## Figure 12: Adding a monitor
+Restart Splunk with the command below
+- sudo ./splunk restart
+
+##  Warning : if u did not use the same username and passwd as us please use exactly the information u put when u run this command for the first time ie sudo ./splunk enable boot-start --acept-license
+
+
+
+
+- Run the command sudo ./splunk list forward-server again! Yeah, we have now an active forward.
+
+
+
+## Figure 13: List forward-server-active
+The Splunk Forwarder has been set up very well! You can verify by following these steps:
+- Go to the home page of the Splunk server
+- Click on Search&Reporting
+- Click on Data Summary and you can see the internal IP address of the Splunk Forwarder as in Figure 15
+
+
+
+# Figure 15: The Splunk forwarder appears in the host section of the Splunk server
+
+NOTE after u add the splunk forworder, u can see its ip address. if u prefer to see the hostname instead of the ip address , u shld configure the hostname of the forwarder before starting the process
+
+Congratulations you have successfully configured the forwarder management on Splunk!
+Conclusion
+In this tutorial, you learned how to set up the environment for the Splunk server and Splunk forwarder on a Linux EC2 instance created using Terraform. In the next tutorial, you will learn how to upload data into Splunk for monitoring through this link.

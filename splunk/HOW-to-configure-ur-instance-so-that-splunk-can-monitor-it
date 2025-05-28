@@ -1,0 +1,53 @@
+
+#### HOW to link your servers to Splunk server to collect ur logs for monitoring
+ REQUIREMENT. cd /opt
+            - Install splunkforwarder on ur own instance server
+         RUN sudo  wget -o splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz "https://download.splunk.com/products/universalforwarder/releases/
+              9.0.4/linux/splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz"
+         run sudo tar -xvzf splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz -C /opt 
+         RUN SUDO RM -F splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz
+         RUN cd splunkforwarder/bin/
+         run sudo ./splunk disable boot-start
+         run sudo groupadd splunk
+         run useradd -m -d /home/splunk splunk -g splunk
+         run chown -R splunk:splunk /opt/splunkforwarder
+         run .splunk enable boot-start -systemd-manager 1 -user splunk -group --accept-license
+              it will require u to put admin-username=admin or any other name  and admin-user-passwd= abcd1234 , put ur own
+         run ./splunk start
+
+## what if we want to uninstall splunkforwarder
+        RUN /opt/splunkforwarder/bin/splumk disable boot-start   
+        run /opt/splunkforwarder/bin/splunk sourcetype
+        run kill -9 'ps -ef | grep splunk | grep -v grep | awk '{sprint $2;}''
+        run rm -rf /opt/splunkforwarder
+        run userdel splunk
+        run groupdel splunk    
+
+
+## set the default hostname of the splun forwarder
+      RUN sudo /opt/splunkforwarder/bin/splunk show servername  
+          put username and passwd ie admin   and abbc1234  
+      RUN sudo /opt/splunkforwarder/bin/splunk set servername <put the name that u want it to display in the main splunk server here> ie my-instance
+      run sudo /opt/splunkforwarder/bin/splunk set default-hostname < past the name of ur server in line 86 here> ie my-instance
+      run sudo hostnamectl set-hostname <past the name of ur server in line 86 here> ie my-instance
+
+
+
+## Configuring the log on splunk forwarder  
+            RUN CD /opt/splunkforwarder/bin/
+            run sudo .splunk and forwarder-server <put the main splunk server ip and port here> ie 20.3.3.3:9997 
+                 put the username=admin passwd=abc1234         
+            run sudo ./splunk list forwarder     
+
+
+ # now lets tell splunkforwarder where to get the log ie path to the log in our my-instance  
+      run sudo ./splunk add monitor /var/log
+      run sudo ./splunk add monitor 
+      run sudo ./splunk list monitor  
+      optioaml  run sudo ./splun and monitor /opt/artifactory-oss-6.9.6/logs  ## to add folder to monitor the log
+
+# lets restart splunk
+  run sudo ./splunk restart     
+
+
+   go to ur splunk on the browser an check this instance  

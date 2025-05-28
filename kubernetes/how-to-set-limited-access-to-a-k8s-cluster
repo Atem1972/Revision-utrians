@@ -198,3 +198,23 @@ here we do not yet have access to the cluster
 
 
 
+
+
+----------------------------------------------------------------
+### how to limite what that new employee can create on that cluster send to him
+- cd to RBAC FOLDER U CREATED BEFORE
+-  creat another file file called <resourcequota.yaml>   # we use <resourcequota to limite user on the number of stuff they can create in the cluster like pod,namespace, etc > 
+
+ #         resourcequota.yaml
+
+               apiVersion: vi
+               kind: ResourceQuota
+               metadata:
+                   name: dev-quota
+                   namespace: dev
+               spec:
+                 hard:
+                   pods: "2"  ## this means that the employee on the dev environment in the cluster can only deploy two pods maximum
+To execute RUN  <kubectl apply -f resoucequota.yaml>
+
+

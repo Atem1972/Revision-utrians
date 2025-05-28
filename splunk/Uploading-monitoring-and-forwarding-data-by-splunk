@@ -1,0 +1,159 @@
+
+## Uploading, Monitoring and forwarding data
+Introduction
+In this tutorial, we will learn how to upload, monitor, and forward data using Splunk. In this demo, we'll be using Splunk's Search Processing Language to explore Apache server data from a fictional gaming company: Buttercup Games.
+
+Prerequisites:
+You need to have two instances running on EC2.
+You must have the Splunk server installed on one  EC2 instance, if not kindly follow this tutorial Deploy the Splunk server and the Splunk forwarder. Once you are logged in, you should have Figure 1.
+
+Optional:
+You can get the same data Here but it may have changed!
+You can also get another set of web server data here But it is too heavy for this tutorial
+Remember: An access log is a log that enables you to check how a web server is doing.
+
+# Figure 1: Splunk home screen
+
+# 1- Upload data into Splunk
+
+Warning: In this part, we are using the access log provided by Splunk you can find the whole file here
+# Open Visual Studio Code and run those different commands
+cd ~
+cd Downloads/
+mkdir data
+cd data
+wget https://github.com/utrains/splunk/raw/main/tutorialdata.zip
+
+
+
+Unzip the archive tutorialdata.zip (according to your OS)
+
+Open the Splunk server web interface by using the Public IP address of the Splunk server instance Public-IP-address:8000
+
+For uploading data in Splunk, follow these different steps:
+Click on Add Data
+Click on Upload: Look at Figure 2
+
+## Figure 2: first step for uploading data
+Click on Select file
+Select access.log as the source file in www1 Folder.
+Wait until the file is uploaded completely and click on Next. Be patient it can take a little time
+
+## Figure 3: select source, acess.log as the source file
+Once it is done, you have a view of the data.
+
+Figure 4: Data view, Source type definition
+You can change the filter by modifying the value of the Source type highlighted in the Figure above! but for the moment we will leave the default value Source type: access_combined_wcookie and click on Next.
+Change the value of the Host field value and put unix as in Figure 5, then click on Review.
+Hint: You can also change the value of the index or create a new look at the first tutorial on Splunk if you don’t know how to create a new index yet:
+Installing Splunk
+
+## Figure 5: Input settings
+
+Note: If you want to follow another way to manipulate data on Splunk you can follow our previous tutorial
+Installing Splunk step by step into a separate drive (EBS volume) using Terraform
+Click on Next, You have a review like in Figure 6.
+
+## Figure 6: Review
+Click on Submit
+You can now start performing some actions like Start Searching, extracting fields, Add More Data, Download Apps, and Build Dashboards.
+Be patient it can take a good bunch of time
+
+## Figure 7: Data successfully uploaded
+Click on Start Searching you will get this: Figure
+
+
+Figure 8: Start Searching view
+On the Search bar, you can see filters that have been used, Splunk presents you the source which is the name of the selected file, the host with the name that we gave earlier, the source type,…
+At the right, you can see the time criteria time click on the Last 24 hours and see what happens!
+When you select Last 24 hours, you will get a few events according to your system, ours is 504 events.
+what is yours?
+Click on the arrow under the icon of the first event, you will have many checkboxes that can help you add more filters to highlight information according to your expectations.
+
+
+
+
+
+ ## Figure 9: Adding filters
+
+
+After doing this, you will notice that the number of selected fields has increased in the left panel.  Look at the left panel.
+
+Figure10: adding selected Fields
+
+
+## Figure 11: Selected fields
+Click on All fields, uncheck source and source type;
+This is how you can add and remove selected fields according to the information that you are looking for.
+
+Basic searching in Splunk…
+Once data has been uploaded you don’t have to upload it again. You just have to follow the steps below:
+Go to the Splunk home page
+Click on Search and Reporting
+Click on Data Summary as it appears in Figure 12.
+
+## Figure 12: Data Summary
+Click on Unix to display the event, and change the time criteria to All Time.
+
+On the search bar, remove host=unix write 503, and press Enter. Result: the number of events decreased.
+Click on Status in the left panel under selected fields as we see in Figure 13 we have exactly 3 different statuses.
+
+## Figure 12: Searching 503
+It’s not exactly what we were looking for: We need to be more clear!
+In the search Bar, replace 503 with status=503 and click the search icon. As you can see now, we got exactly what we were looking for! look at figure 13.
+
+
+## Figure 13: searching status =503
+
+You can add another filter to your research.
+
+On the first event click on Mozilla and select Add to Search
+
+## Figure 14: Adding another search criteria
+You got all the requests in the access log coming from the Mozilla browser and with the status =503.
+Great job! Now you know how to manipulate data by uploading data in Splunk.
+2- Monitoring data
+Another way to manipulate data is through the monitoring menu.
+Click on Setting and then on Add Data as you see in Figure 15.
+
+## Figure 15: step1- Adding a monitoring folder
+
+Figure 16: step2 - Monitoring Data
+As you can see in Figure 17, you can monitor a lot of things like Files and Directory, HTTP Event collector, and many more…
+Click on Files & Directories
+
+## Figure 17: Selecting an options
+In Figure 17 you can browse and go to any directory that you want to monitor: Let’s click on Browse and select /var as the folder that we want to monitor,
+Click on Next
+
+## Figure18: Monitoring selecting the source
+For the Host field value,  put splunk and click on Review
+
+## Figure 19: Putting Host field
+You have the following review in Figure 20
+
+## Figure 20: The review
+Click on Submit, Start searching ;
+Go to the home page of the Splunk server, if you are already logged in just click on Splunk Enterprise
+Click on Search&Reporting after,  Data Summary and you get your data.
+
+
+
+## Figure 21: Data summary
+
+
+3- Monitoring forwarded data
+After that, the forwarding management has been configured in
+Deploying Splunk Enterprise and Splunk Forwarder, 
+Let’s go back to our Splunk server on the web.
+On Splunk Dashboard, click on Search and reporting
+Click on Data summary you get something like Figure 22
+
+## Figure 22: The forwarder
+
+
+10.0.1.241 is the private IP address of the forwarder. You can SSH  into the forwarder and run the ifconfig command.
+Once the forwarder manager is set as a source of data, you can manipulate data as we did earlier.
+
+Conclusion
+In this tutorial, we learned how to upload data using Splunk. We also see how to monitor data and install Splunk forwarder to access logs on another computer on the Splunk server directly. We can easily conclude that Splunk offers a better way to display data than the log file itself. Using Splunk we can track the activities of all users as well as for a specific user, and get details of every activity like date, time, host, IP address, etc… Splunk gives us a very nice view of data. In the next lab, we will see how to write queries and visualize the data in Splunk: Click here.

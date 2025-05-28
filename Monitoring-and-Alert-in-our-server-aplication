@@ -1,0 +1,36 @@
+
+
+a computer or a server is make up of 3 layer  from bottom to top
+
+3) application: this are called software,  this are software runining in the computer e.g chrome browser, whatsap, httpd, nginx jenkins etc
+2) OS:  stand for operating system eg linux, window , this is what manage the computer hardware and software resources, many more explanation
+1) hardware: this are things like the cpu,memory,HARD DRIVE
+
+Take note all this 3 generate logs messages that help use to troublshot problem  eg may aplication is down bc of low memory and os can not process our rquirment
+
+
+# MONITORING OUR COMPUTER OR SERVER
+1) Logs message monitoring tool: example of logs monitoring tools <splunk,graylog,sumo logic, datadog>  ## here u dont see what is happen in the computer or servers at that very moment, u only know after logs have been generated 
+# we need a monitoring tools that will help us to monitor  our computer or server ie monitor hardware, monitor OS, monitor application and give us accurate information on what is going on in our computer or server. THIS inform give us acurate information like the time anything happen in our computer or server. the monitoring tool gets all this information as the computer or server is running, As the computer or server is runinng, it compunent keep genrating logs messages ie the (HARDWARE COMPUNENT, OS COMPUTENENT, APPLICATION COMPUTENENT) which this logs messages are send to our monitoring tools and from there we are able to know what is going on in our computer or server. the monitoring tool give us accurate inform like the time and date it hapend, cpu percentage, memory level, the problems with any of our software  software, at what time and date was the OS SLOW  . this is known as <Time Serie Data>
+
+ALERT
+# WE USE HAVE a monitoring tool, monitoring our computer or server it become easy for us to set and alert ie we will tell the monitoring tool if the cpu drops send us and alert if the memory is low send us alert, this alert can be send as SNS OR THROUGH our email
+
+
+2) what is metrics monitoring tool means? example of metrices monitoring tools <Pomethous,Grafana,InfluxDB,Netdata> ## here u see  what is happen with ur computer or servers at that very moment on the screen as u read the graph
+# metrice is what u see at that present moment ie is a graph that will display our computer or server use and un use resource to us ie in metrice u see it in real time , ie if the CPU, memoery, HD  is down u see it emidiately. but will logs u will need to wait after the logs are generated send to monitoring tool then after read it u will no all that is going on with ur computer or servers
+
+
+3) What is trace monitoring tool: example of trace monitoring tools <Jaeger,Zipkin,uptrace, splunk>  # how this tools works, it monitor the trafic from the user bowser to it destination ie if the user is accessive our database this tool will monitor the trafic from user browser to the database  
+
+
+# why we need this tools to monitor our servers
+- we can set it up in a way that if a strang email want to login to our server send us an SNS OR EMAIL and many more things we can setup
+
+
+# how to monitor application runing inside server ie aplication runing inside a container, in linux serever
+we can use tools like <prometheus,datadog,new relic,splunk,grafana,cAdvisor,sysdig,dynatrace,sematext> etc
+
+
+# what is observerbility layer ontop of all of the above monitoring tool
+ this observability help us to create sugesttions, here after u have look at all the monitoring tool have generated from ur machine and application then u will start having sugestion like the server with low cpu, why can us create instead server with more cpu

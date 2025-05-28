@@ -1,0 +1,149 @@
+
+## Project: Monitoring Eks with Prometheus and Grafana
+## installin it
+ 
+
+In one of the projects I worked on, we had applications running on an EKS cluster. And needed a solution to check the metrics.  My role is to propose and install a solution to help with log aggregation, alerting and log visualization. 
+
+ -   Proposing a new solution  (just online research, blog reading online and other resources)
+ -   Present the new solution to your team
+ -  Request for test lab
+ - After a successful test in your private lab (one server for Prometheus, one server for Grafana, and one server to use as a target server.), and prob little demo to your team,
+ -   Work with the developer team to implement the solution, and verify and validate in the test environment.
+ -  Work with various staging environment teams to perform a deployment to the staging environment. Test and validate the successful deployment.
+  -  Do acceptance testing in the staging environment.
+  -  If everything looks good, then submit a change request for prod implementation.
+
+# To choose a new solution, you will need to consider the following.
+
+  1)  Define a Monitoring Project Plan
+
+Implementing monitoring is not done overnight. It is important to plan your implementation carefully. Your plan should be realistic and based on clear objectives that define your vision and expectations amongst your team. Objectives should clearly outline the shop assets to be monitored and define KPIs.
+
+  2)  Review IT Capabilities & Requirements
+
+To have a successful monitoring system, there is a need to define IT requirements upfront.
+
+  3)  Create a Data Collection Plan
+
+Defining the data items you wish to collect and how they will be analyzed allows your team to best understand how you will deploy your monitoring efforts. Your team should understand the minimum data needed to support your KPIs.
+
+So after studying carefully the requirements to monitor the EKS cluster, you decided to go with Prometheus for metrics collection and Grafana for the dashboard for the following reasons.
+ 
+# Why use Prometheus to gather the metrics
+
+ 
+
+Prometheus is a common choice for Kubernetes monitoring because it was built for a cloud-native environment. Here are several key benefits of using Prometheus to monitor Kubernetes workloads:
+
+ -   It is open source so cost-effective
+ -   Very easy to set up
+ -   Multidimensional data model  
+        The use of key-value pairs creates a similarity to how Kubernetes uses labels to organize infrastructure metadata. This similarity ensures that time-series data can be collected and analyzed accurately by Prometheus.
+ -   Accessible format and protocols
+        Prometheus enables easy and simple exposure of metrics. It ensures metrics are human-readable and can be published via standard HTTP transport.
+ -   Service discovery
+        The Prometheus server periodically scrapes targets. Services and applications do not have to constantly emit data, metrics are pulled, instead of pushed.
+        Prometheus’ servers can employ several techniques to auto-discover scrape targets. You can, for example, configure the servers to filter and match container metadata.
+  -  Modular and highly available components
+        Composable services are responsible for performing metric collection, graphical visualization, alerting, and more. Each of these services supports sharding and redundancy.
+
+# Why choose Grafana
+
+-    It is open source hence cost-effective
+-    Easy to implement
+-    It has a relatively large community, hence it’s easy to troubleshoot.
+-    Dashboard templating.
+        One of Grafana’s most important functions, dashboard templating, helps you to build dashboards that can be reused for different purposes and shared amongst your organization’s teams.
+ -   Provisioning.
+        While it’s easy to construct a single dashboard by clicking, dragging, and dropping, users who need a lot of dashboards will want to use a script to automate the process. Grafana allows you to script anything and get control of numerous dashboards.
+-    Annotations.
+        In Grafana, this feature appears as a graph marker and is useful for correlating data in case something goes wrong. You can either manually generate annotations (control-click on a graph and type some text) or fetch data from any data source.
+ -   Kiosk mode and playlists.
+        If you want to display your Grafana dashboards on a TV monitor, you can use the playlist function to choose which dashboards you need to look through and make them cycle through on the screen. In view-only mode, the kiosk mode hides all the user interface elements you don’t need.
+ -   Custom plugins.
+        You can use plugins to extend Grafana and integrate it with other software, visualizations, and more. Anything that produces a timestamp and a value can be visualized in Grafana with just a few lines of code.
+-    Alerting and alert hooks.
+        If an anticipated scenario occurs, alerts are activated like tripwires. These events can be reported to the monitoring team through Slack or some other communication channel.
+ -   Permissions and teams.
+        When a company has one Grafana and several teams, they often want to keep things apart while still sharing dashboards. If you’re using Grafana Enterprise, you can build a team of users and then set permissions on folders, dashboards, and down to the data source level.
+ -   SQL data sources.
+        Grafana’s native SQL support allows you to turn anything in an SQL database into metric data that you can graph. SQL data sources are used by power users to do a variety of fascinating things, such as building business dashboards.
+ -   Authentication.
+        Grafana supports a variety of authentication styles, including LDAP and OAuth, and lets you map users to organizations. You can also map users to teams in Grafana Enterprise: Grafana helps you to map the teams in your internal systems to Grafana teams if your organization has its authentication system. As a result, you’ll be able to automatically grant access to the dashboards to employees who belong to particular teams.
+
+
+
+# Implementation of this solution. Here is the documentation on how to install Prometheus and Grafana on an EKS cluster.
+
+
+
+###   Install Prometheus and Grafana on Kubernetes using helm
+     1-Installing Prometheus and Grafana using helm
+We are going to use Helm to install Prometheus and Grafana on our cluster.
+Let's get the repository with Prometheus and Grafana
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+
+# Update the repository
+helm repo update
+
+
+# Now create a Name Space monitoring where we will install Prometheus and Grafana
+kubectl create ns monitoring
+
+
+# After creating the namespace, run the command below to install Prometheus and Grafana
+helm install prometheus --namespace monitoring prometheus-community/kube-prometheus-stack
+
+
+
+# Once the installation is done, run the command below to verify the various pods.
+kubectl --namespace monitoring get pods -l "release=prometheus"
+
+
+
+# In the next section, we will test the installation to make sure it's working.
+
+# 2-Testing the installation
+# Run the command below to get the services in the monitoring namespace.
+kubectl get svc -n monitoring
+
+We can notice that the Prometheus-Grafana service is of type Cluster IP, and has no EXTERNAL IP
+So, let's edit the service and change the type to LoadBalancer.
+# Run the command below to edit the service
+kubectl edit svc prometheus-grafana -n monitoring
+
+
+Now scroll down to type on the editor that comes up and change it to LoadBalancer
+
+Now you can save using CTRL + S then close the editor.
+
+# Now let's get the service external address.
+- Run the command below, then copy the external IP and paste it into the browser
+kubectl get svc -n monitoring
+
+Paste the address on your browser.
+
+# Let's verify our password and username
+- Run the command below to get your password and username respectively
+kubectl get secret prometheus-grafana -n monitoring -o jsonpath="{.data.admin-user}" | base64 --decode ; echo
+
+
+Password
+kubectl get secret prometheus-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+
+# Login into your dashboard.
+Now that we are logged in, we will import the global level view dashboard such that we can have a global monitoring of our servers. The ID is, 3119
+To import, click on dashboard, then import.
+
+Enter the Dashboard ID then click on LOAD (in this case the ID is 3119)
+
+select Prometheus as data source, then click on Import
+
+Once the Dashboard has been imported, you can now see a summary of the various processes running in the cluster.
+
+
+
+

@@ -1,0 +1,110 @@
+
+# bellow are some of the tools we can use to deploy in k8s cluster
+1) kubectl 
+2) helm chart:   it is a package manager for k8s, 
+- is goood to use in k8s deployment bc we can go online and download manifest.yaml file compared to kubectl that we have to be writing all the manifest.yaml file ourselve all through
+- helm chart is good compare to kubectl bc with helm if u have 10 manifest yaml file he can run it with one command meanwhile with KUBECTL u need to be runing kubectl apply on each of the file and that is stresfull
+- we can use helm to push and manage stuff in our cluster
+3) argo CD: here u install it on ur cluster give it the link to github respository and in the github repo u have all the manifest file , when u make a 
+            change on the file in github  aego CD read it and update ur cluster automatically
+4) jenkins
+5) terraform
+
+
+
+
+
+HELM CHART (helm.sh)
+## in my use case i will use helm chart to deploy and manage the cluster
+- firstly we need to install helm on our windows machine
+- open the browser search for <helm.sh>
+- click on docs and look for how to install helm
+- u can also use helm to install othere package
+- Open powershell on windows choose run as admin , RUN <choco install kubernetes-helm>  ## on windows
+- to check the version RUN <helm version>
+
+
+
+# lets create our first helm chart
+- RUN helm create app1    ## this will creat a folder called app1 with other folder and files like :
+                       - chart     folder: here is an empty folder where u can put dependency
+                       - template  folder:  here is where we have all our object manifest file .yaml  as seen bellow
+                                          deployment.yaml    
+                                          hpa.yaml          ## wh stand for horizontal pod, it a file use to auto scale
+                                         .helmignore  
+                                          chart.yaml:       ## here is where all information about our app1 chart is kept
+                                          values.yaml       ##  here is where we declear all our requirement like replicaCount, image, tag, serviceAC etc 
+                                          service.yaml      ##   the value are called as a vareiable from value.yaml eg like the name of this service will
+                                                                     be put in value.yaml and will be called here in service.yaml ie  <apiVersion: v1
+                                                                                                                                      kind: Service
+                                                                                                                                   metadata:
+                                                                            name: {{include "app1. put the variable frm value.yaml  here}} >  # this wiil
+                                                                            call the value name of service put there.
+##                                                                            NB this shld be done for all as well
+#                                                                            | nindent 4  means indent it step then put
+                                                                             - toYaml means convert what ever u get here to yaml file
+                                         .gitignore
+                                         .terraform.lock.hcl
+                                         NOTES.txt  ## here u will have information of ur deployment
+                                                 
+## How to execute  helm   ## that is when u create chart to deploy all on ur object
+- RUN <helm list>  # this will list all the deployment in this chart
+- To deployed everythhing on ur chart RUN <helm install app-demo app1>   # app1 is the name of our chart And app-demo is the name of the deployment .
+                                                                        # to change anything in this deployment go to value.yaml
+- To see all ur deployment RUN <helm list>  ##  this will show u all deploy.yaml on that chart app1
+- To see all pod <kubectl get pod>  
+            RUN <kubectl get all> 
+- If u made changes on value.yaml in other to chng somthng in e  deploy.yaml an u realise is a mistake  to un do it RUN <helm rollback app-demo>
+            
+- WHEN u want to do changes in this ur deployment go to value.yaml after u finish with ur changes to execute it RUN <helm upgrade app-demo app1>
+ # NB IF u are ask to create cluster for dev, qa, prod . this will require u to create 3 deffn chart 
+
+
+
+MOMITORING THE CLUSTER
+ # lets add a monitoring tool in our cluster call prometheus
+  - go to ur browser type helm.sh
+  - click on chart
+  - on the serch package write prometheus
+  - look for official
+  - click on the prometheus log and open it
+  - look for get repository info, copy what is under it take to u vsc and install it , not on cluster, make sure is prometheus and grafana together
+
+ ## befor we install helm ,lets first create a namespace so that we can install it in a specific namespace
+  RUN <kubectl create ns monitoring>  ## this will create namespace
+  RUN <helm install (put the name u want it to be called here )-n monitoring prometheus-community/kube-prometheus-stack>  ## this will install prometheus and grafana  -n represent namespace,
+  RUN <kubectl get all -n monitoring>  ## this will u everything under this namespace
+  To edit prometheus and grafana service type RUN <kubectl edit service/prometheus-grafana -n monitoring>  # look for type change to loadBalancer
+  to check if it was change RUN <kubectl get all -n monitoring> ## copy the LB URL AND GO ON THE BROWSER
+  TO UNSTALL RUN <helm uninstall prometheus -n monitoring>
+
+  # HOW to login to the grafana
+  - RUN <kubectl get secret -n monitoring>
+  - RUN <kubectl describe secret prometheus-grafana -n monitoring>
+  - RUN <kubectl edit secret prometheus-grafana -n monitoring>   ### here u will see the admin passwd and admin user copy it go to the termina an decrypt 
+  - RUN <echo (past the admin passwd u copy here) |base64 -d >   ## this will decode it and show u the original passwd
+  - RUN AGAIN <echo (past the admin username u copy here) |base64 -d >        ## this will decode it and show u the original username
+
+  # Lets navigate through the grafana webpage
+  - click on the hamburg on the left
+  - click on dashboard, then new on the right then import   ## the id is 3119
+  - click on what u want to see ie pod, node etc and it will display it and from there u can start moniyoring the cluster
+
+
+
+
+
+
+
+
+
+
+
+                                        
+
+
+
+
+                          ##app1 is the name, we can put any name
+                            this is done in vsc not on linux sever
+-   

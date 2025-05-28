@@ -1,0 +1,139 @@
+
+
+## Install Prometheus and Grafana
+
+To do this, we need 3 instances that is one where it will install Prometheus, another where we will install Grafana and the other where we will later install node exporter to test the monitoring.
+You can create the instances using AWS Console or use Terraform to be fast.
+
+
+Figure 1: EC2 dashboard
+Once you have created your instances, you can now ssh into them.
+For all the 3 instances, run the ssh connect command
+Click on the Instance ID
+Click on Connect
+Copy the ssh command as it is shown in Figure 2 and paste it into the terminal.
+
+
+Figure 2: The ssh command to copy
+Once your three servers instance-grafana, instance-prometheus, instance-client are connected through SSH, you should probably have something like this.
+
+Figure 3:  Instance ssh fully connected
+Now that our servers are running, let's install Prometheus and Grafana.
+Installing Prometheus
+On the EC2 instance, instance-prometheus runs these commands:
+As a best practice, we will create a Linux user to own Prometheus software and processes. To do that, run the commands below
+sudo su
+useradd --no-create-home -s /bin/false prometheus
+
+
+Now, create the required directories for Prometheus software.
+mkdir /etc/prometheus
+
+
+mkdir /var/lib/prometheus
+
+Change the owner and group of these directories to Prometheus.
+chown prometheus:prometheus /etc/prometheus
+
+
+chown prometheus:prometheus /var/lib/prometheus
+
+Now, let's navigate to the /tmp folder and download Prometheus from its official website using wget.
+cd /tmp
+wget https://github.com/prometheus/prometheus/releases/download/v2.13.1/prometheus-2.13.1.linux-amd64.tar.gz
+
+Extract the downloaded zip file by using the tar Linux command.
+tar xvzf prometheus-2.13.1.linux-amd64.tar.gz
+
+Move Prometheus files to /var/lib/prometheus directory.
+mv prometheus-2.13.1.linux-amd64/* /var/lib/prometheus/
+
+The Prometheus zip file also contains a configuration file with default settings.
+We can use this file to configure our Prometheus server.
+Move the Prometheus configuration file to /etc/prometheus directory.
+cd
+
+
+mv /var/lib/prometheus/prometheus.yml /etc/prometheus/
+
+Now, create a soft link of the Prometheus executable file, so we can execute the Prometheus command from CLI.
+ln -s /var/lib/prometheus/prometheus /usr/local/bin/prometheus
+
+To set up the autostart of Prometheus at the time of Linux server startup, we need to create a Systemd service for the Prometheus network monitoring tool as follows.
+Create and edit a file called prometheus.service in the /usr/lib/systemd/system directory
+vi /usr/lib/systemd/system/prometheus.service
+
+Go to the INSERT mode and add the following directives in that file.
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+--config.file /etc/prometheus/prometheus.yml \
+--storage.tsdb.path /var/lib/prometheus/ \
+--web.console.templates=/var/lib/prometheus/consoles \
+--web.console.libraries=/var/lib/prometheus/console_libraries
+[Install]
+WantedBy=multi-user.target
+
+
+Enable and start the Prometheus network service.
+systemctl enable --now prometheus.service
+
+
+
+Open URL <Public-IP-Adress:9090> using a client's browser
+
+Figure 4: Prometheus home page 
+
+
+Installing Grafana
+On the Ggrafana server, follow the steps below to install Grafana.
+Add the Grafana RPM repository to your system
+sudo tee  /etc/yum.repos.d/grafana.repo<<EOF
+
+
+Copy and paste the code below and press enter.
+[grafana]
+name=grafana
+baseurl=https://packages.grafana.com/oss/rpm
+repo_gpgcheck=1
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.grafana.com/gpg.key
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+EOF
+
+
+Once the repository is added, install the Grafana rpm package
+sudo yum  -y install grafana
+
+
+
+
+Figure 5: Troubleshooting tips
+
+Run the following commands and try again
+dhclient
+yum update
+yum install -y grafana
+
+Start up the Grafana service
+sudo systemctl enable --now grafana-server
+
+
+You can check out the status grafana-server and confirm if it's active.
+Configure the firewall to allow port 3000 since it is Grafana’s default port.
+
+Once the service has been started, you can access its web dashboard by visiting <Public-IP-Adress:3000> The default username and password are admin and admin.
+
+Figure 6: Grafana home page
+
+Conclusion
+In this tutorial, we use Terraform to launch 3 EC2 instances (you can also do it manually), we were able to configure a Prometheus server which provides the data to build Dashboards with Grafana on 2 different instances. Don’t hesitate to consult the official documentation of Prometheus and Grafana.
+In the next section, we will use Prometheus and Grafana to monitor our Linux server.
