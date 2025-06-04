@@ -1,0 +1,306 @@
+
+when u write a python code u neeed to install python on that machine that will convert that code to binary that machine can understand it
+- what do we need to write this code to look good: <ide> in our case we will use vs code
+
+
+# take note that def, if, raise, for, etc are key word we use in python function and u can not use them to declear a variable
+ to list all keyword in python use the bellow code
+         flo.py
+        import keyword
+           print(keyword.kwlist)   ## this will print all the keyword in python
+to execute it RUN <python flo.py>
+              
+# some commond keyword and it description
+ | Keyword                 | Description                        |
+| ----------------------- | ---------------------------------- |
+| `if`, `else`, `elif`    | Conditional statements             |
+| `for`, `while`          | Looping                            |
+| `break`, `continue`     | Control loop flow                  |
+| `def`, `return`         | Define functions and return values |
+| `class`                 | Define a class (object-oriented)   |
+| `try`, `except`         | Handle exceptions (errors)         |
+| `import`, `from`        | Import modules                     |
+| `and`, `or`, `not`      | Logical operations                 |
+| `is`, `in`              | Comparison operators               |
+| `True`, `False`, `None` | Special constants                  |
+| `pass`                  | Placeholder/do nothing             |
+| `global`, `nonlocal`    | Scope control                      |
+| `with`, `as`            | Context managers (like with files) |
+| `yield`, `lambda`       | Advanced function tools            |
+
+
+
+
+
+
+1) what is python: <Python is a high-level, general-purpose programming language known for its simplicity and readability>
+
+2) what is import in python:  <In Python, import is a keyword used to include external modules (i.e., libraries or other Python files) into your program so you can use the functions, classes, or variables they define.>
+
+3) what is def/function in python:  <In Python, def is a keyword used to define a function. A function is a reusable block of code that performs a specific task. You define it once using def, and then you can call (use) it as many times as you like>
+         
+         example
+                 def add(a, b):
+                      return a + b
+
+                    result = add(2, 3)
+                  print(result)  # Output: 5
+
+
+
+ Another example of def function:  
+
+| Function   | Description                            | Example                           |
+| ---------- | -------------------------------------- | --------------------------------- |
+| `print()`  | Displays output                        | `print("Hello")`                  |
+| `len()`    | Returns length of an object            | `len("Python")` → `6`             |
+| `type()`   | Returns the data type                  | `type(123)` → `<class 'int'>`     |
+| `int()`    | Converts to integer                    | `int("5")` → `5`                  |
+| `str()`    | Converts to string                     | `str(5)` → `"5"`                  |
+| `input()`  | Gets user input from console           | `input("Enter name: ")`           |
+| `range()`  | Generates a sequence of numbers        | `range(5)` → `0, 1, 2, 3, 4`      |
+| `sum()`    | Adds all items in a list/tuple         | `sum([1, 2, 3])` → `6`            |
+| `max()`    | Returns the largest item               | `max(3, 7, 2)` → `7`              |
+| `min()`    | Returns the smallest item              | `min(3, 7, 2)` → `2`              |
+| `sorted()` | Returns a sorted list from an iterable | `sorted([3, 1, 2])` → `[1, 2, 3]` |
+| `abs()`    | Returns absolute value                 | `abs(-10)` → `10`                 |
+| `round()`  | Rounds a number                        | `round(3.6)` → `4`                |
+           
+
+
+# math function
+
+import math
+
+
+        Function         | Description               | Example                  |
+| ---------------- | ------------------------- | ------------------------ |
+| `math.sqrt(x)`   | Square root               | `math.sqrt(16)` → `4.0`  |
+| `math.pow(x, y)` | Raises x to the power y   | `math.pow(2, 3)` → `8.0` |
+| `round(x)`       | Rounds to nearest integer | `round(3.7)` → `4`       |
+| `abs(x)`         | Absolute value            | `abs(-5)` → `5`          |
+| `math.ceil(x)`   | Rounds up                 | `math.ceil(2.1)` → `3`   |
+| `math.floor(x)`  | Rounds down               | `math.floor(2.9)` → `2` 
+
+import math
+
+print(math.sqrt(16))        # Square root → 4.0
+print(math.pow(2, 3))       # 2 to the power 3 → 8.0
+print(round(3.7))           # Round → 4
+print(abs(-10))             # Absolute value → 10
+print(math.ceil(2.3))       # Round up → 3
+print(math.floor(2.9))      # Round down → 2
+
+
+
+
+## string function:
+| Function                 | Description                   | Example                                  |
+| ------------------------ | ----------------------------- | ---------------------------------------- |
+| `text.upper()`           | Converts to uppercase         | `"hello".upper()` → `"HELLO"`            |
+| `text.lower()`           | Converts to lowercase         | `"Hi".lower()` → `"hi"`                  |
+| `text.strip()`           | Removes spaces from both ends | `text.strip()` → `"hello python"`        |
+| `text.replace("o", "0")` | Replaces characters           | `"hello".replace("o", "0")` → `"hell0"`  |
+| `text.split()`           | Splits a string into a list   | `"a,b,c".split(",")` → `["a", "b", "c"]` |
+| `" ".join(list)`         | Joins list into string        | `" ".join(["a", "b"])` → `"a b"`         |
+
+text = "  Hello Python  "
+
+print(text.upper())          # → "  HELLO PYTHON  "
+print(text.lower())          # → "  hello python  "
+print(text.strip())          # → "Hello Python"
+print(text.replace("o", "0"))# → "  Hell0 Pyth0n  "
+print("a,b,c".split(","))    # → ['a', 'b', 'c']
+print(" ".join(["a", "b"]))  # → "a b"
+
+
+
+
+
+
+# file function: 
+| Function          | Description                                 |
+| ----------------- | ------------------------------------------- |
+| `open()`          | Opens a file                                |
+| `file.read()`     | Reads the whole file                        |
+| `file.readline()` | Reads one line                              |
+| `file.write()`    | Writes to a file                            |
+| `file.close()`    | Closes the file (automatically with `with`) |
+
+# Write to a file
+with open("example.txt", "w") as file:
+    file.write("Hello, file!")
+
+# Read from the file
+with open("example.txt", "r") as file:
+    content = file.read()
+    print(content)           # → "Hello, file!"
+
+
+
+
+# loop and function tools
+| Function      | Description                            | Example                                 |
+| ------------- | -------------------------------------- | --------------------------------------- |
+| `enumerate()` | Loops with index                       | `for i, v in enumerate(["a", "b"])`     |
+| `zip()`       | Pairs elements from multiple iterables | `zip([1, 2], ["a", "b"])` → `(1, "a")…` |
+| `map()`       | Applies a function to each item        | `map(str.upper, ["a", "b"])`            |
+| `filter()`    | Filters items based on a condition     | `filter(lambda x: x > 0, [-1, 2, 0])`   |
+| `lambda`      | Small anonymous function               | `lambda x: x + 1`                       |
+explanation of loop
+# enumerate
+fruits = ["apple", "banana", "cherry"]
+for index, fruit in enumerate(fruits):
+    print(index, fruit)   # 0 apple, 1 banana, 2 cherry
+
+# zip
+names = ["Alice", "Bob"]
+scores = [90, 85]
+for name, score in zip(names, scores):
+    print(name, score)    # Alice 90, Bob 85
+
+# map
+words = ["hello", "world"]
+print(list(map(str.upper, words)))  # → ['HELLO', 'WORLD']
+
+# filter
+nums = [-2, -1, 0, 1, 2]
+positive = list(filter(lambda x: x > 0, nums))
+print(positive)           # → [1, 2]
+
+# lambda
+double = lambda x: x * 2
+print(double(5))          # → 10
+
+
+
+
+# utility function
+| Function           | Description                        | Example                       |
+| ------------------ | ---------------------------------- | ----------------------------- |
+| `help(obj)`        | Shows help/documentation           | `help(str)`                   |
+| `dir(obj)`         | Lists available methods/attributes | `dir(list)`                   |
+| `id(obj)`          | Shows memory address of object     | `id("hello")`                 |
+| `isinstance(x, t)` | Checks type                        | `isinstance(5, int)` → `True` |
+
+x = "Hello"
+y = 100
+
+print(type(x))            # → <class 'str'>
+print(isinstance(y, int)) # → True
+print(id(x))              # Memory address of 'x'
+print(dir(x))             # All string methods
+# help(str)               # Shows documentation (uncomment to use in terminal)
+
+
+4) what is 'for' in python:    <In Python, for is a looping keyword used to repeat a block of code for each item in a collection (like a list, string, or range of numbers). It helps you automate repetitive tasks.>
+
+example    
+         fruits = ["apple", "banana", "cherry"]
+
+            for fruit in fruits:
+           print(fruit)
+
+output  
+       apple
+       banana
+       cherry
+
+ ex2
+       for i in range(5):
+        print(i)
+ output:
+          0
+          1
+          2
+          3
+          4
+ ex3:
+     for letter in "hello":  # this is a string ""
+    print(letter)
+output: 
+    h
+    e
+    l
+    l
+    o
+    
+ex4:  Loop with index (enumerate()):
+
+    names = ["Alice", "Bob"]
+for i, name in enumerate(names):
+    print(i, name)
+ output; 
+      0 Alice
+      1 Bob
+
+    
+    
+
+
+
+
+5) what is try/except in python:  <In Python, try and except are used together for error handling.   In Python, try is used to handle exceptions — errors that might happen when your code runs. It’s part of error handling and helps your program avoid crashing when something goes wrong.>
+
+          exampl
+                 try:
+                      number = int(input("Enter a number: "))
+                       print(f"You entered: {number}")
+                  except ValueError:
+                   print("That’s not a valid number.")
+
+6) what is pip in python: <it is an installer manager u can use in python to install packages ie pip install then the package name>
+
+7) what is 'IF' in python:  <In Python, if is a conditional statement. It lets your program make decisions — run certain code only if a condition is True.>
+
+8) what is 'print function' in python:  <In Python, print() is a built-in function used to display output to the screen (usually the console). It's one of the most commonly used functions when you're learning or debugging.>
+
+9) what is algorithm in programming:  <In programming, an algorithm is a step-by-step set of instructions to solve a specific problem or perform a task.>
+                   ✅ Example (Simple algorithm):
+                    Problem: Find the largest number in a list.
+
+                     Algorithm steps:
+
+                     Start with the first number.
+
+                     Compare it with the next number.
+
+                      Keep the bigger one.
+
+                      Repeat until you’ve checked all numbers.
+
+                      Return the biggest number.
+
+
+
+                     <def find_max(numbers):
+                      max_num = numbers[0]
+                      for num in numbers:
+                      if num > max_num:
+                      max_num = num
+                      return max_num
+
+                     print(find_max([10, 3, 7, 22, 5]))  # Output: 22>
+
+9) what is while loop:    <ChatGPT said:In Python, a while loop is used to repeat a block of code as long as a condition is True.>
+
+       The loop will keep running as long as the condition evaluates to True.
+        If the condition becomes False, the loop stops.  
+
+              i = 1
+              while i <= 5:
+              print(i)
+              i += 1
+ output:
+1
+2
+3
+4
+5
+          
+           
+
+
+
+
+

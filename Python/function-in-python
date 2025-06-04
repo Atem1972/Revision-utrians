@@ -1,0 +1,104 @@
+
+when u see some like in a python called def it simply means it is defining a function
+what is function?  it is just a piece of code u can call multiple time
+NB instead to say i am writing a python code that will do this and that instead say im writing a function that will do this and that
+
+
+ex1 how to declare a function and called
+  def hello()
+      print("hello")   # this is to delclare function 
+
+
+      # lets called the function above
+      hello()              # we are calling the function
+
+
+ ex2.1
+     def display_name(name):   # when will declare function like this (name) is called parameter . when people called this 
+     print(f"hello {name}")    # function they are require to fit aguement in the parameter (name)
+
+
+    # lest called the function above
+
+     display_name('serge')   ## this will take our aguement ('serge') put on the parameter in line 17, and print in line 18 wwill
+                                 will consum the value serge
+
+
+     x=display_name(name)    # for this to work do it as is in ex2.2
+     print(x)                #output  will show none bc we can not convert a function to a variable  
+
+
+ ex2.2
+   def display_name(name):
+    return f"hello {name}"
+
+x = display_name('serge')
+print(x)                    # output hello serge
+
+
+
+
+
+ex3.1
+   def addition(a,b):   
+    sum = a + b
+    print(sum)  
+
+ # lets called the function above
+  addition(2,4)     #output 6
+
+  x=addition(2,4)    # for this to work do it as is in ex3.2
+   print(x)         #output  will show none bc we can not convert a function to a variable
+
+
+
+ ex3.2  
+   def addition(a,b):   
+    sum = a + b
+    return sum    # with return ,now the value from print can be store in a variable
+  x=addition(2,4)
+   print(x)       # output 6
+
+
+
+ex4
+  def command(cmd):
+   import os
+   os.system(cmd)    
+
+## lets called our function above
+command('ls')   #output it will display all files and folder 
+
+
+
+
+
+
+
+
+### lets share our function to another user to call it and use.
+    # he will create a file called anything.py
+
+
+## this will import all function on the file function-in-python
+    import function-in-python  # here will are importing a function from the file called function-in-python
+      function-in-python.hello()   ## the function-in-python is the file where our function has been define  while .hello() is the we call our function in ex1
+ execute it                                ## output   hello
+     
+
+     OR 
+
+## this will import all function on the file function-in-python
+ import function-in-python as m     ## this 'as m'  is like alias ie we are making function-in-python to be now m
+     m.hello 
+
+
+
+## how to import only a paticular function from the many function in the file function-in-python
+      import function-in-python as m    ## this 'as m'  is like alias ie we are making function-in-python to be now m
+      from function-in-python import hello,command  # this simply means go to the file called function-in-python  import me only the function called hello() and command()
+
+hello()
+command('ls')
+
+       

@@ -1,0 +1,68 @@
+
+converting one datatype to another is call casting
+
+# Comm| Function  | Converts to    | Example                           |
+| --------- | -------------- | --------------------------------- |
+| `int()`   | Integer        | `int("5")` → `5`                  |
+| `float()` | Floating-point | `float("3.14")` → `3.14`          |
+| `str()`   | String         | `str(100)` → `"100"`              |
+| `bool()`  | Boolean        | `bool(1)` → `True`                |
+| `list()`  | List           | `list("abc")` → `['a', 'b', 'c']` |
+| `tuple()` | Tuple          | `tuple([1, 2, 3])` → `(1, 2, 3)`  |
+| `set()`   | Set            | `set([1, 2, 2])` → `{1, 2}`       |
+
+
+ ex #  String to Integer
+num_str = "123"
+num_int = int(num_str)
+print(num_int + 1)  # 124
+
+ex2 # Integer to String
+age = 25
+age_str = str(age)
+print("I am " + age_str + " years old.")
+
+ex3 #  List to Set (Remove duplicates)
+my_list = [1, 2, 2, 3]
+my_set = set(my_list)
+print(my_set)  # {1, 2, 3}
+
+ex4 #  List to Set (Remove duplicates)
+my_list = [1, 2, 2, 3]
+my_set = set(my_list)
+print(my_set)  # {1, 2, 3}
+
+ex5 #  Tuple to List
+my_tuple = (1, 2, 3)
+my_list = list(my_tuple)
+print(my_list)  # [1, 2, 3]
+
+ex6 # 2. Float to Integer
+price = 9.99
+whole = int(price)
+print(whole)  # Output: 9 (decimal part removed)
+
+ex6 # . Integer to String
+age = 21
+print("I am " + str(age) + " years old.")  # Output: I am 21 years old.
+
+
+# class example
+num1 = input("please enter the first number")
+num2 = input("please enter the second number")
+result = num1 + num2
+print("result")
+# output = first num 30 
+#           second num 20
+#            display 3020 ## this is the cocaintination method but is not want i want, i want it to convert the string to interger
+
+
+
+### lets convert string to interger
+num1 = input("please enter the first number")
+num2 = input("please enter the second number")
+result = int(num1) + int(num2)  ## we are saying turn num1 and 2 to interger
+print("result")
+
+
+

@@ -1,0 +1,41 @@
+
+## Common AWS Python Tasks You Can Pick From:
+1) S3
+
+✅ List all buckets
+
+✅ Upload a file
+
+✅ Download a file
+
+✅ Delete a file
+
+2) EC2
+
+✅ List running instances
+
+✅ Start or stop an instance
+
+✅ Launch a new instance
+
+3) Lambda
+
+✅ Invoke a function
+
+✅ Deploy or update a function
+
+3) DynamoDB
+
+✅ Create or query a table
+
+✅ Add or get an item
+
+4) SQS (Simple Queue Service)
+
+✅ Send a message
+
+✅ Receive and delete a message
+
+5) SNS (Simple Notification Service)
+
+✅ Send an SMS or email alert

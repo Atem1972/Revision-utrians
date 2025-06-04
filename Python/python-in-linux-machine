@@ -1,0 +1,5 @@
+
+how to get the shebank of python 
+on the linu terminal RUN <whereis python>  ## u can use this command to check path to any software in linux
+
+#!/usr/bin/python

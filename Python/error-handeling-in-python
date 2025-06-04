@@ -1,0 +1,49 @@
+
+when u write a python code at times during execution it will display a fail message  or a user on the browser make a mistake with the url than for us to allow him see the bug of error message we can just put some message that will instaed show, how do we change that message in a single sentence. this will help to avoid bug fail explanation
+
+ex
+  try:
+  
+  except Except as e:    # it means run the code above in A BELLOW if u cash something, BUT if u  dont cash  anything run B
+    A
+  else:
+    B
+  finally:   # it means i dont care what happen up there just run me
+
+
+ex1
+print(a)   # if will run this it will fail but how do we make it in such a way that the bug fail message we see beside the user 
+              out there shld not see it but to instead a short nice fail message. TO SOLVE THIS PROBLEM FROM BELLOW ILLUSTRATION
+# add try function on ur code to achieve this
+
+ex1
+  try:
+      print(a)
+ except:   # it means if u cash and error print the bellow , but if the code is without error will not print it
+     print("eror occour try again")   
+
+
+ex2
+   try:
+     print(a)
+  except Except as e:    # it means what ever error message u cash on the above code put it as value for th variabl 'e'
+                           
+    print(f'Error: {e}')   ## meaning of this line
+                        f'Error:  ## it means this will be our new variable and what ever value cash by the 'e' above variable  
+                        print it as a value for the Error avariable
+
+   else:  # it just means  if u did not cash any error print the bellow
+     print("all good")
+
+   finally:   # it means i dont care what happen up there just run me
+    print('print me welther error or no error')
+
+
+ex3
+   print(a)
+  except NameError:
+    print('Error: wrong code try again')                          
+  else:  # it just means  if u did not cash any error print the bellow
+     print("all good")
+
+

@@ -1,0 +1,520 @@
+
+
+** Data_type.py
+
+.index simply mean on which number is the value of a variable stand
+ex 
+T=(2,3,4,True)
+  t.index(4)  # output 2 
+```
+1 #Number 
+a= 20    # this datatype is call interger bc it is a whole number
+b= 2.4    # this datatypy is call float bc it is decimal
+c= 3+7j  # this is called complex number, it is a number that has imerginaly math
+
+# what do we need numbers for in python?
+they are use in Arithmetic operators are for number ie ( + , - , /, *. ** , %, //)
+ex 
+on the python evironment Run
+                            7+5
+      OUTput 12  # this is known as interger number
+
+ex2 RUN  10/3
+OUTput 3.33333333 # this is known as float numbers
+ 
+
+
+
+
+
+
+
+
+2 # String
+s='serge'
+ex age = '30'
+la= "smith brown"
+_s = """I am learning python"""
+
+Below are some string function we can use to work with String 
+#String methods len(), 
+# .upper(), .lower(),
+#  .isdigit(to fine out if the input someone enter is a digit), .isalpha(), .strip(we us strip to remove space from our code),
+#  .title(to turn every first letter of a sentense to capital letter) and more 
+ex RUN S= "python"
+   RUN len(s)   #output 6 or RUN len(s.upper) or len(s.lower)  etc
+
+# how to replace a particular letter in string
+ex
+  s = "python"
+  s.replace('p','q')
+  # if u want to see the output u can add the print function  and run ur execute
+
+
+
+
+
+# how to work with 2 string function at once
+ex 
+  s= '       serge'
+RUN len(s)   # output 17 which wrong bc of the space, how to solve it
+RUN len((s.strip))    # output 5 now is correct , the function strip will do away with the space
+
+# how to know some of the methode i can use to play around with string function
+ex RUN s = 'serge'
+   RUN dir(s)   this will give u the various way u can use to malover with the value of the variable S
+IF u need help on string function RUN <help(str)>
+
+
+
+# HOW TO USE String for indexing and slicing 
+ex first.py
+   text = "Python"
+print(text[0])   # 'P' (1st character)
+print(text[3])   # 'h' (4th character)
+print(text[-1])  # 'n' (last character)
+print(text[-3])  # 'h' (3rd from end)
+print(text[::2])   # 'Pto' (every 2nd character)
+print(text[::-1])  # 'nohtyP' (reversed string)
+
+table
+| Expression | Result                       | Description |
+| ---------- | ---------------------------- | ----------- |
+| `s[0]`     | First character              |             |
+| `s[-1]`    | Last character               |             |
+| `s[1:4]`   | Characters from index 1 to 3 |             |
+| `s[:3]`    | First 3 characters           |             |
+| `s[3:]`    | From index 3 to end          |             |
+| `s[::-1]`  | Reversed string              |             |
+| `s[::2]`   | Every second character       |             |
+
+
+
+
+
+
+# How to use String for concatenation
+    ex RUN < f = 'serge'   # this help when user put in the data first name then second name , third name , this is the string function method we can use to display all the names in one line
+    RUN < l = 'k' >
+    RUN <f + "" +l>        ## the "" is just to create space btw f and l variable but if u dont want space u can remove it
+output 'serge k'
+
+
+
+
+# Membership operator  in, not in,
+ex file.py
+  text = "Python"         ## this is just away to know if something exist in a given string variable
+print('P' in text)      # True
+print('y' in text)      # True
+print('th' in text)     # True (substring exists)
+print('z' in text)      # False
+print('a' not in text)  # True
+print('o' not in text)  # False (because 'o' is in 'Python')
+
+ex2
+   fruits = ["apple", "banana", "cherry"]   ## this is just away to know if something exist in a given string variable
+print("banana" in fruits)     # True
+print("grape" not in fruits)  # True
+print("plum" in fruits)
+To excute run python file.py
+
+
+
+3#Boolean
+a = True     ## how to know a paeticular datatype in python
+b = False
+print(type(a))  # <class 'bool'>
+
+ex
+  print(5 > 3)    # True
+print(2 == 4)   # False
+print("a" in "cat")  # True
+print("z" not in "apple")  # True
+
+ex2 file.py
+   is_raining = True
+
+if is_raining:
+    print("Take an umbrella.")
+else:
+    print("Enjoy the sun!")
+
+run python file.py
+
+
+
+
+
+
+#List []
+course = ['terraform','aws','linux','devops',2,5.6,True,2,1,1] ## with list can carry mix
+ex1
+ file.py
+fruits = ["apple", "banana", "cherry"]
+print(fruits)
+To execute RUN pytho file.py
+
+ex2 # Accessing List Elements (Indexing)
+fruits = ["apple" "banana" "cherry"]
+print(fruits[0])  # "apple"
+print(fruits[1])  # "banana"
+print(fruits[-1]) # "cherry" (last item)
+
+ex4 #  Slicing a List 
+fruits = ["apple" "banana" "cherry"]
+print(fruits[0:2])   # ['apple', 'banana']
+print(fruits[:2])    # ['apple', 'banana']
+print(fruits[1:])    # ['banana', 'cherry']
+
+ex5 # modifying list
+fruits = ["apple" "banana" "cherry"]
+fruits[1] = "mango"  # Replace "banana" with "mango"
+print(fruits)        # ['apple', 'mango', 'cherry']
+
+ex7 #looping in list
+fruits = ["apple" "banana" "cherry"]
+for fruit in fruits:
+    print(fruit)
+
+ ex8 # boolen in list
+fruits = ["apple" "banana" "cherry"]
+print("banana" in fruits)     # True or False
+
+ex9 # integer in list
+fruits = ["apple" "banana" "cherry"]
+print(len(fruits))  # Number of items 3
+
+
+ex3
+file.py
+courses = [terrafom,ansible,aws,azur]
+print(courses)
+
+#List Methods .append() , .pop(), .clear(), .copy() , change item, len(), extend(), insert(), .count()
+#table
+| Operation   | Example                             |
+| ----------- | ----------------------------------- |
+| Create list | `fruits = ["apple", "banana"]`      |
+| Indexing    | `fruits[0]` → "apple"               |
+| Slicing     | `fruits[:2]` → \["apple", "banana"] |
+| Modify item | `fruits[1] = "grape"`               |
+| Add item    | `fruits.append("mango")`            |
+| Remove item | `fruits.remove("apple")`            |
+| Length      | `len(fruits)`                       |
+| Loop        | `for f in fruits:`                  |
+
+
+
+#good example 
+# lets say u want python to list all ec2 with T3 micro
+herr we can create empty list and use .appen() so that anytime python see an instance with T3 he will appen to the list
+
+
+
+
+
+
+
+
+
+## loops
+Looping Through a List
+# List of fruits
+fruits = ["apple", "banana", "cherry", "mango"]
+ex1
+# Loop through the list
+print("List of fruits:")
+for fruit in fruits:
+    print(f"- {fruit}")
+
+ex2  #You can also use a for loop with range() and indexing:
+fruits = ["apple", "banana", "cherry", "mango"]
+for i in range(len(fruits)):
+    print(f"Fruit {i + 1}: {fruits[i]}")
+#output
+Fruit 1: apple
+Fruit 2: banana
+Fruit 3: cherry
+Fruit 4: mango
+
+ex3 # logic in condition looping 
+fruits = ["apple", "banana", "cherry", "mango"]
+
+for fruit in fruits:
+    if fruit == "banana":
+        print(f"{fruit} is yellow and full of potassium!")
+    elif fruit == "cherry":
+        print(f"{fruit} is small and sweet.")
+    else:
+        print(f"{fruit} is tasty!")
+#output
+apple is tasty!
+banana is yellow and full of potassium!
+cherry is small and sweet.
+mango is tasty!
+
+ex4
+fruits = ["apple", "banana"]
+colors = ["red", "yellow", "green"]
+
+for fruit in fruits:
+    for color in colors:
+        print(f"{fruit} can be {color}")
+# output
+apple can be red
+apple can be yellow
+apple can be green
+banana can be red
+banana can be yellow
+banana can be green
+
+
+
+
+
+4#Tuple () 
+# Tuples in Python are immutable sequences, which means their elements cannot be changed or modified after the tuple is created
+# here u can not update or chang the value once declear
+creating tuple in diffn ways
+empty = ()                        # Empty tuple
+single = ("apple",)              # Tuple with one item (must include comma)
+multi = ("apple", "banana", 42)  # Mixed data types
+nested = ((1, 2), (3, 4))         # Tuple of tuples
+
+ex1 #You can assign the elements of a tuple to variables.
+person = ("Alice", 25, "Engineer")
+
+name, age, job = person
+print(name)  # Alice
+print(age)   # 25
+print(job)   # Engineer
+
+ex2 # Using Tuples as Dictionary Keys
+location = {(40.7128, -74.0060): "New York", (34.0522, -118.2437): "Los Angeles"}
+print(location[(40.7128, -74.0060)])  # "New York"
+
+ex3 # Tuple vs List: Mutability
+
+# Tuple (immutable)
+t = (1, 2, 3)
+# t[0] = 10  → ❌ Error
+
+# List (mutable)
+l = [1, 2, 3]
+l[0] = 10     # ✅ Works
+
+ex5 # Tuple in a List
+students = [("Alice", 90), ("Bob", 85), ("Charlie", 92)]
+
+for name, score in students:
+    print(f"{name} scored {score}")
+# output
+Alice scored 90
+Bob scored 85
+Charlie scored 92
+
+
+ex6 # Tuples in Functions
+def get_student():
+    name = "Alice"
+    age = 20
+    return name, age  # Returns a tuple
+
+student_info = get_student()
+print(student_info)        # ('Alice', 20)
+
+# You can also unpack it:
+name, age = get_student()
+print(f"Name: {name}, Age: {age}")
+
+#tuple methods .count(), index()
+# A tuple is a built-in Python data type used to store multiple items, just like a list. 
+# But tuples are immutable, meaning you can't change their contents once they are created.
+
+
+
+
+
+
+5#set {} 
+# important of set{},  Duplicate values are automatically removed
+ex
+my_set = {"apple", "banana", "apple"}
+print(my_set)  # {'apple', 'banana'}
+
+## Set Methods
+| Method      | Description                              |
+| ----------- | ---------------------------------------- |
+| `add()`     | Add an element                           |
+| `remove()`  | Remove an element (error if not found)   |
+| `discard()` | Remove if exists (no error if not found) |
+| `clear()`   | Remove all items                         |
+| `pop()`     | Removes a random item                    |
+| `update()`  | Add items from another set or iterable   |
+
+my_set.add("mango")
+my_set.remove("banana")
+my_set.discard("grape")  # Won’t give error if not present
+
+
+ex #Combines sets (no duplicates):
+a = {1, 2, 3}
+b = {3, 4, 5}
+print(a | b)  # {1, 2, 3, 4, 5}
+
+ex3 #Common items in both sets:
+print(a & b)  # {3}
+
+ex4  # Items in a but not in b:
+print(a - b)  # {1, 2}
+
+ex5 #Items in either set, but not both:
+print(a ^ b)  # {1, 2, 4, 5}
+
+ex6 # Convert List to Set (to remove duplicates)
+nums = [1, 2, 2, 3, 4, 4]
+unique_nums = set(nums)
+print(unique_nums)  # {1, 2, 3, 4}
+
+
+
+6#Sets 
+#in Python are unordered collections of unique elements
+s_set={2 ,2 ,3 ,4 ,5 , True}
+
+s = {"apple", "banana"}
+
+s.add("mango")        # Add one item
+s.update(["grape", "kiwi"])  # Add multiple items
+
+s.remove("banana")    # Remove item (error if not found)
+s.discard("pear")     # Remove item (no error if not found)
+s.clear()             # Remove all items
+
+ex # Remove Duplicates from List
+nums = [1, 2, 2, 3, 4, 4, 5]
+unique = list(set(nums))
+print(unique)  # [1, 2, 3, 4, 5]
+
+ex2
+colors = {"red", "green", "blue"}
+
+print("red" in colors)     # True
+print("yellow" not in colors)  # True
+
+
+names = {"Alice", "Bob", "Alice", "Charlie"}
+
+print("Unique names:")
+for name in names:
+    print(name)
+
+# ex 5 Set Operations
+a = {1, 2, 3}
+b = {3, 4, 5}
+| Operation      | Code    | Result      |               |
+| -------------- | ------- | ----------- | ------------- |
+| Union          | \`a     | b\`         | `{1,2,3,4,5}` |
+| Intersection   | `a & b` | `{3}`       |               |
+| Difference     | `a - b` | `{1,2}`     |               |
+| Symmetric Diff | `a ^ b` | `{1,2,4,5}` |               |
+
+#set methods add(), update(), remove(), pop(), clear(), discard()
+
+
+
+
+
+
+
+
+6#Dictionary {} 
+# Dictionaries in Python are a collection of key-value pairs. They are highly flexible and WIDELY used for data manipulation
+d={'name':'Serge', 'age': 30, 'profession': 'DevOps Engineer', 'courses':['aws','linux','terraform']}
+
+
+ex 
+person = {
+    "name": "Alice",
+    "age": 25,
+    "job": "Engineer"
+}
+print(person["name"])    # Alice
+print(person.get("age")) # 25
+
+
+ex2
+student = {
+    "name": "John",
+    "marks": [85, 90, 78],
+    "grade": "A"
+}
+# Accessing nested data
+print(student["marks"][1])  # 90
+
+
+
+
+ex5 # Dictionary inside a List
+students = [
+    {"name": "Alice", "grade": "A"},
+    {"name": "Bob", "grade": "B"}
+]
+
+for student in students:
+    print(f"{student['name']} got grade {student['grade']}")
+
+# table 
+| Feature       | Description               |
+| ------------- | ------------------------- |
+| Type          | `dict`                    |
+| Syntax        | `{key: value}`            |
+| Keys must be  | Unique & immutable        |
+| Values can be | Any data type             |
+| Ordered?      | ✅ Yes (since Python 3.7+) |
+| Mutable?      | ✅ Yes                     |
+
+Ex
+D={'name': 'serge', 'age':30, 'profession':'Devops engineer', 'courses': ['aws','linux','terraform']}
+print(type(D))  # OUTPUT dictionary
+print(len(D))
+print(D['name'])   #output  serge
+print(D['age'])  # out 30     etc
+print(D.get('profesion'))
+print(D.get('course'))[0]   #output aws
+print(D.get('course'))[0].upper()   #output AWS
+print(D['age'])=39
+
+#Dict methods .clear(), .copy(), .get() items(), keys(), values(), pop(), popitem(), update(dict), del(dict[key])
+
+```
+
+
+
+## loop
+  what ia a loop?  A loop in programming is a way to repeat a set of instructions multiple times until a certain condition is met
+
+ex   # for loop
+  for i in range(5):
+    print("Hello")  #output , this will print hello five time
+
+ex   # while loop
+count = 0
+while count < 5:
+    print("Hello")
+    count += 1
+  
+# Repeats as long as a condition is true.
+
+
+
+
+
+
+
+
+
+
+
+

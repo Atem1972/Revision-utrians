@@ -1,0 +1,13 @@
+
+b="today"    # this is global variable and it can be print in any function bellow
+
+  def hello()
+      print("hello") 
+    a= "monday"       # local variable if u print this it will not work bc it is not define
+
+
+
+  def display_name(name):   # when will declare function like this (name) is called parameter . when people called this 
+     print(f"hello {name}") 
+     print(b)   # this will work  global variable
+     print(a)    # this will not work be it is declare with another function is call local variable

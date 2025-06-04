@@ -1,0 +1,101 @@
+on ur vs code install python extension
+
+01) ## how to use print function to display message ie "hellow world" 
+# create a file called first.py
+   
+    print("hello world")                   # this a print function , we use it to display a message on the screen
+    print('i like learning "python"')
+    print("""
+            1- version
+            2- region
+            3 language
+            """)
+lets execute it RUN <python first.py>    ###  it will display all the messages on each print
+
+
+
+#  to list all keyword in python use the bellow code
+         flo.py
+        import keyword
+           print(keyword.kwlist)   ## this will print all the keyword in python
+To execute it RUN <python flo.py>
+note that u can not use a keyword to declear a variable
+
+
+02) #  TO know what clase of variable is this
+EX1  first.py
+R = 2.5
+print(type(R))      # Output:  is class 'float'  because of the decimal ie 2.5 the dort
+To execcute RUN <python first.py> output float
+
+EX2 FIRST.py
+  age = 30
+  print(tpye(age))  # output interger
+
+EX3 first.py
+   is_student = True   ## this is a boolent  
+print(tpye(is_studen))  # output boolent
+
+
+## how to comment a code out
+   """
+           """
+
+
+## how to creat variables using script in python 
+ex 
+  NAME = 'valery'
+  AGE = 50
+  FirstName = 'gnes'
+
+ print(NAME)          
+ print(AGE)
+ print(FirstName)
+
+Lets execute it RUN <python first.py>      ## this will called and display all the value in our variable
+# note that u can not declear this kind of variable in python 4name = "gsg", my-name = 'hfhg', my name = 'shgsh'
+
+
+
+# how to create variable on python using command line 
+- on ur vs code prompt RUN <python> # this will bring python prompt. make sure u have python install on ur machine
+ - RUN <AGE = 30
+   RUN <R = 2.5
+   RUN  <is_student = True>
+
+# please note that when ever u see open and close bracket () is function
+# how to know what class is ur variable ie , it is a float, string,bullent, etc
+   RUN <tpye(R)>  # this will display what time of class of variable R is  = FLOAT
+   RUN <type(AGE)>    output interger
+   run <type(is_student) # output boolent
+
+
+
+
+# FOR us to be able to run linux command in python we most import os
+ex 
+On the command promt RUN <import os>  # after importing the os we can now do all our linux command here ie
+                     RUN <os.system('clear')   ## this will clear the screen
+                     RUN <os.system('pwd')  # an more other command
+
+# TO WRONG the above in script
+first.py
+         import os
+        os.system('pwd')
+        os.system('ls')
+        
+  print()
+TO execute RUN THE FOLLOWING COMMAND
+    chmod +x first.py
+   ./first.py
+
+
+
+
+
+
+
+
+
+
+
