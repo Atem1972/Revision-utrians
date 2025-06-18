@@ -1,0 +1,63 @@
+
+in python we have
+- module: this is an already writing script u just need to instll , import
+    ex
+      import jenkins, boto3 etc
+
+
+##  server = jenkins.jenkins('http:localhost:8080',username='myuser',password='mypasswd')
+how to get method associated to this object RUN  <print(dir(server))>
+
+
+- the server is the <object>:   this is a variable will put to store jenkins crdential to access jenkins 
+- jenkins is the module
+- .jenkins is the <method>: this are just somethings we can use python to do in jenkins ie like .get_job, .github url, .get_whoami .delete_job etc
+method are attach to object
+
+
+   ex     
+      import jenkins
+        
+    try:
+        server =  jenkins.jenkins('http:localhost:8080',username='myuser',password='mypasswd')
+        jobs = server.get_all_jobs()
+         print(jobs) 
+    except:
+          print("please double check ur credential or url")    
+
+1) TO know the data type run 
+                           print(typejobs)      ## output class list   
+2) TO know the total elemen/number of the list run  
+                            print(len(jobs))      ## output 23   
+3) How tO loop through and print all job store in jobs?
+                               server =  jenkins.jenkins('http:localhost:8080',username='myuser',password='mypasswd')
+                               jobs = server.get_all_jobs()     
+                               for gh in jobs:    # this simply means go to the variable jobs, print each jobs one after another 
+                                 print(gh)        # this will print the jobs and put it in gh variable
+                                 print('*'*100)      # this will print star 100 time              
+
+4) how to get the value of a key , this means all the key and value that are store in a variable called jobs
+ example of this key and value =  fullName: first_job, url:http:localhost:8080',username='myuser',password='mypasswd
+
+                      server =  jenkins.jenkins('http:localhost:8080',username='myuser',password='mypasswd')
+                               jobs = server.get_all_jobs()     
+                               for gh in jobs:    
+                                 print(gh[fullname])
+                                 for gh in jobs:
+                                  print('*'*100)
+
+5)
+  try:
+  server =  jenkins.jenkins('http:localhost:8080',username='myuser',password='mypasswd')
+  jobs = server.get_all_jobs()
+  job_list = []  
+  for gh in jobs:
+  job_list.append(gh.get('fullname))    # this just means all the jobs names u find in jobs/gh append it to the list call job_list
+  print(job_list)   # this will print now all the jobs name appended to job_list 
+  print(server.get_job_info('geoapp'))    # this simply mean get me all the inform link to this job name call geoapp in jenkins
+  print(serever.get_job_config('geoapp'))
+
+
+
+
+  

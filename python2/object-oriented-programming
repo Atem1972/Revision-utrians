@@ -1,0 +1,396 @@
+1
+Object Oriented Programming 
+
+2
+# table of content
+What’s Object-Oriented Programming?
+Classes 
+Objects 
+Inheritance 
+Encapsulation 
+Polymorphism 
+Data abstraction 
+
+3
+Important note: To get all the scripts mentioned in this document:
+- Clone the following python repository: https://github.com/utrains/Utrains_python_script.git
+- Navigate to the python_courses_scripts directory.
+
+4-5)
+#1.
+What’s Object-Oriented Programming?
+-Object-Oriented Programming (OOP) is a programming paradigm that provides a means of structuring programs so that properties and behaviors are bundled into individual objects.
+-The core concept of OOP is to bind data and functions into a single unit so that no other part of the code can access this data.
+
+
+6 )     #              oop concept
+     class,object,inheritance,encapsulation,polymorphism,abstraction
+
+7-8-9-10
+#2 classes
+         What is a class?
+How to create a class?
+Class and Instance attributes 
+Class methods
+
+What is a class?
+A class is a collection of objects.
+A class contains the blueprint or the prototype from which objects are created.
+It is a logical entity that contains some attributes and methods.
+Methods are functions that perform actions on objects, and attributes are characteristics of objects in the class.
+Let’s take Circle as a class, with main attributes such as pi and radius. We can create as many objects as we want from that class.
+
+How to create a class?
+
+Here are rules to create a class in python:
+A Class block begins with the keyword class followed by the class name and ends with a colon ( : ).
+Inside the class block, add statements that define attributes and methods of the class.
+Syntax:	class ClassName:
+# Statement-1
+…
+# Statement-N
+
+#How to create a class?
+
+Let’s create a class Circle for mathematical circles with the following code:
+class Circle:
+    pi = 3.14159
+    def __init__(self, radius):
+        self.radius = radius
+    def area(self):
+        return self.pi * self.radius**2
+    def circumference(self):
+        return 2 * self.pi * self.radius
+The __init__() method is a built-in function used to create an object from a class. This function is called constructor of the class.
+The class Circle has two attributes and two methods. The self parameter is a reference to the current instance of the class and is used to access variables that belong to the class.
+
+
+#Class and Instance attributes 
+Class attributes are class variables that are inherited by every object of a class. The value of class attributes remain the same for every new object.
+For example: In the previous class we created (Circle), pi is a class attribute.
+Instance attributes defined in the __init__() function, are class variables that allow us to define different values for each object of a class.
+For example: In the previous class we created (Circle), radius is an instance attribute.
+
+
+#Class methods in OOP
+Methods are functions defined inside the body of a class. They are used to define behaviors of an object.
+Methods are used for doing an action on attributes.
+In the previous example of Circle class, we have created two methods:
+area: to compute the area of the circle
+circumference: to compute the circumference of the circle
+
+
+3.
+#Objects
+
+What’s an Object?
+How to create an Object?
+Access to object attributes  
+Access to object methods
+
+# What’s an Object in OOP?
+An object of class is created by calling the class name followed by parentheses ( ) . This process is called instantiation. An object of a class is an instance of that class.
+Syntax: object_name= class_name(attributes_values) 
+By creating an object (instance) from the class, you can have access to class’ functionalities. You can create more than one object from the class.
+For example: let’s assume we have a class Car, we want to create 3 objects, as shown in the image below.
+
+
+
+#car class 
+black car= model,price,color,build,year      #- The black Car represents the class 
+
+
+# object=  The colored cars are objects of the Car class 
+        first car=    model:AAA,  price:10k, color:orange, build year:2025
+        second car=   model:BBB,  price:15k   color:blue  build year:2018
+        third car=    model:CCC  price:45  color:green    build year:2015
+
+
+# How to create an object in OOP?
+To create those 3 objects, we have to create the class Car then create three instances using the following code:
+# create a class Car with their attributes and methods
+class Car:
+    def __init__(self, model, price, color, built_year):
+        self.model=model
+        self.price=price
+        self.color=color
+        self.built_year=built_year
+    def car_details(self):
+        print(f'The characteristics of this car are: Model: {self.model}, color: {self.color}, Built year: {self.built_year}  and the price is {self.price}')
+
+#create three objects of Car class
+car1= Car('AAA', '10K','Orange', 2015)
+car2= Car('BBB', '15K','Blue', 2018)
+car3= Car('CCC', '45K','Green', 2015)
+
+#Access to object attributes 
+We can access attributes and methods of an object.
+To access an attribute of an object , we use the following syntax:
+Syntax: object_name.attribute_name
+For example, let’s access attributes of  one of the previous objects called car1:
+# Access to car1 attributes
+print(car1.model)
+print(car1.price)
+print(car1.color)
+print(car1.built_year)
+
+#Access to object methods
+To access a method of an object, we use the following syntax:
+Syntax: object_name.method_name()
+For example, let’s access a method of  one of the previous objects called car1:
+# Access to car1 method
+car1.car_details()
+Output:
+# the charateristic of this car are: MODEL:AAA, color:orange, build year:2015, and the price is 10k 
+
+
+# 4.
+#Inheritance
+What’s Inheritance?
+Inheritance syntax
+Create a Parent class
+Create a Child class
+Accessing Parent and Child objects 
+Use the super() function
+
+
+# What’s Inheritance?
+Inheritance is the most important aspects of object-oriented programming, simulating the real-world concept of inheritance.
+It allows us to define a class that inherits all the methods and properties from another class.
+Parent class (also called base class) is the class being inherited from.
+Child class (also called derived class) is the class that inherits from another class.
+
+# Create a Parent class
+Any class can be a parent class, and the syntax to create a parent class is the same as for creating any other class.
+Let’s create a parent class named Person, with firstname and lastname as properties, isStudent and  printname as methods. To do this, we use the following code:
+class Person:
+    def __init__(self, fname, lname):
+        self.firstname = fname
+        self.lastname = lname
+    def printname(self):
+        print(self.firstname, self.lastname)
+    def isStudent(self):
+        return False
+
+# Create a Child class
+To create a class that inherits the functionalities from another class, set the parent class as a parameter when creating the child class. 
+Let’s create a class named Student that inherits from Person, and override the isStudent method with the following code:
+class Student(Person):
+    def isStudent(self):
+        return True
+
+# Accessing Parent and Child objects
+Use the Person and Student class to create objects, and then execute printname and isStudent methods for each object:
+person= Person("John", "Doe")
+person.printname()
+print(f'Is {person.firstname} a student? {person.isStudent()}')
+student= Student("Estephe","Kana")
+student.printname()
+print(f'Is {student.firstname} a student? {student.isStudent()}')
+
+
+# Use the super() function 
+Python also has a super() function that will make the child class inherit all the methods and properties from its parent.
+When you redefine a parent method in the child class, you override the parent method. So if you want to use the parent method as it’s defined in parent class, use the following syntax:
+Syntax: parent_class_name.parent_method_name() 
+or super().parent_method_name() 
+
+# Use the super() function 
+Let’s use super() to keep the behaviour of isStudent method in student class, then execute the isStudent method using the code below:
+class Student(Person):
+    def isStudent(self):
+        return super().isStudent()
+student= Student("Estephe","Kana")
+student.printname()
+print(f'Is {student.firstname} a student? {student.isStudent()}')
+
+Now “Is Estephe a student? False” because isStudent in the child class (Student) inherited the behaviour of isStudent from parent class (Person).
+
+
+
+# 5.
+# Encapsulation
+What’s Encapsulation?
+Encapsulation (Protected mode)
+Encapsulation (Private mode)
+
+# What’s Encapsulation 
+Encapsulation is one of the fundamental concepts in object-oriented programming (OOP).
+The main idea behind the concept is to hide and protect attributes and methods which should not be accessed directly.
+By default, all class members are public, meaning they can be accessed both inside and outside the class. To control access, we use access modifiers which include:
+Protected
+Private
+
+# Encapsulation (Protected mode) 
+When the encapsulation is protected, the members of a class are accessible only by other members of the class and their subclasses.
+For converting a member to be protected, you need to add underscore ( _ ) prefix to its name.
+Here, we redefine Person class with one protected member: lastname, which is specified by ( _ ) prefix to its name:
+class Person:
+    def __init__(self, fname, lname):
+        self.firstname = fname
+        self._lastname = lname
+    def printname(self):
+        print(self.firstname, self._lastname)
+    def isStudent(self):
+        return False
+
+
+# Encapsulation (Protected mode)
+Let’s try to access to a protected member (lastname) in printname() method:
+	person = Person("John", "Doe")
+person.printname()
+Then the output is   → 
+	The output shows that we successfully accessed the protected member
+Let’s try to access directly to the protected member and then see the output:
+person = Person("John", "Doe")    
+person.lastname
+The output shows that we can’t directly access to the protected member by using its name.
+
+
+# Encapsulation (Private mode)
+Similar to protected mode, when the encapsulation is private, the members of a class are only accessible by others members of the class and not by their subclasses.
+To make a member private, you add double underscore ( __ ) prefix to its name.
+So, you may ask the question: How can subclasses access these private members? This is possible by using getter & setter methods.
+Let’s redefine Person class with one private member: lastname, which is specified by ( __ ) prefix to its name, and two methods to get and modify lastname value:
+
+
+# Encapsulation (Private mode)
+Here is the code to redefine Person class:
+class Person:
+    def __init__(self, fname, lname):
+        self.firstname = fname
+        self.__lastname = lname
+    def printname(self):
+        print(self.firstname, self.__lastname)
+    def isStudent(self):
+        return False
+    def getLastname(self):
+        print(f' Person lastname is {self.__lastname}')
+    def setLastname(self,lastname_new):
+        self.__lastname = lastname_new
+
+
+# Encapsulation (Private mode)
+Let’s access to the private member using getLastname() method:
+	person= Person("John", "Doe")
+person.getLastname()
+EXECUTE IT
+Let’s modify the private member value using setLastname() method:
+person = Person("John", "Doe")
+person.setLastname('Kana')
+person.getLastname()
+EXECUTE
+
+
+
+6.
+#Polymorphism
+What’s Polymorphism in OOP?
+Polymorphism in inheritance
+Example of polymorphism in inheritance
+
+# What’s Polymorphism in OOP?
+The word polymorphism means “having many forms”. In programming, polymorphism means the ability of the same function name (but with different signatures) to be used for different types.
+The built-in function len() is used to have the length of an input passed as argument.
+For example: The len() function can operate on different data types, such as strings and lists.
+# len() being used for a string
+print(len("geeks"))
+# len() being used for a list
+print(len([10, 20, 30]))
+
+
+# Polymorphism in inheritance
+Consider the inheritance, where the child class inherits methods and attributes from parent class. It is possible for child class to have a method with the same name as the parent but with a different implementation.
+Let’s take our inheritance example with Person as parent class and Student as child class. Then change the implementation of printname() in the Student class.
+In the next slide, we will show the code to demonstrate this and we will create objects from parent and child classes. The output will show the different implementations of printname(). 
+
+
+#Example Polymorphism in inheritance
+class Person:
+    def __init__(self, fname, lname):
+        self.firstname = fname
+        self.lastname = lname
+    def printname(self):
+        print(f'The firstname of the person is : {self.firstname} and lastname is: {self.lastname}')
+class Student(Person):
+    def printname(self):
+        print(f'The firstname of the student is : {self.firstname} and lastname is: {self.lastname}')
+# calling the same function with different implementation
+person = Person("Estephe","Kana")
+person.printname()
+student= Student("Estephe","Kana")
+student.printname()
+EXECUTE IT
+As we can see in the output image, the printname() method doesn’t produce the same result for each type of object.
+For the object of parent class (Person), the result is:
+The firstname of the person is : Estephe and lastname is: Kana
+For the object of child class (Student), the result is:
+The firstname of the student is : Estephe and lastname is: Kana
+
+
+# 7.
+#Data abstraction
+What’s abstraction in OOP?
+What’s Data abstraction in OOP?
+Example of data abstraction
+
+# What’s abstraction in OOP?
+Abstraction is used to hide the internal functionality of a function from the users. 
+Users only interact with the basic implementation of the function, but its inner workings remain hidden. They understand  "what the function does" but they don't know "how it does it."
+For example:
+People do not think of a car as a set of thousands of individual parts. Instead, they see it as a well-defined object with its own unique behavior. This abstraction allows people to drive a car without needing to understand the complexities of its components. They can ignore the details of how the engine, transmission and braking systems work. Instead, they are free to utilize the object as a whole.
+
+#What’s Data abstraction in OOP
+Data Abstraction in Python can be achieved by creating abstract classes and inheriting them later. 
+A class containing one or more abstract methods is called an abstract class. An abstract class cannot be instantiated.
+As a property, abstract classes can have any number of abstract methods coexisting with any number of other methods.
+Abstract methods do not contain any implementation. Instead, all the implementations can be defined in the methods of sub-classes that inherit from the abstract class.
+Python provides the ABC module to use the abstraction in the Python program. Let's see the following syntax:
+Syntax:	from abc import ABC
+class ClassName(ABC):
+    pass
+
+# Example of Data abstraction 
+# LETS CREATE THE CAR CLASS THAT INHERITED THE ABC class and defined an abstract method named mileage() and three subclassses(Tesla,suzuki and Renault)
+#  inherited the parent class car and implemented abstract method differently.
+from abc import ABC  
+class Car(ABC):  
+    def mileage(self):  
+        pass  
+class Tesla(Car):  
+    def mileage(self):  
+        print("The mileage is 30kmph")  
+class Suzuki(Car):  
+    def mileage(self):  
+        print("The mileage is 25kmph ")  
+class Renault(Car):  
+    def mileage(self):  
+        print("The mileage is 27kmph ")
+
+
+# Example of Data abstraction 
+Let’s create three objects to access to abstract methods of subclasses, and then see the output.
+tesla= Tesla ()  
+tesla.mileage()
+suziki = Suzuki()  
+suziki.mileage()    
+renault = Renault()  
+renault.mileage()
+The output shows the mileage of each type of car: Tesla (30 kmph); Suzuki (25 kmph) and Renault (27 kmph).  
+
+
+# Advantages of OOP
+More reusable and shareable code: you can use the class and its subclasses multiple times without rewriting everything from scratch.
+More security: you can hide and protect sensible attributes which should not be accessible & modified.
+Easy troubleshooting: Since you have separated various functionalities into different classes, when you encounter an error, you know at least where to start debugging.
+
+
+#
+
+
+
+
+
+
+
+

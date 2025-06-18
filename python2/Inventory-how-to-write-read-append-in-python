@@ -1,0 +1,130 @@
+# file-handeling.py
+# we use this to open files in python and edit it ie 'w','r',append and many more
+
+f = open('filename','w')   # 'w','r','a'  # 'wt',wb
+
+
+f.close()
+## that above is how u should start with ur file opening and end with close
+
+
+
+                      OR
+
+
+
+
+## writing text to a file
+ with open('text.txt', 'w') as f:   # this will creat a file call text.txt     # becarefull when u use 'w' bc if u want toadd 
+                                     # content on ur file it will over write other text in it 
+        f.read()                    # this when u just want to read in the file text.txt
+        f.write("hello world")      # this will write this text to the file above text.txt 
+execute it        
+
+
+
+
+## appending text to a file
+ with open('text.txt', 'a') as f:   # this will creat a file call text.txt   ## the 'a' will append ur new text to e file
+                                     
+        f.read()                    # this when u just want to read in the file text.txt
+        f.write("\nhello ojong\n")      # this will write this text to the file above text.txt 
+execute it 
+
+
+
+
+## read text in a file
+ with open('text.txt', 'r') as f:   # this will creat a file call text.txt     
+                                     
+        content = f.read()  # or f.readlin() or f.readlins()          # this when u just want to read in the file text.txt
+        print(content)
+execute it 
+
+
+
+
+
+
+
+
+# another example
+# this will create a spreet shit
+import csv    # this is a file
+
+with open('jenkins.csv', 'w',newline='')  as j:      # this will create a jenkins.csv file  # while as j is a variable
+        pen = csv.writer(j)
+        pen.writerow(["USER_NAME","CELL_PHONE","INSTANCE_TYPE", "REGION"])    #this will create header in e shit 
+        pen.writerow(['sserg','4536666','t2-micro','us-east-1'])          # putting valu
+Execute it
+we can open an see it in file explorer by right click on the file select reveal in file explorer
+
+
+
+
+# project
+#### AT work , we haev many jenkins server and there is aneed to inventory stidious task to manually got in jenkins and count the jobs, 
+    and the vcs  to each of them . go ahead and propose a solution for this.
+  jenkins url: 'http://44.197.324.43:8080'
+  jenkins username : 'devops'
+  jenkins passsword: 'devops'
+all the data should be directed to a jenkins.csv file use .writerow, 
+
+
+
+
+# solution
+     import requests
+import csv
+from requests.auth import HTTPBasicAuth
+
+# Jenkins credentials and server URL
+JENKINS_URL = 'http://44.197.324.43:8080'
+USERNAME = 'devops'
+PASSWORD = 'devops'
+
+# Output file
+CSV_FILE = 'jenkins.csv'
+
+def get_all_jobs():
+    url = f"{JENKINS_URL}/api/json?tree=jobs[name,url]"
+    response = requests.get(url, auth=HTTPBasicAuth(USERNAME, PASSWORD))
+    response.raise_for_status()
+    return response.json().get('jobs', [])
+
+def get_job_vcs_url(job_url):
+    config_url = f"{job_url}config.xml"
+    response = requests.get(config_url, auth=HTTPBasicAuth(USERNAME, PASSWORD))
+    if response.status_code != 200:
+        return "Error fetching config"
+
+    # Parse Git URL (look for <url>...</url> in config XML)
+    try:
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(response.text)
+        scm = root.find('.//scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url')
+        return scm.text if scm is not None else "No VCS"
+    except Exception as e:
+        return f"Parse error: {e}"
+
+def main():
+    jobs = get_all_jobs()
+    print(f"Found {len(jobs)} jobs.")
+
+    with open(CSV_FILE, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Job Name', 'Job URL', 'VCS URL'])
+
+        for job in jobs:
+            job_name = job['name']
+            job_url = job['url']
+            vcs_url = get_job_vcs_url(job_url)
+            writer.writerow([job_name, job_url, vcs_url])
+            print(f"Logged: {job_name} - {vcs_url}")
+
+if __name__ == '__main__':      ### this line of code simply means from line 110 to 123  can only be execute if i do it here
+                                 # but if someone import this code and execute it from line 110 to 123 will not execute
+    main()
+
+
+

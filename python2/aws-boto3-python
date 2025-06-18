@@ -1,0 +1,142 @@
+
+# make sure u have boto3 install on ur server
+# check boto3 documentation ie boto3.amazonaws.com
+import boto3 
+client = boto3.client('iam')    # this is a method, iam is the service ww want to attack, client is object, .client is method
+resp = client.list_users()    ## in this list_user we have the key and value ie usernamea: 'serge'
+#print(resp)
+
+#print(resp['users'])
+## lets loop through the list of user and print value of a key 
+ for user in resp['Users']:   ## we want to loop in all the users and print and element call user 
+  print(user['UserName'], user['UserId'], user['Arn'])    ## how to print a value of a particular key
+  
+### how to put users in line 12 in a list
+
+client = boto3.client('iam')    
+resp = client.list_users()
+user_list = []
+for user in resp['Users']:
+  user_list.append(user['UserName'])
+print(user_list)
+ 
+ ## lets put the code above in to a function so that someone can call and use
+def list_iam_users():
+  client = boto3.client('iam')    
+  resp = client.list_users()
+  user_list = []
+  for user in resp['Users']:
+    user_list.append(user['UserName'])
+<replace print with return> return(user_list)  # replace this print with return if u want the person calling this code to be able to store it in a variable
+#NB TAke note if we execute this script from line 24 to 30 nothing will happen bc we have put it in a function 
+#for us to execute it we need to call the function
+ex 
+  #for us to be able to put user_list in a variable we most go back to line 30 replace print with return   
+# calling the function in line 24
+users = list_iam_users
+print(users)
+
+
+
+
+
+##############################################################################################
+
+# lets list all ec2 instance
+ex
+import boto3 
+ec2 = boto3.client('ec2', region_name= 'us-east-1')  # note that if u do not specify a region it will create in e default one
+resp = ec2.describe_instances()
+#print(resp)
+#print(resp['Reservations']) 
+
+#### lets loop through resp variable
+for inst in resp['Reservations']:  
+  #print(inst['Instances'])
+  ### let print how many instance we have in aws
+  # print(len(inst['Instances]))
+    for ins in inst['Instance']:
+       print(ins['instanceId'],ins['ImageId'],ins ['instanceType'])
+
+
+
+### let create and empty list and append instance info to it
+def list_of_instanceid_imageid_instancetype():    ## with this someone can call this code      
+ ec2 = boto3.client('ec2', region_name= 'us-east-1')  # note that if u do not specify a region it will create in e default one
+resp = ec2.describe_instances()
+instance_list = []      ## this is the empty list
+for inst in resp['Reservations']: 
+    for ins in inst['Instance']:
+       instance_list.append([ins['instanceId'],ins['ImageId'],ins ['instanceType']]) ## all of this will be append to our empty list above
+       #print(instance_list) ## since we hv a def function above ,remove print(instance_list) replace with return(instance_list) , then go below and call the function
+                             # if u execute this code now it will not work , to excute it call it below
+                             
+# calling the function in line 63
+                              
+    instance =   list_of_instanceid_imageid_instancetype
+    print(instance)                      
+
+
+
+#####################################################
+# how to use python and stop instance
+
+stop = boto3.client('ec2', region_name= 'us-east-1') 
+ec2.stop_instances(InstanceIds=['i-7479273974292747927']) # this id number was copy frm aws but we can still call it here   # one of the agurment/function under ec2 method
+
+#             or  
+
+def list_of_instanceid_imageid_instancetype():    ## with this someone can call this code      
+ ec2 = boto3.client('ec2', region_name= 'us-east-1')  # note that if u do not specify a region it will create in e default one
+ resp = ec2.describe_instances()
+ instance_list = []      ## this is the empty list
+ for inst in resp['Reservations']: 
+    for ins in inst['Instances']:
+       instance_list.append(ins['InstanceId'])
+ return instance_list
+
+# the below function are using the function in line 89 to be able to get the instanceid
+
+def stop_instance(instances):
+  stop = boto3.client('ec2', region_name= 'us-east-1') 
+  ec2.stop_instances(InstanceIds=instances)
+
+###########################################
+def start_instance(instances):
+  stop = boto3.client('ec2', region_name= 'us-east-1') 
+  ec2.start_instances(InstanceIds=instances)
+
+
+
+# lets execute the above function
+instances = list_of_instanceid_imageid_instancetype()
+
+print("Starting instances:", instances)
+start_instance(instances)
+
+print("Stopping instances:", instances)
+stop_instance(instances)
+
+
+####################################################################################
+# nNB if we need to import the code to another file then will need to do 
+def start_instance(instances):
+ from  <then put the file name where the function is located> import list_of_instanceid_imageid_instancetype,stop_instance,
+# we just import 3 function
+instances = list_of_instanceid_imageid_instancetype()
+
+print("Starting instances:", instances)
+start_instance(instances)
+
+print("Stopping instances:", instances)
+stop_instance(instances)
+
+
+
+
+
+
+
+
+
+

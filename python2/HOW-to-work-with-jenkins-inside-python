@@ -1,0 +1,24 @@
+
+steps
+- RUN  pip install python-jenkins 
+
+create a file .py
+   import jenkins
+try:
+ server = jenkins.jenkins('http://localhost:8080', username='devops',password='devops')  
+ user = server.get_whoami        # this are function under jenkins ie is what we can use python to do in jenkins
+  print(user)              # this will give u so many data in dictionary formate 
+except:
+  print("please check credential")
+ Execute it
+
+
+
+    import jenkins
+try:
+ server = jenkins.jenkins('http://localhost:8080', username='devops',password='devops')  
+ user = server.get_whoami        # this are function under jenkins ie is what we can use python to do in jenkins
+  print(user["fullName"])        # this will give u the user full name of the jenkins account    
+except:
+  print("please check credential")
+ Execute it

@@ -11,3 +11,39 @@ b="today"    # this is global variable and it can be print in any function bello
      print(f"hello {name}") 
      print(b)   # this will work  global variable
      print(a)    # this will not work be it is declare with another function is call local variable
+
+
+
+
+
+
+
+     ### how to stop someone from calling ur function
+
+     def addition(a,b):
+        sum = a+b
+        return sum
+     def command(cmd):
+        import os
+        os.system(cmd)
+
+     if __name__=='_main' :   ## with this contructor code ,u just stop someone from calling the function bellow
+
+ my_value = addition1(2,7)    ##  nobody can call this function blc of the  if_name_=='_main_':
+     print(my_value)     
+
+
+                  OR
+
+## WE CAN DO A MODULE FUNCTION FOR IT  ie
+     def main()                ### this function can not be call and use in a diffn file but it can  be call here and and use
+     my_value = addition1(2,7)  
+     print(my_value)
+    if_name_=='_main_':   
+
+#lets call the function
+
+ if_name_=='_main_':  
+main()
+
+

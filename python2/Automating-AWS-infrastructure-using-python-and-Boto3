@@ -1,0 +1,630 @@
+
+
+# Automating AWS infrastructures with Python & Boto3 
+
+
+# Table of content
+What’s Boto3 ?
+Install boto3 module on Python
+Boto3 Client vs Boto3 resource
+Use boto3 with Amazon EC2
+Use boto3 with Amazon S3
+Managing IAM users with boto3
+
+# Important note: To get all the scripts made in this document:
+Clone the following python repo: https://github.com/utrains/Utrains_python_script.git
+Get into the python_courses_scripts directory.
+
+# 1.
+What’s Boto3 ?
+Boto is a software development kit (SDK) designed to enhance the use of the Python programming language in Amazon Web Services (AWS).
+It has become the official AWS SDK for Python, with its versions including Boto, Botocore and Boto3, the latest version.
+Boto3 allows you to create, update, and delete AWS resources directly from your Python scripts.
+
+# 2.
+Install boto3 module on Python
+Install boto3 module on python
+Install awscli on python
+Configure AWS credentials
+
+To use boto3, you first need to install it along with its dependencies.
+Before installing boto3, ensure that you have Python 3.7 or later installed.
+In this course, we are using Python 3.7.9. So you can install boto3 with the following command:
+pip3 install boto3 or pip install boto3
+To check boto3 details , you can use this command:
+pip3 show boto3
+     or
+pip show boto3
+
+
+# Install AWSCLI on Python
+After installing boto3 module, you need to set up authentication credentials for your AWS account using AWS CLI.
+If you don’t have AWS CLI installed, you can install it using the following pip command:
+pip3 install awscli or pip install awscli
+After the installation, you can check the version of awscli  using the command:  aws --version
+
+#  Configure AWS credentials 
+Now, let’s configure authentication credentials for your AWS account using the following command:
+		aws configure
+Then, provide your credentials when prompted:
+	aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+default_region_name= YOUR_DEFAULT_REGION
+default_output_format= YOUR_DEFAULT_OUTPUT_FORMAT
+After that, ensure your computer’s date and time are set correctly.
+Once the configuration is complete, you can start working with boto3. 
+
+# 3.
+# Boto3 Client vs Boto3 resource
+Client and Resource are two different abstractions within the boto3 SDK making AWS service requests. 
+To make API calls to an AWS service with Boto3, you can use either a Client or a Resource.
+A Client provides a low-level interface to the AWS service, offering direct access to AWS service API operations.
+A Resource provides a higher-level abstraction compared to clients, simplifying interactions with AWS services.
+
+# A  Boto3 Client
+This is the original boto3 API abstraction.
+It provides low-level AWS service access.
+All AWS service operations are supported by clients.
+It typically maps 1:1 with the AWS service API.
+It exposes snake-cased method names (e.g. ListBuckets API => list_buckets method).
+You'll need to handle result pagination manually when using Clients.
+It is generated from an AWS service description.
+Example: You can create a Boto3 client to interact with AWS S3 as follows:
+import boto3
+s3_client = boto3.client("s3")
+
+# B   Boto3 resource
+This is the newer boto3 API abstraction.
+It provides a high-level, object-oriented API.
+It does not provide 100% API coverage of AWS services.
+It uses identifiers and attributes.
+It has actions (operations on resources).
+It exposes sub-resources and collections of AWS resources.
+It does the result pagination for you.
+It is generated from an AWS resource description.
+Example: You can create a Boto3 resource to interact with AWS S3 as follows:
+import boto3
+s3_resource = boto3.resource('s3')
+
+
+NB  
+ Before interacting with AWS services, it's recommended to create and activate a virtual environment (if you haven’t already) using the following commands:
+# create and activate a virtualenv for python
+pip3 install virtualenv
+virtualenv env
+source env/Scripts/activate  ( for windows)
+source env/bin/activate  (for mac or linux)
+
+# 4.
+# Use boto3 with Amazon EC2
+Create an EC2 key pair
+Create a new EC2 instance
+Get the public IP for a running EC2 instance
+List all running EC2 instances,
+Stop an EC2 instance,
+Terminate an EC2 instance.
+
+EC2 stands for Elastic Compute Cloud. It is an is on-demand computing service that  offers all the capabilities of a traditional computing device along with the flexibility of a virtual environment.
+With boto3 and Amazon EC2, we can make various operations such as:
+Create an EC2 key pair,
+Launch a new EC2 instance,
+Retrieve the public IP for a running EC2 instance,
+List all running EC2 instances,
+Stop an EC2 instance,
+and terminate an EC2 instance.
+
+# Create an EC2 key pair
+A key pair consists of a private key and a public key, which are required for securely accessing an EC2 instance.
+Amazon stores the public key, while you store the private key.
+We will use create_key_pair() method from boto 3 to create an EC2 key pair.
+Let’s create a new file to make all ec2 experimentations:
+		code ec2_boto3_code.py
+To create an EC2 key pair named my-ec2-key-pair, copy the following code, paste it in ec2_boto3_code file and save the file.
+
+# Create an EC2 key pair
+
+import boto3
+# create an EC2 key pair
+def create_key_pair(key_pair_name):
+   ec2_client = boto3.client("ec2", region_name="us-east-1")
+   response = ec2_client.create_key_pair(KeyName=key_pair_name)  
+   print(response)
+
+create_key_pair("my-ec2-key-pair")
+Let’s run the ec2_boto3_code file using the following command, then see the output in the next slide:
+	python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+
+# The output shows key pair attributes in dictionary format: KeyFingerprint, KeyMaterial, KeyName, KeyPairId and ResponseMetadata.
+
+
+# Launch a new EC2 instance
+To launch a new EC2 instance, we will be using run_instances() from boto 3.
+This method need some parameters: Required parameters and recommended parameters.
+Required parameters are parameters that the method can’t work without.
+ImageId: An Amazon Machine Image (AMI) is required to launch an EC2 instance. You can either use one of the freely available AMIs provided by Amazon or create your own.
+MinCount: Minimum number of EC2 instances to create
+MaxCount: Maximum number of EC2 instances to create
+
+Recommended parameters are parameters that you can also set for this method. They are optional.
+InstanceType: The instance type for the EC2 instance.
+KeyName: The name of the key pair that will be used to access the EC2 instance. If no KeyName is specified, we won’t be able to SSH into the EC2 instance.
+SecurityGroupIds: Security groups allow you to control access in and out your EC2 instance.
+IamInstanceProfile: The name of the IAM profile that will be attached to the EC2 instance.
+EC2 instances can take few minutes before available for use.
+- For example, let’s launch an EC2 instance of type t2.micro using the key pair we created earlier, then display the ID of the instance.
+To do that, Let’s copy the following code, modify the ec2_boto3_code file by commenting the last function call (create_key_pair("my-ec2-key-pair")), then paste the code there and save the file.
+For this example let’s use the ImageId of Amazon Linux 2 AMI in us-east-1. The region name and imageId can be different for your case.
+
+# Launch a new EC2 instance
+
+# create an EC2 instance
+def create_instance():
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+    instances = ec2_client.run_instances(
+        ImageId="ami-090fa75af13c156b4",
+        MinCount=1,
+        MaxCount=1,
+        InstanceType="t2.micro",
+        KeyName="my-ec2-key-pair"
+    )
+    print(f'Instance id: {instances["Instances"][0]["InstanceId"]}')
+create_instance()
+
+# Let’s run the ec2_boto3_code file using the following command, then see the output:
+	python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+
+# Output: the output of this function is the ID of the created instance.
+
+
+## Retrieve the public IP for a running EC2 instance
+To retrieve the public IP of an EC2 instance, we can use the describes_instances() method.
+After creating the above EC2 instance, we can get its public IP by using Instance id as its argument.
+To do that, Let’s copy the following code, modify the ec2_boto3_code file by commenting the last function call (create_instance()), then paste the code there and save the file.
+Note: don’t forget to change the Instance id and put your own.
+EX
+   # get a public key of an EC2 instance
+def get_public_ip(instance_id):
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+    reservations = ec2_client.describe_instances(InstanceIds=[instance_id]).get("Reservations")
+
+    for reservation in reservations:
+        for instance in reservation['Instances']:
+            print(f'public IP adress: {instance.get("PublicIpAddress")}')
+
+get_public_ip('i-0a20cf982109974f5')
+
+# Let’s run the ec2_boto3_code file using the following command, then see the output:
+	python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+
+# Output: The output is the public IP address of the EC2 instance we have created previously. 
+
+
+## List all running EC2 instances
+To list all running EC2 instances, we will use describe_instances() method.
+We will use the Filters arguments to only return instances which are in the Running state.
+For example, let’s list all our running EC2 instances. 
+To do that, Let’s copy the following code, modify the ec2_boto3_code file by commenting the last function call (get_public_ip('i-0a20cf982109974f5')), then paste the code there and save the file.
+
+# list all running EC2 instances
+def get_running_instances():
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+    reservations = ec2_client.describe_instances(Filters=[
+        {
+            "Name": "instance-state-name",
+            "Values": ["running"],
+        }
+    ]).get("Reservations")
+    print("instance.id\t\tinstance_type\tpublic IP address\tprivate IP address\n")
+    for reservation in reservations:
+        for instance in reservation["Instances"]:
+            instance_id = instance["InstanceId"]
+            instance_type = instance["InstanceType"]
+            public_ip = instance.get("PublicIpAddress")
+            private_ip = instance.get("PrivateIpAddress")
+            print(f"{instance_id}\t{instance_type}\t{public_ip}\t\t\t{private_ip}")
+
+get_running_instances()
+
+# Let’s run the ec2_boto3_code file using the following command, then see the output:
+python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+# Output
+
+
+## Stop an EC2 instance
+An EC2 instance can be shut down using the stop_instances() method. To stop an EC2 instance, we need to specify its instance id.
+A stopped EC2 instance is not charged for usage (except for any EBS volumes).
+For example, let’s stop the EC2 instance that we created previously. 
+To do that, Let’s copy the following code, modify the ec2_boto3_code file by commenting the last function call (get_running_instances()), then paste the code there and save the file.
+
+# stop an EC2 instance we created.
+def stop_instance(instance_id):
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+    response = ec2_client.stop_instances(InstanceIds=[instance_id])
+    print(response)
+
+stop_instance('i-0a20cf982109974f5')
+Let’s run the boto3_test file using the following command, then see the output in the next slide:
+	python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+
+# Output: the Output shows two states of an instance: CurrentState and PreviousState. 
+CurrentState: is the actual state of the instance. For our example the CurrentState shows stopping.
+PreviousState: is the previous state of the instance. For our example the PreviousState shows running.
+
+
+### Terminate an EC2 instance
+We will use the terminate_instances() method to terminate and remove our EC2 instance.
+For example, let’s terminate the instance that we created and stopped (Instance_id=i-0a20cf982109974f5).
+To do that, Let’s copy the following code, modify the ec2_boto3_code file by commenting the last function call (stop_instance('i-0a20cf982109974f5')), then paste the code there and save the file.
+
+# terminate an EC2 instance
+def terminate_instance(instance_id):
+    ec2_client = boto3.client("ec2", region_name="us-east-1")
+    response = ec2_client.terminate_instances(InstanceIds=[instance_id])
+    print(response)
+
+terminate_instance('i-0a20cf982109974f5')
+Let’s run the ec2_boto3_code file using the following command, then see the output in the next slide:
+	python3 ec2_boto3_code.py  or python ec2_boto3_code.py
+
+# Output: the Output shows two states of an instance: CurrentState and PreviousState. 
+CurrentState: is the actual state of the instance. For our example the CurrentState shows terminated.
+PreviousState: is the previous state of the instance. For our example the PreviousState shows stopped.
+
+
+## To get more informations about boto3 methods for Amazon EC2 instances, follow the link below: 
+ https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html
+
+
+
+## 5.
+Use boto3 with Amazon S3
+Create an Amazon S3 bucket
+List existing s3 buckets
+Upload a file into a bucket
+Download a file from a bucket
+Get a bucket access control list
+Delete an Amazon s3 bucket
+
+S3 stands for Simple Storage Service. It is an object storage service offering industry-leading scalability, data availability, security, and performance.
+With boto3 and Amazon S3, we can make some operations like:
+Create an Amazon S3 bucket,
+List existing s3 buckets,
+Upload a file into an S3 bucket,
+Download a file from a bucket,
+Get a bucket access control list,
+and delete an Amazon s3 bucket.
+
+
+### Create an Amazon S3 bucket 
+An Amazon S3 bucket is a storage location to hold files. S3 files are referred to as objects.
+The name of an Amazon S3 bucket must be unique across all regions of the AWS platform.
+Not every string is an acceptable bucket name. For information about bucket naming restrictions, see Bucket naming rules.
+The bucket can be located in a specific region to minimize latency or to address regulatory requirements.
+For example, let’s create an Amazon s3 bucket with name first-utrains-bucket and region us-east-1. 
+
+
+Let’s create a new file to make all s3 experimentations:
+code s3_boto3_code.py
+Copy the above code, paste it into the file and save.
+# create Amazon s3 buckets with region name
+def create_bucket(bucket_name, region):
+    s3_client = boto3.client('s3', region_name=region)
+    location = {'LocationConstraint': region}
+    response=s3_client.create_bucket(Bucket=bucket_name,
+                            CreateBucketConfiguration=location)
+    print(response)
+
+create_bucket("first-utrains-bucket","us-east-1")
+
+
+## Let’s run the s3_boto3_code file using the following command, then see the output:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+Output
+
+
+
+### List existing s3 buckets 
+To list all the existing buckets for the AWS account, we use list_buckets() method from boto 3.
+For example, let’s retrieve the list of all existing s3 buckets created in our account.
+To do that, let’s copy the following code, modify the s3_boto3_code file by commenting the last function call (create_bucket("first-utrains-bucket","us-east-1")), then paste the code there and save the file.
+
+# Retrieve the list of existing buckets
+def list_buckets():
+    s3 = boto3.client('s3')
+    response = s3.list_buckets()
+    # Output the bucket names
+    print('Existing buckets:')
+    for bucket in response['Buckets']:
+        print(f'{bucket["Name"]}')          
+list_buckets()
+Let’s run the s3_boto3_code file using the following command, then see the output in the next slide:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+
+# Output: the Output shows the list of all existing s3 buckets of your account. We can see our recently created  s3 bucket called first-utrains-bucket.
+
+
+### Upload a file into an S3 bucket 
+To upload a file into the S3 bucket, we will use upload_file() method from boto3.
+It is defined as follows:
+Syntax: upload_file(Filename, Bucket, Key, ExtraArgs=None, Callback=None, Config=None)
+Filename: the path to the file to upload.
+Bucket: the name of the bucket to upload to.
+Key: the name of the key to upload to.
+ExtraArgs(optional): extra arguments that may be passed to the client operation.
+Callback: a method which takes a number of bytes transferred to be periodically called during the upload.
+Config: the transfer configuration to be used when performing the transfer.
+
+For example , let’s create a file with name test.txt and upload it to first-utrains-bucket we created previously.
+Let’s create the file in Utrains-python directory by using the following command:
+	code test.txt
+Add the following text inside the file and save it:
+Hello world !!!
+This file will be upload on Amazon s3 bucket
+named
+
+To upload test.txt into first-utrains-bucket, let’s copy the following code, modify the s3_boto3_code file by commenting the last function call (list_buckets()), then paste the code there and save the file.
+# Upload a file in the s3 bucket
+def upload_file(file_name, bucket_name, key):
+    s3_client = boto3.client('s3')
+    s3_client.upload_file(file_name, bucket_name, key)
+
+upload_file('./test.txt', 'first-utrains-bucket', 'test')
+Let’s run the s3_boto3_code file using the following command, then see the output in the next slide:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+
+
+### Download a file from an S3 bucket
+To download a file from an S3 bucket, we will use download_file() function from boto 3.
+It is defined as follows:
+Syntax: download_file( Bucket, Key, Filename, ExtraArgs=None, Callback=None, Config=None)
+Filename: The filename to save the file to.
+ExtraArgs(optional): extra arguments that may be passed to the client operation.
+Callback: a method which takes a number of bytes transferred to be periodically called during the upload.
+Config: the transfer configuration to be used when performing the transfer.
+
+  # For example, let’s download the file we uploaded in first-utrains-bucket.
+To do that, let’s copy the following code, modify the s3_boto3_code file by removing the last function call (upload_file('./test.txt', 'first-utrains-bucket', 'test')), then paste the code there and save the file.
+# download the file from a s3 bucket
+def download_file(bucket_name, key, file_name):
+    s3_client = boto3.client('s3')
+    s3_client.download_file(bucket_name,key,file_name)
+
+download_file('first-utrains-bucket', 'test', 'downloaded_test.txt')
+
+# Let’s run the s3_boto3_code file using the following command, then see the output:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+Output: a new file named downloaded_test.txt have been added.
+
+
+
+### Get a bucket access control list
+To get the current access control list of an S3 bucket, we will use get_bucket_acl() from boto3.
+The method accepts a parameter that specifies the bucket name.
+For example, let’s get the current access control list of the bucket we created previously named first-utrains-bucket.
+To do that, let’s copy the following code, modify the s3_boto3_code file by commenting the last function call (download_file('first-utrains-bucket', 'test', 'downloaded_test.txt')), then paste the code there and save the file.
+
+# get the access control list of the specified bucket
+def get_bucket_acl(bucket_name):
+    s3_client = boto3.client('s3')
+    result = s3_client.get_bucket_acl(Bucket=bucket_name)
+    print(result)
+
+get_bucket_acl('first-utrains-bucket')
+Let’s run the s3_boto3_code file using the following command, then see the output in the next slide:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+
+## Output: As we can see in the image below, the access of first-utrains-bucket is Full_Control as shown in the attribute PERMISSION of the variable Grants (colored in yellow) in the image below.
+
+
+
+### Delete an Amazon s3 bucket
+To delete an Amazon s3 bucket, make sure it is empty. To delete an empty bucket, we use delete_bucket() method from boto3.
+For example, let’s try to delete our s3 bucket named first-utrains-bucket.
+Before delete it, we will make sure that it’s empty by counting the  objects inside using list_objects_v2. If there is no object, then we can delete the bucket.
+To do that, let’s copy the following code, modify the s3_boto3_code file by commenting the last function call (get_bucket_acl('first-utrains-bucket')), then paste the code there and save the file.
+
+
+# delete an Amazon s3 bucket
+
+def delete_bucket(bucket_name):
+    s3_client = boto3.client('s3', region_name="us-east-1")
+    print("Before deleting the bucket we need to check if its empty. Checking ...")
+    objects = s3_client.list_objects_v2(Bucket=bucket_name)
+    fileCount = objects['KeyCount']
+
+    if fileCount==0:
+        response = s3_client.delete_bucket(Bucket=bucket_name)
+        print("{} has been deleted successfully !!!".format(bucket_name))
+        print(response)
+    else:
+        print("{} is not empty {} objects present".format(bucket_name,fileCount))
+        print("Please make sure S3 bucket is empty before deleting it !!!")
+delete_bucket('first-utrains-bucket')
+
+# Let’s run the s3_boto3_code file using the following command, then see the output:
+	python3 s3_boto3_code.py  or python s3_boto3_code.py
+Output: Because of the file we uploaded in first-utrains-bucket, it is not empty, so we can’t delete it. So we have to remove the uploaded file first.
+
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html  # FOR MORE INFORMATION
+
+
+
+## 6.
+# Managing IAM users with boto3
+Create a new IAM user
+List all IAM users
+Update a IAM user
+Create an IAM policy
+List all IAM policies
+Attach a policy to a user.
+
+IAM stands for Identity and Access Management. It enables you to securely control access to Amazon Web Services services and resources for your users.
+With boto3 and Amazon IAM, we can make some operations like:
+Create a new IAM user,
+List all IAM users,
+Update an IAM user,
+Create an IAM policy,
+List all IAM policies,
+and attach a policy to a user.
+
+AWS recommends creating a new IAM user as soon as you setup a new AWS account and not to use the root account.
+To create a new IAM user in your AWS account, we will use create_user() method from boto3.
+For more information about limitations on the number of IAM users that you can create, see Limitations on IAM Entities in IAM User Guide. https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html
+For example, let’s create a new user with name utrains.
+Let’s create a new file to make all iam experimentations:
+		code iam_boto3_code.py
+Copy the following code, then paste it into the file and save it.
+
+# create a new IAM user
+
+def create_iam_user(username):
+    iam_client = boto3.client("iam")
+    response = iam_client.create_user(UserName=username)
+    print(response)
+
+create_iam_user('utrains')
+Let’s run the iam_boto3_code file using the following command, then see the output in the next slide:
+	python3 iam_boto3_code.py  or python iam_boto3_code.py
+
+# Output: 
+The output shows the new iam user we created and its parameters. 
+
+
+
+### List all IAM users
+To list all the IAM users of our AWS account, we will be using a paginator to iterate over the response from AWS.
+For more information about paginators click here.
+For example, let’s get a list of all IAM users of our AWS account.
+To do that, let’s copy the following code, modify the iam_boto3_code file by commenting the last function call (create_iam_user('utrains')), then paste the code there and save the file.
+
+# get a list of all users of AWS account
+def list_iam_users():
+    iam_client = boto3.client("iam")
+    paginator = iam_client.get_paginator('list_users')
+    for response in paginator.paginate():
+        for user in response["Users"]:
+            print(f"Username: {user['UserName']}, Arn: {user['Arn']}")
+list_iam_users()
+Let’s run the iam_boto3_code file using the following command, then see the output in the next slide:
+	python3 iam_boto3_code.py  or python iam_boto3_code.py
+
+# Output: The output shows a list of all IAM users in my AWS account. It should be different for you. The list shows the username and arn( amazon resource name) of iam user. We can see a user we created in yellow.
+
+
+
+###  Update an IAM user
+To update the name and/or the path of the specified IAM user, we will be using update_user() method from boto3.
+For example, let’s change the name of the user we previously created from ‘utrains’ to ’python-utrains’.
+To do that, let’s copy the following code, modify the iam_boto3_code file by commenting the last function call (list_iam_users()), then paste the code there and save it.
+
+# update the name of IAM user
+def update_user(old_user_name, new_user_name):
+    iam_client = boto3.client('iam')
+    # Update a user name
+    response = iam_client.update_user(
+        UserName=old_user_name,
+        NewUserName=new_user_name
+    )
+    print(response)
+update_user('utrains','python-utrains')
+Let’s run the iam_boto3_code file using the following command, then see the output in the next slide:
+	python3 iam_boto3_code.py  or python iam_boto3_code.py
+
+# Output
+We can see the IAM user with the new name python-utrains in the image below.
+
+
+
+###  Create an IAM policy
+A policy is a document that list the actions that user can perform and the resources those actions affects.
+To create a new managed policy for our AWS account, we will be using create_policy() method from boto3.
+For example, let’s create an IAM policy named testDynamoDBPolicy that allows access to 2 actions in DynamoDB over all DynamoDB resources.
+To do that, let’s copy the following code, modify the iam_boto3_code file by commenting the last function call (update_user('utrains','python-utrains')), then paste the code there and save it.
+We will be using json module to convert a dictionary into a json document
+
+# Create an IAM policy
+
+import json
+def create_iam_policy():
+    # Create IAM client
+    iam_client = boto3.client('iam')
+
+    # Create a policy
+    my_managed_policy = {"Version": "2012-10-17",
+        "Statement": [
+            {"Effect": "Allow","Action": ["dynamodb:GetItem","dynamodb:Scan",],
+                "Resource": "*"
+            }
+        ]
+    }
+    response = iam_client.create_policy(
+        PolicyName='testDynamoDBPolicy',
+        PolicyDocument=json.dumps(my_managed_policy)
+    )
+    print(response)
+
+create_iam_policy()
+
+# Let’s run the iam_boto3_code file using the following command, then see the output:
+python3 iam_boto3_code.py  or python iam_boto3_code.py
+# Output 
+
+
+
+####   List all IAM policies
+To list all IAM policies of our AWS account, we will be using a paginator to iterate over the response from AWS.
+For example, let’s get a list of all IAM policies of our AWS account.
+To do that, let’s copy the following code, modify the iam_boto3_code file by commenting the last function call (create_iam_policy()), then paste the code there and save the file.
+
+# list all IAM policies of AWS account
+def list_policies():
+    iam_client = boto3.client("iam")
+    paginator = iam_client.get_paginator('list_policies')
+    for response in paginator.paginate(Scope="Local"):
+        for policy in response["Policies"]:
+            print(f"Policy Name: {policy['PolicyName']} ARN: {policy['Arn']}")
+list_policies()
+Let’s run the iam_boto3_code file using the following command, then see the output in the next slide:
+	python3 iam_boto3_code.py  or python iam_boto3_code.py
+
+# Output: the output shows a list of IAM policies (policyName, Arn). The policy we created is colored in yellow.
+
+
+###### Attach a policy to a user
+IAM policies can be attached to users to give them more permissions.
+We can attach a policy to a particular user by using attach_user_policy() method from boto3 and specifying the ARN of the policy. attach_user_policy() method takes as arguments username and policy_arn.
+For example, let’s attach the policy testDynamoDBPolicy to the user python-utrains.
+You can find the policy_arn in your AWS account. The policy_arn of testDynamoDBPolicy is  'arn:aws:iam::076892551558:policy/testDynamoDBPolicy'.
+To do that, let’s copy the following code, modify the iam_boto3_code file by commenting the last function call (list_policies()), then paste the code there and save it.
+
+# Attach a specific policy to a specific user
+def attach_user_policy(username, policy_arn):
+    iam_client = boto3.client("iam")
+    response = iam_client.attach_user_policy(
+        UserName=username,
+        PolicyArn=policy_arn
+    )
+    print(response)
+attach_user_policy('python-utrains','arn:aws:iam::076892551558:policy/testDynamoDBPolicy')
+
+# Let’s run the iam_boto3_code file using the following command, then see the output in the next slide:
+	python3 iam_boto3_code.py  or python iam_boto3_code.py
+# Output: 
+The HTTPStatusCode 200 shows that the request is done.
+ 
+ ## To get more informations about boto3 methods for Amazon IAM, follow the link below:  
+ https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/iam.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+

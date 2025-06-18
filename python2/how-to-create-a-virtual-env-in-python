@@ -1,0 +1,96 @@
+
+# how to create or activate a virtual env for python on window
+
+- pip3/pip install virtualenv
+-  virtualenv env or  py -m venv env    ## this will create the virtual env
+- source env/scripts/activate      # for windows   , to activate
+- source env/bin/activate         # for mac or linux, to activate
+
+
+diffn between builting module and third party module, when u install python it comes with some builting modules  while third party 
+module is what u need to import it in ur env
+
+N/B  in all python project we will have a file called requirement.txt; this file contain all the modules or packages we need to install
+
+- create a folder call anything ie python-modules
+- cd to it
+- create a file called anything.py ie test.py
+- vi test.py
+           
+           import turtle
+        pen = turtle.Turtle()
+        pen .color('red)
+        pen.shape('turtle)
+        pen.forward(100)
+        pen.right()
+        turtle.done()
+ Execute the script   
+
+# create another file called anything.py ie built_in.py
+ - vi builting-module.py
+ # os module
+               import os
+            
+ # function    
+               os.getcwd()    # this will show u present working directory
+               os.mkdir('dok')  # this will create a directory
+               os.system('ls')
+Execute the script
+TO get more about os module RUN help(os)   also help(sys)     
+
+
+
+## lets create another file sys-module.py
+   vi sys-module.py
+
+            import sys
+            argument = sys.argv
+            print(argument[1])  # this will print only the first agument  
+
+
+
+
+## how to take an argument from the street survy
+      import sys
+ # stop, start, restart    , this are the argument u want they shoild put if it match
+      
+def validity_check(): 
+      if len(sys.argv) < 2 or sys.argv[1]  not in ('stop','start','restart'): 
+      print("please provide a valide choice('stop','start','restart')") 
+
+
+
+# lets called the function # this is in the same file
+
+    validity_check()
+Execute it run sys-module.py  # this will call the above function and execute    
+
+
+
+
+# lets create another function
+import os
+import time     # to run sleep command
+
+time.sleep(4)     ## sleep 
+def start_daemon():
+         os.system('system start httpd')
+
+def stop_daemon():
+       os.system('system stop httpd')
+
+def restart_daemon():
+        os.system('system restart httpd')   
+
+ if _name_=='_main_':  # when people call the function , with this constructor code on this line , nothing bellow it will execute 
+                        # on their file
+   validity_check()        # calling a function and we just need to run it as it is
+   if sys.argv[1] == 'stop':
+    stop_daemon()
+    elif sys.argv[1] == 'start':
+      start_daemon()
+      else:
+      restart_daemon()
+
+                   
+                

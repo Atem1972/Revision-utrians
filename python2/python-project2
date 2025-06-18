@@ -1,0 +1,211 @@
+
+write a python script that will pull all the jobs in jenkins with all the vcs attach to it and also those without vcs
+
+### solution
+
+     import jenkins
+     import xml.etree.ElementTree as ET
+
+     try:
+                   # connect to jenkins server
+         server = jenkins.jenkkins('https//2.2.2..2:8080/', username=devops, password= devops)
+
+                 # get all jobs in jenkins
+         jobs = server.get_all_jobs()
+         job_list = []
+         for j in jobs:
+          job_list.append(j.get('fulllname'))
+       print("jobs on jenkins server:")
+       print(job_list)
+
+                        ## fetch the job config xml for the  'geoapp' job
+         job_names = 'geoapp'
+         for job in job_list:
+             job_config_xml = server.get_job_config(job)
+             root = ET.fromstring(job_config_xml)   
+
+                      ## find the git url
+      scm = root.fine(".//scm")
+      if scm is not None:
+      url_element = scm.find(".//url")
+      if url_element is not None:
+      url = url_element.text
+      print(f"\nGit URL for job '{job}': {url}")
+
+  else:
+      print(f"\nURL element not found in the xml for {job}.")
+
+  else:
+       print(f"\nSCM element not fount in the XML{job}.")
+  except Exception as e:
+          print(f"An error occured: {e}")                                               
+
+
+
+
+
+
+
+
+
+
+##################################################################################
+
+          ### how to put the code in excel sheet
+         ### this will print job and it url
+     import jenkins
+     import xml.etree.ElementTree as ET
+     import sys
+     import csv
+
+     try:
+                   # connect to jenkins server
+         server = jenkins.jenkins('http//2.2.2..2:8080/', username=devops, password= devops)
+
+                 # get all jobs in jenkins
+         jobs = server.get_all_jobs()
+         job_list = []
+         for j in jobs:
+          job_list.append(j.get('fullname'))
+       print("jobs on jenkins server:")
+       #print(job_list)
+
+                        ## fetch the job config xml for the  'geoapp' job
+         jobs_url = []
+         for job in job_list:
+             job_config_xml = server.get_job_config(job)
+             root = ET.fromstring(job_config_xml)   
+
+                      ## find the git url
+      scm = root.find(".//scm")
+      if scm is not None:
+      url_element = scm.find(".//url")
+      if url_element is not None:
+      url = url_element.text
+      #print(f"\nGit URL for job '{job}': {url}")
+        job_url.append([job,url])    ## this will append all the jobs and url to the empty list in line 73 
+        print(job_url)    # this will print everything in the variable job_url
+
+        ###excel sheet
+with opne("jenkins_inventory.csv", 'w', newline='') as f:
+       pen = csv.writer(f)
+       pen.writerow(["JOB_NAME", JOBS_CVS_URL])
+       for line in jobs_url:
+       pen.writerow(line)
+
+
+  except Exception as e:
+          print(f"An error occured: {e}")   
+
+
+
+
+######################################################################### corection of above
+
+import jenkins
+import xml.etree.ElementTree as ET
+import csv
+
+try:
+    # Connect to Jenkins server
+    server = jenkins.Jenkins('http://2.2.2.2:8080/', username='devops', password='devops')
+
+    # Get all jobs from Jenkins
+    jobs = server.get_all_jobs()
+    job_list = [j.get('fullname') for j in jobs]  # 'fullname' is the correct key
+
+    print("Jobs on Jenkins server:")
+
+    jobs_url = []  # To store [job name, git URL]
+
+    for job in job_list:
+        try:
+            job_config_xml = server.get_job_config(job)
+            root = ET.fromstring(job_config_xml)
+
+            # Find the Git URL
+            scm = root.find(".//scm")
+            if scm is not None:
+                url_element = scm.find(".//url")
+                if url_element is not None:
+                    url = url_element.text
+                    jobs_url.append([job, url])
+        except Exception as job_error:
+            print(f"⚠️ Error processing job '{job}': {job_error}")
+
+    # Save to CSV
+    with open("jenkins_inventory.csv", 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["JOB_NAME", "GIT_REPO_URL"])
+        for line in jobs_url:
+            writer.writerow(line)
+
+    print("✅ Job and Git URL data written to 'jenkins_inventory.csv'")
+
+except Exception as e:
+    print(f"❌ An error occurred: {e}")
+
+
+
+
+
+
+
+
+
+
+#####################################
+
+import jenkins
+import xml.etree.ElementTree as ET
+from openpyxl import Workbook
+
+# Jenkins credentials
+JENKINS_URL = 'http://2.2.2.2:8080/'  # Fixed the URL format
+USERNAME = 'devops'
+PASSWORD = 'devops'
+
+try:
+    # Connect to Jenkins server
+    server = jenkins.Jenkins(JENKINS_URL, username=USERNAME, password=PASSWORD)
+
+    # Get all jobs
+    jobs = server.get_all_jobs()
+    job_list = [j.get('fullname') for j in jobs]  # Correct key is 'fullname'
+    print("Jobs on Jenkins server:")
+
+    job_url_data = []  # To store [job_name, git_url]
+
+    for job in job_list:
+        try:
+            job_config_xml = server.get_job_config(job)
+            root = ET.fromstring(job_config_xml)
+
+            # Find the Git URL
+            scm = root.find(".//scm")
+            if scm is not None:
+                url_element = scm.find(".//url")
+                if url_element is not None:
+                    url = url_element.text
+                    job_url_data.append([job, url])
+        except Exception as job_error:
+            print(f"⚠️ Error processing job '{job}': {job_error}")
+
+    # Print results
+    for entry in job_url_data:
+        print(f"🔧 Job: {entry[0]} — URL: {entry[1]}")
+
+    # Save to Excel
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Jenkins Jobs and Git URLs"
+    sheet.append(["Job Name", "Git URL"])  # Header
+
+    for row in job_url_data:
+        sheet.append(row)
+
+    workbook.save("jenkins_jobs_git_urls.xlsx")
+    print("✅ Data saved to 'jenkins_jobs_git_urls.xlsx'.")
+
+except Exception as e:
+    print(f"❌ An error occurred: {e}")
