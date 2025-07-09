@@ -1,0 +1,15 @@
+- SSH TO THE SERVER
+- MAKE SURE DOCKER IS INSTALL AND RUNING
+- GO TO AWS CLICK ON ECR
+- click on the image name u want to use for the container
+- look for the image URL AND COPY
+- GO BACK TO UR INSTANCE
+- RUN docker run -d -- name web1 -p 8080:80   <past the url u copy from ECR HERE> # this is to build a container
+- run docker ps
+- copy the ip address of the instance and add :80  but if the instance is attach to a loadbalance we can take the dns to the browser
+And if the instance is attach to route53 then we take the domain name to the browser 
+
+# what if the websit has a problem, what can the developer do?
+- run ls #look for  index.html
+- vi index.html
+- after finish modify it press esc on ur keyboard and :wq to save and quite

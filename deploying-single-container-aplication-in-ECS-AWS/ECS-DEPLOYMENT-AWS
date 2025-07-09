@@ -57,37 +57,32 @@ Login to your AWS account and on the search bar tap ECS then click on Elastic Co
  # HERE CREAT ECS CLUSTER
  - click on create cluster
  - cluster name = any name
- - infrastructure = select aws fargate
+ - infrastructure = select fargate
  - click create
 
 
  - CREAT NEW TASK DEFINATION , U WILL SEE A SPACE TO PUT THE URL OF UR IMAGE IN ECR
    a) task definition = any name
-   b)On launch typy, click on aws fargat 
+   b) click on aws fargat , serverless
    c) container detail, name = google
    d) url = copy from ecr and past here
    f) essential container = yes
-   g) port mapping, <container port= 80,,  <protocol= TCP,,  <PORT NAME= anything http80,,  <app protocol= http
+   g) port mapping ,port name = any name
    e) click create task definition
 
 # create service, and service create LB 
  click on cluster
   - click on the name of the cluster u created
-  - task definition family = put the name of ur task u created above
-  - service name= devservice 
-  - On compute option = select capacity provider
-  - On capacity provider = select FARGATE
-  - On service type = select REPLICA
-  - Desire task = 2 and above
-  - existing cluster= make sure u select ur cluster name u created earlier  
+  - scrow down and click on service  
+   - SElect capacity provider
+   -capacity provider = fargate
+   - select service
+   - family = select the name u gave to ur task
+   - service name = any name
+   - select replica
+   - desire task = 2 
    - click on LB
-   - select application LB
-   - container= webapp 80:80
-   - application loadbalancer = select create a new LB
-   - LB name = anything
-   - on listener select = create new listener,  port=80,, protocol= HTTP
-   - On target group = select create new target group, target group name= anything,, protocol= HTTP,, deregistration delay= 300,, health check= HTTP,,
-                                                             HEALTH CHECK PATH= / 
+   - file some space 
    - click on creat service
    - check that ur default lb security-group has port 80 open
 
@@ -102,7 +97,6 @@ Login to your AWS account and on the search bar tap ECS then click on Elastic Co
  - next
  - Pipeline name = any name
  - next
- # source stag
  - Source provider = click on the drop down and sellect   Github(via Github App)
  - click on connect to github
  - connection name = any name
@@ -119,40 +113,21 @@ Login to your AWS account and on the search bar tap ECS then click on Elastic Co
 
   # codebuild stage
   - click on other build provider
-  - select AWS Codebuild
-
   - click on create project
   - Project name = any name
-  - scrow down and click on aditional configuration
-  
-  - scrow down to Environment variable add the variable bellow
+  - role name = put a role 
   - AWS_DEFAULT_REGION = us-east-1
   - AWS_ACCOUNT_ID = PAST UR AWS ACCOUNT ID NUMBER
   - IMAGE_REPO_NAME = the name of the repo in ecr
   - IMAGE_TAG = the tag of ur image in ecr
-  - CONTAIANER_NAME = the name of u gave to ur container when creating task
-  - region= select ur region
-
+  - CONTAIANER-NAME = the name of ur container in ecs
   - click on Buildspec
   - select Use a buildspec file
-  - deployspec = buildspec.yml
-  - next
-
-# test stage , we donot have it yet just click on next
-
-# deploy stag
+  - Buildspec name = buildspec.yml
+  - next 
   - Deploy provider = amazon ecs
-  - region = us-east-1
   - Cluster name = put the name of ur cluster in ecs
   - Service name = the name of the service u created in ecs
   - Image definitions file = imagedefinitions.json
-  - next
-
   - go to iam and creat ur role, look for the role name u created
-  - click on iam
-  - click on role
-  - look for the role
-  - click on add permition , select attach policie
-  - look for amazonec2containerRegistryfullaccess
-  - click add permtion
   - if deployment faild go to buildspec file in github and edit the container name with the container name in ecs

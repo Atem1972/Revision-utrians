@@ -34,7 +34,7 @@
       ## run ecr get-login-password --region us-east-1 # to verify if ur server has access now to aws after finishing creating
 
 - cd static-app
-- go to the repo u created in aws look for push view copy the commands the bring to ur terminal and run
+- go to the repo u created in aws lock for push view copy the commands the bring to ur terminal and run
 - this will build and push the image to aws ecr
 
 

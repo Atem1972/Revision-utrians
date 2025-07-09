@@ -27,4 +27,4 @@ containers can talk to each other if they are in the network as seen bellow
                         --network net = it means add this network called net to my container
                          -e WORDPRESS_DB_HOST=mariadb = telling the wordpress which container name  he need to connect to
 
-                                   
+                                

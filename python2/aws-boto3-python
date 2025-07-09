@@ -118,18 +118,12 @@ print("Stopping instances:", instances)
 stop_instance(instances)
 
 
-####################################################################################
+
 # nNB if we need to import the code to another file then will need to do 
 def start_instance(instances):
  from  <then put the file name where the function is located> import list_of_instanceid_imageid_instancetype,stop_instance,
-# we just import 3 function
-instances = list_of_instanceid_imageid_instancetype()
+# we just import 3 
 
-print("Starting instances:", instances)
-start_instance(instances)
-
-print("Stopping instances:", instances)
-stop_instance(instances)
 
 
 
