@@ -26,22 +26,23 @@
 
 #               nb we can also include the master server here if we need to do some update patching etc
 
-- create another file again called vi  ansible.config, past the below code on it
+- create another file again called vi  ansible.cfg, past the below code on it
                             [defaults]
                             host_key_checking= False
-                            inventory=inventory.yml    ## this inventory.yml most match the file name in line 5
+                            inventory= ./inventory.yml    ## this inventory.yml most match the file name in line 5
                             interpreter_python=auto_silent
                             localhost_warning=false
-                            deprecation_warnings=False  
-                            #log_path= /home/ec2-user/ansible-dev/ansible.log  ## this simply means at the end of this create a file call ansible.log and
+                            deprecation_warnings=False
+
+                           dont add this #log_path= /home/ec2-user/ansible-dev/ansible.log  ## this simply means at the end of this create a file call ansible.log and
                                                                                 in this path /home/ec2-user/ansible-dev/ and put the logs there.
                                                                                ## all our playbook inventory.yml task output logs will be put in the 
                                                                                ansible.log file we ask ansible to create it for us , u can open and 
                                                                                check the logs message after u execute ur playbook
 
 
-                              
-- run ansible all -m ping   # this command is use to check the connectivity of  the target server   # all means all the target node in the inventory.yml file
+- run ansible all -i inventory.yml -m ping                         
+- run ansible all -m ping    # this command is use to check the connectivity of  the target server   # all means all the target node in the inventory.yml file
 - u can also run just a specific node ie <ansible webserveres -m ping> this will just check only the connectivity of this target server s   OR <ansible all -m ping -l webservers> this is in the case where u have group many server but u just need to check just one of the instance
 # all the below command are known as ansible ad-hoc command
 - run ansible all -a 'uptime'  # <all the output that will display here is from the target node in the inventory.yml file>
