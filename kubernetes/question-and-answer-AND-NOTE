@@ -24,10 +24,10 @@ kubernetes.io
 
 
 # what are some of the processes that are running in the master node  OR COMPUNENT OF MASTER NODE
-#  - API SERVER :  
-                this is the process that check permision of any user trying to login to the master node cluster ie check what permision u have , like 
-                                                             read only access, permision to deploy to worker node, write access, execute access
- # - THE CONTROLER MANAGER:
+#  - API SERVER :       It acts as the front-end of the Kubernetes control plane.
+                this is the process that check permision of any user (both human users and tools, lets say cicd wand to deploy in k0s) trying to login to the master node cluster ie check what permision u have , like 
+                                                             read only access, permision to deploy to worker node, write access, execute access.  
+ # - THE CONTROLER MANAGER: 
                             -THE CONTROLER MANAGER IS Like a monitoring tool ie it monitor the worker nodes so that if a pod/containers is down for any of the
                              worker node , it will immediately inform the <SCHEDULER> to go and real schedule the failing pod/container
                              - he is able to know this because he has access of our requirement on the manifest file , so when he check the manifest file and 
