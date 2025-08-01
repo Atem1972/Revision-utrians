@@ -34,7 +34,7 @@ kubectl describe pod nginx
 
 # 2- Exposing the nginx server within the cluster with the Kubectl expose command
 We can expose the pod using a service directly from the command line with the Kubectl expose command. Here, we expose the pod within the cluster using the clusterIP type of service
-kubectl expose pod nginx --port 80 --target-port 80 --type ClusterIP --name nginx-service
+kubectl expose pod nginx --port 80 --target-port 80 --type=ClusterIP --name=nginx-service
 
 
 # Verify the service with:
