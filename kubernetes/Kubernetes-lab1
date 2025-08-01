@@ -43,9 +43,12 @@ kubectl get svc
 
 # You can describe the service to see the port and endpoint details:
 kubectl describe svc nginx-service
-
+# this service can only be access internally
 # To check if the service is reachable, from the master node, run:
-curl <put-your-service-cluster-IP-here>  eg curl 3.3.3.3
+run;  kubectl run curlpod --image=radial/busyboxplus:curl -it --rm --restart=Never -- sh
+run: curl httpd-service.default.svc.cluster.local
+run: curl http://httpd-service.default.svc.cluster.local
+
 
 
 
