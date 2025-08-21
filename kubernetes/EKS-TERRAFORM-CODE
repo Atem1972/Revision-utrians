@@ -1,1 +1,3 @@
 https://github.com/utrains/provision-eks-cluster-with-terraform 
+After u have finish executing the terraform code ie terraform apply, 
+on the same teminal RUN aws eks update-kubeconfig --name <put ur cluster name here> -- region us-east-1
